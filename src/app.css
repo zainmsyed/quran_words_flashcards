@@ -1,0 +1,32 @@
+:root{
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --accent: #0f172a;
+}
+
+html,body,#app{height:100%;}
+body{
+  margin:0;
+  font-family: 'Lato', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background:var(--bg);
+  color:var(--accent);
+}
+main{max-width:680px;margin:28px auto;padding:16px}
+header{display:flex;align-items:center;gap:12px}
+.card{background:var(--card);padding:20px;border-radius:8px;box-shadow:0 6px 18px rgba(2,6,23,0.08);} 
+.arabic{font-size:2rem;text-align:center;direction:rtl}
+.english{font-size:1.1rem;margin-top:8px}
+.buttons{display:flex;gap:8px;margin-top:12px}
+button{padding:8px 12px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer}
+
+/* Arabic typography: enforce Amiri where Arabic text is rendered */
+.arabic, .arabic-text, .arabic-word, .verse, .arabic-ex, .word-row .ar {
+  font-family: 'Amiri', 'Noto Naskh Arabic', 'Scheherazade', serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "rlig" 1, "liga" 1;
+  direction: rtl;
+}
+
+/* transliteration styling */
+.translit { font-size: 0.95rem; color: #555; font-style: italic; margin-top: 6px }

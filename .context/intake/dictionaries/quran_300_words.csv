@@ -1,0 +1,301 @@
+id,arabic,transliteration,english,group
+1,مِنْ,min,From/of,1
+2,فِيْ,fī,In,1
+3,لاْ,lā,No/Not,1
+4,اللهْ,allāh,Allah,1
+5,عَلَى,ʿalā,On/upon/over,2
+6,الَّذِيْ,alladhī,Who/that,2
+7,قَالَ,qāla,He said,2
+8,إِنَّ,inna,Indeed,2
+9,رَبّ,rabb,Lord,3
+10,مَا,mā,No/Not/What (non-beings),3
+11,كَانَ,kāna,He was/is,3
+12,لِ,li,For/to,3
+13,إِنْ,in,If/Not,4
+14,إِلَى,ilā,To/toward/until,4
+15,بِ,bi,With/By/in,4
+16,مَنْ,man,Who/whom? (beings),4
+17,ذَلِكَ,dhālika,That,5
+18,آمَنَ,āmana,He believed,5
+19,أَنْ,an,That,5
+20,إِلَّ,illā,Except/but,5
+21,إِذَا,idhā,When (before a verb),6
+22,أَرْض,arḍ,Earth,6
+23,هُوَ,huwa,He,6
+24,عَنْ,ʿan,From/of,6
+25,آيَة,āyah,Sign,7
+26,قَوْم,qawm,People,7
+27,يَوْم,yawm,Day,7
+28,قَدْ,qad,Indeed (before past verb),7
+29,لَيْ,lay,Not (before present verb),8
+30,كُلّ,kull,Every/all,8
+31,هُمْ,hum,They (m/f),8
+32,عَلِمَ,ʿalima,He learnt/knew,8
+33,كَفَرَ,kafara,He disbelieved,9
+34,رَسُول,rasūl,Messenger,9
+35,جَعَلَ,jaʿala,He made,9
+36,ثُمَّ,thumma,Then,9
+37,أَوْ,aw,Or,10
+38,نَفْس,nafs,Soul/self/person,10
+39,سَمَاء,samāʾ,Sky/heaven,10
+40,عَذَاب,ʿadhāb,Punishment,10
+41,شَيْء,shayʾ,Thing,11
+42,لَوْ,law,If,11
+43,عَمِلَ,ʿamila,He worked,11
+44,جَاءَ,jāʾa,He came,11
+45,بَيْنَ,bayna,Between,12
+46,رَأَى,raʾā,He saw,12
+47,آتَى,ātā,He gave out,12
+48,هَذَا,hādhā,This,12
+49,قَبْل,qabl,Before,13
+50,الْحَقّ,al-ḥaqq,Right/Truth,13
+51,الْكِتَاب,al-kitāb,The book,13
+52,أَتَى,atā,He came,13
+53,أُولَئِكَ,ulāʾika,They/those,14
+54,شَاءَ,shāʾa,He wanted/willed,14
+55,إِذْ,idh,When,14
+56,النَّاس,al-nās,People,14
+57,أَنزَلَ,anzala,He revealed,15
+58,خَلَقَ,khalaqa,He created,15
+59,عِنْد,ʿinda,At/near,15
+60,بَعْد,baʿd,After,15
+61,كَذَّبَ,kadhdhaba,To deny/reject/falsify,16
+62,كَذَبَ,kadhaba,He lied,16
+63,سَبِيل,sabīl,Path/way,16
+64,خَيْر,khayr,Good/better/best,16
+65,لَمَّا,lammā,When/then/not yet,17
+66,اتَّقَى,ittaqā,To fear/be righteous,17
+67,أَمْر,amr,Command/matter/affair,17
+68,دَعَا,daʿā,To call/invite/pray/supplicate,17
+69,إِلَه,ilāh,God,18
+70,بَعْض,baʿḍ,Some,18
+71,عَلِيم,ʿalīm,All knowing,18
+72,مَعَ,maʿa,With,18
+73,النَّار,al-nār,Hell/Fire,19
+74,غَيْر,ghayr,Not/without/apart/non,19
+75,الْجَنَّة,al-jannah,Paradise/Heaven,19
+76,آخِر,ākhir,Hereafter/last,19
+77,حَتَّى,ḥattā,Until/to/upto,20
+78,أَيُّهَا,ayyuhā,O!/Oh!,20
+79,هُدَى,hudā,Guidance,20
+80,دُون,dūn,Without/not,20
+81,قَلْب,qalb,Heart,21
+82,اتَّبِعْ,ittabiʿ,You follow (command),21
+83,أَمْ,am,Or,21
+84,أَرَادَ,arāda,He wanted,21
+85,ظَلَمَ,ẓalama,He oppressed,22
+86,لَكِنْ,lākin,But,22
+87,أَرْسَلَ,arsala,He sent,22
+88,عَبْد,ʿabd,Slave,22
+89,بَلْ,bal,But/Nay,23
+90,أَهْل,ahl,Family/folks/owner,23
+91,أَخَذَ,akhadha,He took,23
+92,لَعَلَّ,laʿalla,Perhaps/hope,23
+93,اتَّخَذَ,ittakhadha,He took/held tightly,24
+94,رَحِيم,raḥīm,Kind/Merciful,24
+95,مُبِين,mubīn,Clear,24
+96,يَد,yad,Hand,24
+97,عَظِيم,ʿaẓīm,Great,25
+98,سَأَلَ,saʾala,He asked,25
+99,ذُو,dhū,Owner of,25
+100,الدُّنْيَا,al-dunyā,World,25
+101,عَزِيز,ʿazīz,Mighty,26
+102,أَجْر,ajr,Reward,26
+103,وَجَدَ,wajada,He found,26
+104,لَنْ,lan,Never (future verb),26
+105,أَكَلَ,akala,He ate/consumed,27
+106,دِين,dīn,Religion/judgement,27
+107,حَكِيم,ḥakīm,Wise,27
+108,أَخْرَجَ,akhraja,Brought forth,27
+109,هَلْ,hal,Is/are/has (question),28
+110,فَعَلَ,faʿala,He did,28
+111,شَيْطَان,shayṭān,Devil,28
+112,لَيْس,laysa,Not (to be),28
+113,غَفُور,ghafūr,All Forgiving,29
+114,مَلَك,malak,Angel,29
+115,نَظَرَ,naẓara,He looked/saw,29
+116,مِثْل,mithl,Like/as,29
+117,فَضْل,faḍl,Kindness/bounty,30
+118,ذَكَرَ,dhakara,He mentioned,30
+119,وَالِ,wālī,Friend/protector,30
+120,مَال,māl,Wealth,30
+121,خَافَ,khāfa,He feared,31
+122,كَيْفَ,kayfa,How,31
+123,قَتَلَ,qatala,He killed,31
+124,لَيْل,layl,Night,31
+125,الصَّلَاة,al-ṣalāh,Prayer/Salat,32
+126,رَجَعَ,rajaʿa,He came back,32
+127,أَكْثَر,akthara,More/most,32
+128,الأَوَّل,al-awwal,First,32
+129,دَخَلَ,dakhala,He entered,33
+130,الزَّوْج,al-zawj,The Partner/Pair,33
+131,جَهَنَّم,jahannam,Hellfire,33
+132,صَاحِب,ṣāḥib,Companions,33
+133,سَمِعَ,samiʿa,He heard,34
+134,الأَخ,al-akh,The brother,34
+135,الْحَيَاة,al-ḥayāh,The life,34
+136,تَوَلَّ,tawallā,He turned,34
+137,خَالِدُون,khālidūn,Permanent/eternal,35
+138,أَحَد,aḥad,One/anyone,35
+139,نَبِيّ,nabī,Prophet,35
+140,مَثَل,mathal,Example,35
+141,أَوْحَى,awḥā,He revealed,36
+142,أَلِيم,alīm,Painful,36
+143,أَطَاعَ,aṭāʿa,He obeyed,36
+144,جَزَى,jazā,He rewarded,36
+145,بَيِّنَة,bayyinah,Evidence,37
+146,إِنْسَان,insān,Human,37
+147,أَشْرَكَ,ashraka,He made partner,37
+148,وَجْه,wajh,Face,37
+149,قِيَامَة,qiyāmah,Day of resurrection,38
+150,قَلِيل,qalīl,Little,38
+151,أَيّ,ayy,What/any,38
+152,آخَر,ākhar,Another,38
+153,بَيْت,bayt,House,39
+154,يَوْمَئِذٍ,yawmaʾidhin,That day,39
+155,أَنفَقَ,anfaqa,He spent,39
+156,وَعَدَ,waʿada,He promised,39
+157,أَصَابَ,aṣāba,He bestowed/been affected,40
+158,أَحَبَّ,aḥabba,He loved,40
+159,أَب,ab,Father,40
+160,صَلُحَ,ṣaluḥa,Be righteous,40
+161,أُمَّة,ummah,People/nation,41
+162,أَضَلَّ,aḍalla,He made astray,41
+163,يَمِين,yamīn,Right/Vow,41
+164,غَفَرَ,ghafara,He forgave,41
+165,كَسَبَ,kasaba,He earned,42
+166,ابْن,ibn,Son,42
+167,مَاء,māʾ,Water,42
+168,تَابَ,tāba,He repented,42
+169,صَدَقَ,ṣadaqa,He said the truth,43
+170,رَزَقَ,razaqa,He provided,43
+171,تَلَى,talā,He recited,43
+172,نَزَّلَ,nazzala,He revealed,43
+173,صَبَرَ,ṣabara,He became patient,44
+174,نَصَرَ,naṣara,He helped,44
+175,امْرَأَة,imraʾah,Lady,44
+176,قَضَى,qaḍā,He judged/decided,44
+177,شَدِيد,shadīd,Tough/hard,45
+178,نَهَار,nahār,Day (light),45
+179,قَرْيَة,qaryah,Village,45
+180,نَذِير,nadhīr,A warning/Warner,45
+181,وَلَد,walad,Child,46
+182,مَسَّ,massa,To touch,46
+183,شَهِيد,shahīd,Witness/martyr,46
+184,جَرَى,jarā,To flow/run,46
+185,أَمَّا,ammā,However/then/as for,47
+186,أَقَامَ,aqāma,To establish,47
+187,قَتَلَ,qatala,To kill,47
+188,عَيْن,ʿayn,Eye/water-well,47
+189,ضَرَبَ,ḍaraba,To strike/beat up,48
+190,خَرَجَ,kharaja,To exit,48
+191,جَمِيع,jamīʿ,All,48
+192,نَهَر,nahr,A river,48
+193,مُجْرِم,mujrim,A criminal,49
+194,أَحْيَا,aḥyā,To give life,49
+195,بَعَثَ,baʿatha,To resurrect,49
+196,أَجَل,ajal,Term/time/yes,49
+197,كَتَبَ,kataba,He wrote/ordained,50
+198,افْتَرَى,iftarā,He fabricated,50
+199,سُوء,sūʾ,Harm,50
+200,أَهْلَكَ,ahlaka,He destroyed,50
+201,وَعَدَ,waʿada,He promised,51
+202,زَادَ,zāda,He increased,51
+203,عَدُوّ,ʿaduww,Enemy,51
+204,بَصِير,baṣīr,All seer,51
+205,الدَّار,al-dār,House,52
+206,عَقَلَ,ʿaqala,He understood,52
+207,الْمَوْت,al-mawt,Death,52
+208,تَحْت,taḥt,Beneath/under,52
+209,السَّاعَة,al-sāʿah,Hour/Time/Qiyamah,53
+210,الْغَيْب,al-ghayb,Unseen,53
+211,النِّعْمَة,al-niʿmah,Favour/blessings,53
+212,تَذَكَّرَ,tadhakkara,He remembered,53
+213,الصِّرَاط,al-ṣirāṭ,Path/way,54
+214,نَبَّأَ,nabbaʾa,He informed,54
+215,شَكَرَ,shakara,He thanked,54
+216,ظَنَّ,ẓanna,He assumed,54
+217,حَمَلَ,ḥamala,He carried,55
+218,سَبَّحَ,sabbaḥa,He glorified,55
+219,صَدْر,ṣadr,Chest,55
+220,يَذَرَ,yadhara,He left,55
+221,فَوْق,fawq,Above/top,56
+222,سَلَّمَ,sallama,He submitted/saluted,56
+223,نَادَى,nādā,He called,56
+224,أَنذَرَ,andhara,He warned,56
+225,أَرَى,arā,To show,57
+226,اسْتَطَاعَ,istaṭāʿa,He was able to,57
+227,حَمِدَ,ḥamida,He praised,57
+228,حَسِبَ,ḥasiba,He thought,57
+229,بِئْس,biʾsa,To be bad/evil,58
+230,بَحْر,baḥr,Sea,58
+231,نُور,nūr,Light,58
+232,شَهِدَ,shahida,He bore witness,58
+233,خَشِيَ,khashiya,He feared,59
+234,تَوَكَّلَ,tawakkala,He relied upon,59
+235,تَرَكَ,taraka,He left,59
+236,بَلَغَ,balaghа,He reached,59
+237,سُلْطَان,sulṭān,Ruler,60
+238,مَعْرُوف,maʿrūf,Known,60
+239,مَاتَ,māta,He died,60
+240,وَيْل,wayl,Woe,60
+241,صَدَّ,ṣadda,He hindered,61
+242,مَيِّت,mayyit,Dead,61
+243,بَشَّرَ,bashshara,He gave good news,61
+244,إِذْن,idhn,Permission,61
+245,فَاسِق,fāsiq,Sinner,62
+246,بَشَر,bashar,Human,62
+247,رَضِيَ,raḍiya,He is satisfied,62
+248,جَبَل,jabal,Mountain,62
+249,مُسْتَقِيم,mustaqīm,Straight,63
+250,حَشَرَ,ḥashara,He gathered,63
+251,ضَلَّلَ,ḍallala,He misguided,63
+252,حَرَّمَ,ḥarrama,Prohibited,63
+253,نَجَّى,najjā,He saved,64
+254,ذَنْب,dhanb,Sin,64
+255,مُحْسِن,muḥsin,Improver,64
+256,حِسَاب,ḥisāb,Account,64
+257,رَدَّ,radda,He returned,65
+258,ذَاقَ,dhāqa,He tasted,65
+259,أَحْسَنَ,aḥsana,He excelled,65
+260,حَزِنَ,ḥazina,He grieved,65
+261,مَتَاع,matāʿ,Provision,66
+262,حِين,ḥīn,Time/when,66
+263,إِثْم,ithm,Sin,66
+264,سَيِّئَة,sayyiʾah,Evil,66
+265,نَسِيَ,nasiya,He forgot,67
+266,ذَهَبَ,dhahaba,He went,67
+267,بَيَّنَ,bayyana,He described,67
+268,آلَاء,ālāʾ,Signs/bounty,67
+269,اخْتَلَفَ,ikhtilāf,He deferred,68
+270,سَجَدَ,sajada,He prostrated,68
+271,اسْتَوَى,istawā,He established,68
+272,أُمّ,umm,Mother,68
+273,خَاسِر,khāsir,Loser,69
+274,كَلَّا,kallā,Nay/Never,69
+275,شَمْس,shams,Sun,69
+276,فِتْنَة,fitnah,Trial/test,69
+277,زَكَاة,zakāh,Charity,70
+278,أَنْعَام,anʿām,Cattle,70
+279,فَرِيق,farīq,Group/team,70
+280,ابْتَغَى,ibtaghā,He sought,70
+281,سَاءَ,sāʾa,Became bad,71
+282,حُكْم,ḥukm,Ruling,71
+283,نَهَى,nahā,He forbidden,71
+284,عَاقِبَة,ʿāqibah,End,71
+285,الْمَلَأ,al-malaʾ,The folks/elite/group,72
+286,شَرّ,sharr,Evil/bad,72
+287,نَفَعَ,nafaʿa,He benefited,72
+288,كَفَى,kafā,It sufficed,72
+289,وَلَّ,wallā,He turned,73
+290,عَسَى,ʿasā,Perhaps,73
+291,رَجُل,rajul,Man,73
+292,أَبَدًا,abadan,Ever/forever,73
+293,أَبْصَرَ,abṣara,He saw,74
+294,قُوَّة,quwwah,Power,74
+295,رِيح,rīḥ,Wind,74
+296,أَصْبَحَ,aṣbaḥa,He became,74
+297,جُنْد,jund,Army,75
+298,كَرِيم,karīm,Kind/noble,75
+299,عَرْش,ʿarsh,Throne,75
+300,أَصْلَحَ,aṣlaḥa,He reformed/reconciled,75

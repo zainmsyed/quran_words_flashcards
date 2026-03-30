@@ -1,0 +1,20 @@
+{
+  "name": "arabic-flashcards",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "svelte": "^4.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "svelte-preprocess": "^5.0.0",
+    "typescript": "^5.0.0"
+  }
+}

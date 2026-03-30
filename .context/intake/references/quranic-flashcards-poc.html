@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quranic Arabic Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f3;
+      --text: #1a1a1a;
+      --text-secondary: #666;
+      --text-tertiary: #aaa;
+      --border: rgba(0,0,0,0.12);
+      --border-md: rgba(0,0,0,0.22);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --info-bg: #e6f1fb;
+      --info-text: #185fa5;
+      --warn-bg: #faeeda;
+      --warn-text: #854f0b;
+      --success-bg: #eaf3de;
+      --success-text: #3b6d11;
+      --danger-bg: #fcebeb;
+      --danger-text: #a32d2d;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1e;
+        --bg-secondary: #2a2a2a;
+        --text: #f0f0f0;
+        --text-secondary: #aaa;
+        --text-tertiary: #666;
+        --border: rgba(255,255,255,0.1);
+        --border-md: rgba(255,255,255,0.2);
+        --info-bg: #0c2e52;
+        --info-text: #85b7eb;
+        --warn-bg: #412402;
+        --warn-text: #fac775;
+        --success-bg: #173404;
+        --success-text: #c0dd97;
+        --danger-bg: #501313;
+        --danger-text: #f09595;
+      }
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    /* --- Screens --- */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* --- Top bar --- */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .topbar h1 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .streak-badge {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 11px;
+      border-radius: 20px;
+      background: var(--warn-bg);
+      color: var(--warn-text);
+    }
+
+    /* --- Progress --- */
+    .progress-wrap { margin-bottom: 1.25rem; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--info-text);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* --- Session tags --- */
+    .session-tags { display: flex; gap: 6px; margin-bottom: 1rem; }
+    .session-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+    .tag-new { background: var(--info-bg); color: var(--info-text); }
+    .tag-review { background: var(--warn-bg); color: var(--warn-text); }
+
+    /* --- Flashcard --- */
+    .flashcard-scene { perspective: 1200px; margin-bottom: 1rem; }
+    .flashcard {
+      position: relative;
+      width: 100%;
+      min-height: 240px;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+    }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: var(--radius-lg);
+      border: 0.5px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .card-face.back {
+      transform: rotateY(180deg);
+      background: var(--bg-secondary);
+    }
+    .card-mode-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 1rem;
+    }
+    .arabic-text {
+      font-family: 'Amiri', serif;
+      font-size: 54px;
+      line-height: 1.3;
+      color: var(--text);
+      direction: rtl;
+      margin-bottom: 0.25rem;
+    }
+    .transliteration {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+    .english-text {
+      font-size: 26px;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .audio-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 6px;
+    }
+    .audio-btn {
+      background: none;
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 4px 12px;
+      font-size: 13px;
+      font-family: 'Lato', sans-serif;
+      transition: opacity 0.15s;
+    }
+    .audio-btn:hover { opacity: 0.65; }
+    .quran-example {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      border-top: 0.5px solid var(--border);
+      padding-top: 0.75rem;
+      margin-top: 0.75rem;
+      width: 100%;
+      text-align: center;
+    }
+    .arabic-ex {
+      font-family: 'Amiri', serif;
+      font-size: 17px;
+      direction: rtl;
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    /* --- Flip hint --- */
+    .flip-hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-align: center;
+      margin-bottom: 0.75rem;
+      min-height: 18px;
+    }
+
+    /* --- Answer buttons --- */
+    .answer-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+    .ans-btn {
+      padding: 10px 6px;
+      border-radius: var(--radius-md);
+      border: 0.5px solid var(--border-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      transition: opacity 0.15s;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .ans-btn:hover { opacity: 0.75; }
+    .ans-btn.hard { border-color: var(--danger-text); color: var(--danger-text); background: var(--danger-bg); }
+    .ans-btn.ok   { border-color: var(--warn-text);   color: var(--warn-text);   background: var(--warn-bg); }
+    .ans-btn.easy { border-color: var(--success-text); color: var(--success-text); background: var(--success-bg); }
+    .ans-btn small { font-size: 11px; font-weight: 400; display: block; margin-top: 2px; }
+
+    /* --- Generic action button --- */
+    .action-btn {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      border-radius: var(--radius-md);
+      border: 0.5px solid var(--border-md);
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Lato', sans-serif;
+      cursor: pointer;
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 8px;
+      transition: opacity 0.15s;
+    }
+    .action-btn:hover { opacity: 0.75; }
+    .action-btn.primary {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    .bottom-row { display: flex; gap: 8px; margin-top: 0.5rem; }
+    .bottom-row .action-btn { margin-bottom: 0; }
+
+    /* --- Stats screen --- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-num { font-size: 28px; font-weight: 700; color: var(--text); }
+    .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* --- Session done --- */
+    .session-done { text-align: center; padding: 2rem 0; }
+    .session-done .big { font-size: 48px; margin-bottom: 0.5rem; }
+    .session-done h2 { font-size: 20px; font-weight: 700; margin-bottom: 0.5rem; }
+    .session-done p { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.6; }
+
+    /* --- Word list --- */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 0.75rem;
+    }
+    .word-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem; }
+    .word-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 0.5px solid var(--border);
+      background: var(--bg);
+      font-size: 14px;
+      gap: 8px;
+    }
+    .word-row .ar {
+      font-family: 'Amiri', serif;
+      font-size: 20px;
+      direction: rtl;
+      min-width: 60px;
+      text-align: right;
+    }
+    .word-row .en { color: var(--text-secondary); font-size: 13px; flex: 1; }
+    .word-row .lvl { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+    .lvl-new      { background: var(--info-bg);    color: var(--info-text); }
+    .lvl-learning { background: var(--warn-bg);    color: var(--warn-text); }
+    .lvl-mastered { background: var(--success-bg); color: var(--success-text); }
+    .empty-state { font-size: 13px; color: var(--text-tertiary); padding: 8px 0; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- STUDY SCREEN -->
+  <div id="study-screen" class="screen active">
+    <div class="topbar">
+      <h1>Quranic Arabic</h1>
+      <div class="streak-badge" id="streak-label">0 day streak</div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progress-text">Card 1 of 15</span>
+        <span id="mastered-text">0 mastered</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="session-tags">
+      <span class="session-tag tag-new" id="tag-new">10 new</span>
+      <span class="session-tag tag-review" id="tag-review">5 review</span>
+    </div>
+
+    <div class="flashcard-scene">
+      <div class="flashcard" id="flashcard" onclick="toggleFlip()">
+
+        <!-- FRONT -->
+        <div class="card-face front">
+          <div class="card-mode-label" id="front-mode-label">arabic → english</div>
+
+          <div id="front-main-arabic" style="display:none; text-align:center;">
+            <div class="arabic-text" id="front-arabic"></div>
+            <div class="transliteration" id="front-translit"></div>
+            <div class="audio-row">
+              <button class="audio-btn" onclick="event.stopPropagation(); speakWord()">🔊 pronounce</button>
+            </div>
+          </div>
+
+          <div id="front-main-english" style="display:none; text-align:center;">
+            <div class="english-text" id="front-english-text"></div>
+          </div>
+        </div>
+
+        <!-- BACK -->
+        <div class="card-face back">
+          <div class="card-mode-label" id="back-mode-label">meaning</div>
+
+          <div id="back-main-english" style="display:none; text-align:center;">
+            <div class="english-text" id="back-english"></div>
+          </div>
+
+          <div id="back-main-arabic" style="display:none; text-align:center;">
+            <div class="arabic-text" id="back-arabic"></div>
+            <div class="transliteration" id="back-translit"></div>
+            <div class="audio-row">
+              <button class="audio-btn" onclick="event.stopPropagation(); speakWord()">🔊 pronounce</button>
+            </div>
+          </div>
+
+          <div class="quran-example" id="back-example"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="flip-hint" id="flip-hint">tap card to reveal</div>
+
+    <div class="answer-btns" id="answer-btns" style="display:none;">
+      <button class="ans-btn hard" onclick="answer('hard')">Hard<small>show again soon</small></button>
+      <button class="ans-btn ok"   onclick="answer('ok')">Got it<small>show tomorrow</small></button>
+      <button class="ans-btn easy" onclick="answer('easy')">Easy<small>show in 3 days</small></button>
+    </div>
+
+    <div class="bottom-row">
+      <button class="action-btn" onclick="showScreen('stats-screen')" style="flex:1;">Stats</button>
+      <button class="action-btn" onclick="showScreen('list-screen')"  style="flex:1;">Word List</button>
+    </div>
+  </div>
+
+  <!-- SESSION DONE SCREEN -->
+  <div id="done-screen" class="screen">
+    <div class="session-done">
+      <div class="big">🕌</div>
+      <h2>Session complete</h2>
+      <p id="done-summary"></p>
+      <button class="action-btn primary" onclick="startSession()">Study Again</button>
+      <button class="action-btn" onclick="showScreen('stats-screen')">View Stats</button>
+    </div>
+  </div>
+
+  <!-- STATS SCREEN -->
+  <div id="stats-screen" class="screen">
+    <div class="topbar">
+      <h1>Progress</h1>
+      <button class="action-btn" onclick="showScreen('study-screen')" style="width:auto;margin:0;padding:6px 14px;font-size:13px;">Back</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="s-studied">0</div><div class="stat-label">cards studied</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-mastered">0</div><div class="stat-label">mastered</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-accuracy">0%</div><div class="stat-label">easy rate</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-streak">0</div><div class="stat-label">day streak</div></div>
+    </div>
+    <div class="section-label">Recent words</div>
+    <div id="word-progress-list" class="word-list"></div>
+  </div>
+
+  <!-- WORD LIST SCREEN -->
+  <div id="list-screen" class="screen">
+    <div class="topbar">
+      <h1>All Words</h1>
+      <button class="action-btn" onclick="showScreen('study-screen')" style="width:auto;margin:0;padding:6px 14px;font-size:13px;">Back</button>
+    </div>
+    <div class="section-label">mastered</div>
+    <div id="list-mastered" class="word-list"></div>
+    <div class="section-label">learning</div>
+    <div id="list-learning" class="word-list"></div>
+    <div class="section-label">not yet seen</div>
+    <div id="list-new" class="word-list"></div>
+  </div>
+
+</div>
+
+<script>
+// ─── Word bank ───────────────────────────────────────────────────────────────
+// Each entry: ar (Arabic), tr (transliteration), en (English meaning),
+//             ex.ar (Quranic example in Arabic), ex.en (translation + surah:ayah)
+const WORDS = [
+  {ar:"الله",   tr:"allāh",    en:"Allah (God)",          ex:{ar:"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",             en:"In the name of Allah, the Most Gracious, the Most Merciful (1:1)"}},
+  {ar:"رَبّ",   tr:"rabb",     en:"Lord, Sustainer",      ex:{ar:"الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",              en:"All praise is due to Allah, Lord of all the worlds (1:2)"}},
+  {ar:"رَحْمَن",tr:"raḥmān",  en:"Most Gracious",         ex:{ar:"الرَّحْمَٰنِ الرَّحِيمِ",                             en:"The Most Gracious, the Most Merciful (1:3)"}},
+  {ar:"كِتَاب", tr:"kitāb",   en:"book, scripture",       ex:{ar:"ذَٰلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ",                en:"This is the Book about which there is no doubt (2:2)"}},
+  {ar:"يَوْم",  tr:"yawm",    en:"day",                   ex:{ar:"مَالِكِ يَوْمِ الدِّينِ",                              en:"Master of the Day of Judgment (1:4)"}},
+  {ar:"قَوْل",  tr:"qawl",    en:"saying, speech",        ex:{ar:"وَقُولُوا لِلنَّاسِ حُسْنًا",                          en:"And speak to people good words (2:83)"}},
+  {ar:"عِلْم",  tr:"ʿilm",    en:"knowledge",             ex:{ar:"وَعَلَّمَ آدَمَ الْأَسْمَاءَ كُلَّهَا",              en:"And He taught Adam the names of all things (2:31)"}},
+  {ar:"إِنسَان",tr:"insān",   en:"human being",           ex:{ar:"خَلَقَ الْإِنسَانَ مِنْ عَلَقٍ",                      en:"Created man from a clinging substance (96:2)"}},
+  {ar:"آيَة",   tr:"āyah",    en:"sign, verse",           ex:{ar:"تِلْكَ آيَاتُ اللَّهِ",                               en:"These are the signs of Allah (2:252)"}},
+  {ar:"قُلْ",   tr:"qul",     en:"say (command)",         ex:{ar:"قُلْ هُوَ اللَّهُ أَحَدٌ",                            en:"Say: He is Allah, the One (112:1)"}},
+  {ar:"نَاس",   tr:"nās",     en:"people, mankind",       ex:{ar:"يَا أَيُّهَا النَّاسُ اعْبُدُوا رَبَّكُمُ",           en:"O mankind, worship your Lord (2:21)"}},
+  {ar:"أَرْض",  tr:"arḍ",     en:"earth, land",           ex:{ar:"أَلَمْ نَجْعَلِ الْأَرْضَ مِهَادًا",                  en:"Have We not made the earth a resting place? (78:6)"}},
+  {ar:"سَمَاء", tr:"samāʾ",   en:"sky, heaven",           ex:{ar:"وَالسَّمَاءَ بَنَيْنَاهَا بِأَيْدٍ",                  en:"And the sky We constructed with strength (51:47)"}},
+  {ar:"حَقّ",   tr:"ḥaqq",    en:"truth, right",          ex:{ar:"جَاءَ الْحَقُّ وَزَهَقَ الْبَاطِلُ",                  en:"Truth has come and falsehood has departed (17:81)"}},
+  {ar:"خَيْر",  tr:"khayr",   en:"good, better",          ex:{ar:"وَمَا تَفْعَلُوا مِنْ خَيْرٍ يَعْلَمْهُ اللَّهُ",    en:"Whatever good you do, Allah knows it (2:197)"}},
+  {ar:"مَلِك",  tr:"malik",   en:"king, sovereign",       ex:{ar:"مَلِكِ النَّاسِ",                                       en:"The King of mankind (114:2)"}},
+  {ar:"دِين",   tr:"dīn",     en:"religion, way of life", ex:{ar:"إِنَّ الدِّينَ عِندَ اللَّهِ الْإِسْلَامُ",           en:"Indeed, the religion in the sight of Allah is Islam (3:19)"}},
+  {ar:"عَمَل",  tr:"ʿamal",   en:"deed, action",          ex:{ar:"مَنْ عَمِلَ صَالِحًا فَلِنَفْسِهِ",                   en:"Whoever does good, it is for his own soul (41:46)"}},
+  {ar:"قَلْب",  tr:"qalb",    en:"heart",                 ex:{ar:"إِنَّ فِي ذَٰلِكَ لَذِكْرَىٰ لِمَن كَانَ لَهُ قَلْبٌ",en:"Indeed in that is a reminder for whoever has a heart (50:37)"}},
+  {ar:"نُور",   tr:"nūr",     en:"light",                 ex:{ar:"اللَّهُ نُورُ السَّمَاوَاتِ وَالْأَرْضِ",              en:"Allah is the Light of the heavens and the earth (24:35)"}},
+  {ar:"صَلَاة", tr:"ṣalāh",   en:"prayer",                ex:{ar:"وَأَقِيمُوا الصَّلَاةَ",                               en:"And establish prayer (2:43)"}},
+  {ar:"جَنَّة", tr:"jannah",  en:"paradise, garden",      ex:{ar:"وَبَشِّرِ الَّذِينَ آمَنُوا أَنَّ لَهُمْ جَنَّاتٍ",  en:"Give good tidings to those who believe, that they will have gardens (2:25)"}},
+  {ar:"نَار",   tr:"nār",     en:"fire, hell",            ex:{ar:"وَاتَّقُوا النَّارَ الَّتِي أُعِدَّتْ لِلْكَافِرِينَ",en:"Fear the Fire prepared for the disbelievers (3:131)"}},
+  {ar:"رَحِيم", tr:"raḥīm",   en:"Most Merciful",         ex:{ar:"وَكَانَ اللَّهُ غَفُورًا رَّحِيمًا",                  en:"And Allah is Forgiving and Merciful (4:96)"}},
+  {ar:"غَفُور", tr:"ghafūr",  en:"Most Forgiving",        ex:{ar:"إِنَّ اللَّهَ غَفُورٌ رَّحِيمٌ",                     en:"Indeed, Allah is Forgiving and Merciful (2:173)"}},
+  {ar:"إِيمَان",tr:"īmān",    en:"faith, belief",         ex:{ar:"وَمَن يَكْفُرْ بِالْإِيمَانِ فَقَدْ حَبِطَ عَمَلُهُ",en:"Whoever disbelieves in faith, their deeds are voided (5:5)"}},
+  {ar:"رَسُول", tr:"rasūl",   en:"messenger",             ex:{ar:"مُّحَمَّدٌ رَّسُولُ اللَّهِ",                         en:"Muhammad is the Messenger of Allah (48:29)"}},
+  {ar:"آمَنَ",  tr:"āmana",   en:"believed, had faith",   ex:{ar:"الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ",          en:"Those who believed and did righteous deeds (2:25)"}},
+  {ar:"كَافِر", tr:"kāfir",   en:"disbeliever",           ex:{ar:"وَاللَّهُ لَا يَهْدِي الْقَوْمَ الْكَافِرِينَ",      en:"And Allah does not guide the disbelieving people (2:264)"}},
+  {ar:"مُؤْمِن",tr:"muʾmin",  en:"believer",              ex:{ar:"قَدْ أَفْلَحَ الْمُؤْمِنُونَ",                         en:"Certainly the believers have succeeded (23:1)"}},
+];
+
+// ─── Config ──────────────────────────────────────────────────────────────────
+const NEW_PER_SESSION    = 10;
+const REVIEW_PER_SESSION = 5;
+
+// ─── State ───────────────────────────────────────────────────────────────────
+let cards, stats;
+try { cards = JSON.parse(localStorage.getItem('qfc2_cards') || 'null'); } catch(e) { cards = null; }
+try { stats = JSON.parse(localStorage.getItem('qfc2_stats') || 'null'); } catch(e) { stats = null; }
+if (!cards) cards = WORDS.map((w, i) => ({ id: i, interval: 0, due: 0, ease: 2.5, reps: 0 }));
+if (!stats) stats = { studied: 0, easy: 0, streak: 0, lastDay: '' };
+
+let sessionQueue    = [];
+let currentIdx      = 0;
+let sessionEasy     = 0;
+let sessionHard     = 0;
+let isFlipped       = false;
+let currentMode     = 'ar2en';
+let sessionNewCount    = 0;
+let sessionReviewCount = 0;
+
+// ─── Persistence ─────────────────────────────────────────────────────────────
+function saveData() {
+  try {
+    localStorage.setItem('qfc2_cards', JSON.stringify(cards));
+    localStorage.setItem('qfc2_stats', JSON.stringify(stats));
+  } catch(e) {}
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// ─── Session building ─────────────────────────────────────────────────────────
+function buildQueue() {
+  const now = Date.now();
+  const newCards    = cards.filter(c => c.reps === 0);
+  const dueReviews  = cards.filter(c => c.reps > 0 && c.due <= now);
+
+  const newBatch    = newCards.slice(0, NEW_PER_SESSION);
+  const reviewBatch = dueReviews.sort((a, b) => a.due - b.due).slice(0, REVIEW_PER_SESSION);
+
+  sessionNewCount    = newBatch.length;
+  sessionReviewCount = reviewBatch.length;
+
+  // Reviews first, then new words
+  const combined = [...reviewBatch, ...newBatch];
+  sessionQueue   = combined.map(c => ({ ...c, sessionMode: Math.random() < 0.5 ? 'ar2en' : 'en2ar' }));
+
+  currentIdx  = 0;
+  sessionEasy = 0;
+  sessionHard = 0;
+}
+
+function updateStreak() {
+  const today     = todayStr();
+  if (stats.lastDay === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  stats.streak    = stats.lastDay === yesterday ? stats.streak + 1 : 1;
+  stats.lastDay   = today;
+  saveData();
+}
+
+// ─── Entry point ──────────────────────────────────────────────────────────────
+function startSession() {
+  buildQueue();
+  updateStreak();
+  showScreen('study-screen');
+  showCard();
+}
+
+// ─── Card display ─────────────────────────────────────────────────────────────
+function showCard() {
+  if (currentIdx >= sessionQueue.length) { endSession(); return; }
+
+  const item = sessionQueue[currentIdx];
+  const word = WORDS[item.id];
+
+  isFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('answer-btns').style.display = 'none';
+  document.getElementById('flip-hint').textContent = 'tap card to reveal';
+
+  currentMode = item.sessionMode;
+
+  // Hide all content panels
+  ['front-main-arabic','front-main-english','back-main-english','back-main-arabic']
+    .forEach(id => document.getElementById(id).style.display = 'none');
+
+  if (currentMode === 'ar2en') {
+    document.getElementById('front-mode-label').textContent  = 'arabic → english';
+    document.getElementById('front-arabic').textContent      = word.ar;
+    document.getElementById('front-translit').textContent    = word.tr;
+    document.getElementById('front-main-arabic').style.display = 'block';
+
+    document.getElementById('back-mode-label').textContent   = 'meaning';
+    document.getElementById('back-english').textContent      = word.en;
+    document.getElementById('back-main-english').style.display = 'block';
+  } else {
+    document.getElementById('front-mode-label').textContent  = 'english → arabic';
+    document.getElementById('front-english-text').textContent = word.en;
+    document.getElementById('front-main-english').style.display = 'block';
+
+    document.getElementById('back-mode-label').textContent   = 'arabic';
+    document.getElementById('back-arabic').textContent       = word.ar;
+    document.getElementById('back-translit').textContent     = word.tr;
+    document.getElementById('back-main-arabic').style.display = 'block';
+  }
+
+  const ex = word.ex;
+  document.getElementById('back-example').innerHTML =
+    `<span class="arabic-ex">${ex.ar}</span>${ex.en}`;
+
+  // Update progress UI
+  const pct = Math.round((currentIdx / sessionQueue.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `Card ${currentIdx + 1} of ${sessionQueue.length}`;
+
+  const mastered = cards.filter(c => c.interval >= 3).length;
+  document.getElementById('mastered-text').textContent  = `${mastered} mastered`;
+  document.getElementById('streak-label').textContent   = `${stats.streak} day streak`;
+  document.getElementById('tag-new').textContent        = `${sessionNewCount} new`;
+  document.getElementById('tag-review').textContent     = `${sessionReviewCount} review`;
+}
+
+// ─── Flip (both directions) ───────────────────────────────────────────────────
+function toggleFlip() {
+  if (!isFlipped) {
+    isFlipped = true;
+    document.getElementById('flashcard').classList.add('flipped');
+    document.getElementById('answer-btns').style.display = 'grid';
+    document.getElementById('flip-hint').textContent = 'tap to flip back';
+    stats.studied++;
+    saveData();
+  } else {
+    isFlipped = false;
+    document.getElementById('flashcard').classList.remove('flipped');
+    document.getElementById('answer-btns').style.display = 'none';
+    document.getElementById('flip-hint').textContent = 'tap card to reveal';
+  }
+}
+
+// ─── Spaced repetition answer ─────────────────────────────────────────────────
+function answer(rating) {
+  const item = sessionQueue[currentIdx];
+  const card = cards.find(c => c.id === item.id);
+  const now  = Date.now();
+
+  if (rating === 'easy') {
+    card.ease     = Math.min(card.ease + 0.15, 3.5);
+    card.interval = Math.max(card.interval * card.ease, 3);
+    sessionEasy++;
+    stats.easy++;
+  } else if (rating === 'ok') {
+    card.interval = Math.max(card.interval * 1.2, 1);
+  } else {
+    card.ease     = Math.max(card.ease - 0.2, 1.3);
+    card.interval = 0.25;
+    sessionHard++;
+    // Re-queue the hard card near the end of the session
+    sessionQueue.push({ ...item, sessionMode: Math.random() < 0.5 ? 'ar2en' : 'en2ar' });
+  }
+
+  card.due  = now + card.interval * 86400000;
+  card.reps++;
+  currentIdx++;
+  saveData();
+  showCard();
+}
+
+// ─── Session end ──────────────────────────────────────────────────────────────
+function endSession() {
+  document.getElementById('done-summary').textContent =
+    `You studied ${sessionNewCount} new words and reviewed ${sessionReviewCount}. ` +
+    `${sessionEasy} marked easy, ${sessionHard} needed more work. ` +
+    `Come back tomorrow for your next session!`;
+  showScreen('done-screen');
+}
+
+// ─── Screen routing ───────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'stats-screen') renderStats();
+  if (id === 'list-screen')  renderWordList();
+}
+
+// ─── Stats screen ─────────────────────────────────────────────────────────────
+function renderStats() {
+  const mastered = cards.filter(c => c.interval >= 3).length;
+  const acc      = stats.studied > 0 ? Math.round((stats.easy / stats.studied) * 100) : 0;
+  document.getElementById('s-studied').textContent  = stats.studied;
+  document.getElementById('s-mastered').textContent = mastered;
+  document.getElementById('s-accuracy').textContent = acc + '%';
+  document.getElementById('s-streak').textContent   = stats.streak;
+
+  const list = document.getElementById('word-progress-list');
+  list.innerHTML = '';
+  const seen = cards.filter(c => c.reps > 0).slice(0, 12);
+  seen.forEach(c => {
+    const w   = WORDS[c.id];
+    const lvl = c.interval >= 3 ? 'mastered' : 'learning';
+    const row = document.createElement('div');
+    row.className = 'word-row';
+    row.innerHTML = `<span class="ar">${w.ar}</span><span class="en">${w.en}</span><span class="lvl lvl-${lvl}">${lvl}</span>`;
+    list.appendChild(row);
+  });
+  if (!seen.length) {
+    list.innerHTML = '<p class="empty-state">No words studied yet — start a session!</p>';
+  }
+}
+
+// ─── Word list screen ─────────────────────────────────────────────────────────
+function renderWordList() {
+  const mastered = [], learning = [], unseen = [];
+
+  cards.forEach(c => {
+    const w   = WORDS[c.id];
+    const lvl = c.interval >= 3 ? 'mastered' : c.reps > 0 ? 'learning' : 'new';
+    const row = `<div class="word-row"><span class="ar">${w.ar}</span><span class="en">${w.en}</span><span class="lvl lvl-${lvl}">${lvl}</span></div>`;
+    if (c.interval >= 3)   mastered.push(row);
+    else if (c.reps > 0)   learning.push(row);
+    else                   unseen.push(row);
+  });
+
+  document.getElementById('list-mastered').innerHTML =
+    mastered.join('') || '<p class="empty-state">None yet — keep going!</p>';
+  document.getElementById('list-learning').innerHTML =
+    learning.join('') || '<p class="empty-state">None in progress yet.</p>';
+  document.getElementById('list-new').innerHTML =
+    unseen.join('') || '<p class="empty-state">All words have been introduced!</p>';
+}
+
+// ─── Pronunciation ───────────────────────────────────────────────────────────
+function speakWord() {
+  const item = sessionQueue[currentIdx];
+  if (!item) return;
+  const word = WORDS[item.id];
+  if ('speechSynthesis' in window) {
+    const u = new SpeechSynthesisUtterance(word.ar);
+    u.lang = 'ar-SA';
+    u.rate = 0.8;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+updateStreak();
+showCard();
+</script>
+</body>
+</html>

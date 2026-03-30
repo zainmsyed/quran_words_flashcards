@@ -1,0 +1,1802 @@
+[
+  {
+    "id": "w1",
+    "arabic": "مِنْ",
+    "transliteration": "min",
+    "english": "From/of"
+  },
+  {
+    "id": "w2",
+    "arabic": "فِيْ",
+    "transliteration": "fī",
+    "english": "In"
+  },
+  {
+    "id": "w3",
+    "arabic": "لاْ",
+    "transliteration": "lā",
+    "english": "No/Not"
+  },
+  {
+    "id": "w4",
+    "arabic": "اللهْ",
+    "transliteration": "allāh",
+    "english": "Allah"
+  },
+  {
+    "id": "w5",
+    "arabic": "عَلَى",
+    "transliteration": "ʿalā",
+    "english": "On/upon/over"
+  },
+  {
+    "id": "w6",
+    "arabic": "الَّذِيْ",
+    "transliteration": "alladhī",
+    "english": "Who/that"
+  },
+  {
+    "id": "w7",
+    "arabic": "قَالَ",
+    "transliteration": "qāla",
+    "english": "He said"
+  },
+  {
+    "id": "w8",
+    "arabic": "إِنَّ",
+    "transliteration": "inna",
+    "english": "Indeed"
+  },
+  {
+    "id": "w9",
+    "arabic": "رَبّ",
+    "transliteration": "rabb",
+    "english": "Lord"
+  },
+  {
+    "id": "w10",
+    "arabic": "مَا",
+    "transliteration": "mā",
+    "english": "No/Not/What (non-beings)"
+  },
+  {
+    "id": "w11",
+    "arabic": "كَانَ",
+    "transliteration": "kāna",
+    "english": "He was/is"
+  },
+  {
+    "id": "w12",
+    "arabic": "لِ",
+    "transliteration": "li",
+    "english": "For/to"
+  },
+  {
+    "id": "w13",
+    "arabic": "إِنْ",
+    "transliteration": "in",
+    "english": "If/Not"
+  },
+  {
+    "id": "w14",
+    "arabic": "إِلَى",
+    "transliteration": "ilā",
+    "english": "To/toward/until"
+  },
+  {
+    "id": "w15",
+    "arabic": "بِ",
+    "transliteration": "bi",
+    "english": "With/By/in"
+  },
+  {
+    "id": "w16",
+    "arabic": "مَنْ",
+    "transliteration": "man",
+    "english": "Who/whom? (beings)"
+  },
+  {
+    "id": "w17",
+    "arabic": "ذَلِكَ",
+    "transliteration": "dhālika",
+    "english": "That"
+  },
+  {
+    "id": "w18",
+    "arabic": "آمَنَ",
+    "transliteration": "āmana",
+    "english": "He believed"
+  },
+  {
+    "id": "w19",
+    "arabic": "أَنْ",
+    "transliteration": "an",
+    "english": "That"
+  },
+  {
+    "id": "w20",
+    "arabic": "إِلَّ",
+    "transliteration": "illā",
+    "english": "Except/but"
+  },
+  {
+    "id": "w21",
+    "arabic": "إِذَا",
+    "transliteration": "idhā",
+    "english": "When (before a verb)"
+  },
+  {
+    "id": "w22",
+    "arabic": "أَرْض",
+    "transliteration": "arḍ",
+    "english": "Earth"
+  },
+  {
+    "id": "w23",
+    "arabic": "هُوَ",
+    "transliteration": "huwa",
+    "english": "He"
+  },
+  {
+    "id": "w24",
+    "arabic": "عَنْ",
+    "transliteration": "ʿan",
+    "english": "From/of"
+  },
+  {
+    "id": "w25",
+    "arabic": "آيَة",
+    "transliteration": "āyah",
+    "english": "Sign"
+  },
+  {
+    "id": "w26",
+    "arabic": "قَوْم",
+    "transliteration": "qawm",
+    "english": "People"
+  },
+  {
+    "id": "w27",
+    "arabic": "يَوْم",
+    "transliteration": "yawm",
+    "english": "Day"
+  },
+  {
+    "id": "w28",
+    "arabic": "قَدْ",
+    "transliteration": "qad",
+    "english": "Indeed (before past verb)"
+  },
+  {
+    "id": "w29",
+    "arabic": "لَيْ",
+    "transliteration": "lay",
+    "english": "Not (before present verb)"
+  },
+  {
+    "id": "w30",
+    "arabic": "كُلّ",
+    "transliteration": "kull",
+    "english": "Every/all"
+  },
+  {
+    "id": "w31",
+    "arabic": "هُمْ",
+    "transliteration": "hum",
+    "english": "They (m/f)"
+  },
+  {
+    "id": "w32",
+    "arabic": "عَلِمَ",
+    "transliteration": "ʿalima",
+    "english": "He learnt/knew"
+  },
+  {
+    "id": "w33",
+    "arabic": "كَفَرَ",
+    "transliteration": "kafara",
+    "english": "He disbelieved"
+  },
+  {
+    "id": "w34",
+    "arabic": "رَسُول",
+    "transliteration": "rasūl",
+    "english": "Messenger"
+  },
+  {
+    "id": "w35",
+    "arabic": "جَعَلَ",
+    "transliteration": "jaʿala",
+    "english": "He made"
+  },
+  {
+    "id": "w36",
+    "arabic": "ثُمَّ",
+    "transliteration": "thumma",
+    "english": "Then"
+  },
+  {
+    "id": "w37",
+    "arabic": "أَوْ",
+    "transliteration": "aw",
+    "english": "Or"
+  },
+  {
+    "id": "w38",
+    "arabic": "نَفْس",
+    "transliteration": "nafs",
+    "english": "Soul/self/person"
+  },
+  {
+    "id": "w39",
+    "arabic": "سَمَاء",
+    "transliteration": "samāʾ",
+    "english": "Sky/heaven"
+  },
+  {
+    "id": "w40",
+    "arabic": "عَذَاب",
+    "transliteration": "ʿadhāb",
+    "english": "Punishment"
+  },
+  {
+    "id": "w41",
+    "arabic": "شَيْء",
+    "transliteration": "shayʾ",
+    "english": "Thing"
+  },
+  {
+    "id": "w42",
+    "arabic": "لَوْ",
+    "transliteration": "law",
+    "english": "If"
+  },
+  {
+    "id": "w43",
+    "arabic": "عَمِلَ",
+    "transliteration": "ʿamila",
+    "english": "He worked"
+  },
+  {
+    "id": "w44",
+    "arabic": "جَاءَ",
+    "transliteration": "jāʾa",
+    "english": "He came"
+  },
+  {
+    "id": "w45",
+    "arabic": "بَيْنَ",
+    "transliteration": "bayna",
+    "english": "Between"
+  },
+  {
+    "id": "w46",
+    "arabic": "رَأَى",
+    "transliteration": "raʾā",
+    "english": "He saw"
+  },
+  {
+    "id": "w47",
+    "arabic": "آتَى",
+    "transliteration": "ātā",
+    "english": "He gave out"
+  },
+  {
+    "id": "w48",
+    "arabic": "هَذَا",
+    "transliteration": "hādhā",
+    "english": "This"
+  },
+  {
+    "id": "w49",
+    "arabic": "قَبْل",
+    "transliteration": "qabl",
+    "english": "Before"
+  },
+  {
+    "id": "w50",
+    "arabic": "الْحَقّ",
+    "transliteration": "al-ḥaqq",
+    "english": "Right/Truth"
+  },
+  {
+    "id": "w51",
+    "arabic": "الْكِتَاب",
+    "transliteration": "al-kitāb",
+    "english": "The book"
+  },
+  {
+    "id": "w52",
+    "arabic": "أَتَى",
+    "transliteration": "atā",
+    "english": "He came"
+  },
+  {
+    "id": "w53",
+    "arabic": "أُولَئِكَ",
+    "transliteration": "ulāʾika",
+    "english": "They/those"
+  },
+  {
+    "id": "w54",
+    "arabic": "شَاءَ",
+    "transliteration": "shāʾa",
+    "english": "He wanted/willed"
+  },
+  {
+    "id": "w55",
+    "arabic": "إِذْ",
+    "transliteration": "idh",
+    "english": "When"
+  },
+  {
+    "id": "w56",
+    "arabic": "النَّاس",
+    "transliteration": "al-nās",
+    "english": "People"
+  },
+  {
+    "id": "w57",
+    "arabic": "أَنزَلَ",
+    "transliteration": "anzala",
+    "english": "He revealed"
+  },
+  {
+    "id": "w58",
+    "arabic": "خَلَقَ",
+    "transliteration": "khalaqa",
+    "english": "He created"
+  },
+  {
+    "id": "w59",
+    "arabic": "عِنْد",
+    "transliteration": "ʿinda",
+    "english": "At/near"
+  },
+  {
+    "id": "w60",
+    "arabic": "بَعْد",
+    "transliteration": "baʿd",
+    "english": "After"
+  },
+  {
+    "id": "w61",
+    "arabic": "كَذَّبَ",
+    "transliteration": "kadhdhaba",
+    "english": "To deny/reject/falsify"
+  },
+  {
+    "id": "w62",
+    "arabic": "كَذَبَ",
+    "transliteration": "kadhaba",
+    "english": "He lied"
+  },
+  {
+    "id": "w63",
+    "arabic": "سَبِيل",
+    "transliteration": "sabīl",
+    "english": "Path/way"
+  },
+  {
+    "id": "w64",
+    "arabic": "خَيْر",
+    "transliteration": "khayr",
+    "english": "Good/better/best"
+  },
+  {
+    "id": "w65",
+    "arabic": "لَمَّا",
+    "transliteration": "lammā",
+    "english": "When/then/not yet"
+  },
+  {
+    "id": "w66",
+    "arabic": "اتَّقَى",
+    "transliteration": "ittaqā",
+    "english": "To fear/be righteous"
+  },
+  {
+    "id": "w67",
+    "arabic": "أَمْر",
+    "transliteration": "amr",
+    "english": "Command/matter/affair"
+  },
+  {
+    "id": "w68",
+    "arabic": "دَعَا",
+    "transliteration": "daʿā",
+    "english": "To call/invite/pray/supplicate"
+  },
+  {
+    "id": "w69",
+    "arabic": "إِلَه",
+    "transliteration": "ilāh",
+    "english": "God"
+  },
+  {
+    "id": "w70",
+    "arabic": "بَعْض",
+    "transliteration": "baʿḍ",
+    "english": "Some"
+  },
+  {
+    "id": "w71",
+    "arabic": "عَلِيم",
+    "transliteration": "ʿalīm",
+    "english": "All knowing"
+  },
+  {
+    "id": "w72",
+    "arabic": "مَعَ",
+    "transliteration": "maʿa",
+    "english": "With"
+  },
+  {
+    "id": "w73",
+    "arabic": "النَّار",
+    "transliteration": "al-nār",
+    "english": "Hell/Fire"
+  },
+  {
+    "id": "w74",
+    "arabic": "غَيْر",
+    "transliteration": "ghayr",
+    "english": "Not/without/apart/non"
+  },
+  {
+    "id": "w75",
+    "arabic": "الْجَنَّة",
+    "transliteration": "al-jannah",
+    "english": "Paradise/Heaven"
+  },
+  {
+    "id": "w76",
+    "arabic": "آخِر",
+    "transliteration": "ākhir",
+    "english": "Hereafter/last"
+  },
+  {
+    "id": "w77",
+    "arabic": "حَتَّى",
+    "transliteration": "ḥattā",
+    "english": "Until/to/upto"
+  },
+  {
+    "id": "w78",
+    "arabic": "أَيُّهَا",
+    "transliteration": "ayyuhā",
+    "english": "O!/Oh!"
+  },
+  {
+    "id": "w79",
+    "arabic": "هُدَى",
+    "transliteration": "hudā",
+    "english": "Guidance"
+  },
+  {
+    "id": "w80",
+    "arabic": "دُون",
+    "transliteration": "dūn",
+    "english": "Without/not"
+  },
+  {
+    "id": "w81",
+    "arabic": "قَلْب",
+    "transliteration": "qalb",
+    "english": "Heart"
+  },
+  {
+    "id": "w82",
+    "arabic": "اتَّبِعْ",
+    "transliteration": "ittabiʿ",
+    "english": "You follow (command)"
+  },
+  {
+    "id": "w83",
+    "arabic": "أَمْ",
+    "transliteration": "am",
+    "english": "Or"
+  },
+  {
+    "id": "w84",
+    "arabic": "أَرَادَ",
+    "transliteration": "arāda",
+    "english": "He wanted"
+  },
+  {
+    "id": "w85",
+    "arabic": "ظَلَمَ",
+    "transliteration": "ẓalama",
+    "english": "He oppressed"
+  },
+  {
+    "id": "w86",
+    "arabic": "لَكِنْ",
+    "transliteration": "lākin",
+    "english": "But"
+  },
+  {
+    "id": "w87",
+    "arabic": "أَرْسَلَ",
+    "transliteration": "arsala",
+    "english": "He sent"
+  },
+  {
+    "id": "w88",
+    "arabic": "عَبْد",
+    "transliteration": "ʿabd",
+    "english": "Slave"
+  },
+  {
+    "id": "w89",
+    "arabic": "بَلْ",
+    "transliteration": "bal",
+    "english": "But/Nay"
+  },
+  {
+    "id": "w90",
+    "arabic": "أَهْل",
+    "transliteration": "ahl",
+    "english": "Family/folks/owner"
+  },
+  {
+    "id": "w91",
+    "arabic": "أَخَذَ",
+    "transliteration": "akhadha",
+    "english": "He took"
+  },
+  {
+    "id": "w92",
+    "arabic": "لَعَلَّ",
+    "transliteration": "laʿalla",
+    "english": "Perhaps/hope"
+  },
+  {
+    "id": "w93",
+    "arabic": "اتَّخَذَ",
+    "transliteration": "ittakhadha",
+    "english": "He took/held tightly"
+  },
+  {
+    "id": "w94",
+    "arabic": "رَحِيم",
+    "transliteration": "raḥīm",
+    "english": "Kind/Merciful"
+  },
+  {
+    "id": "w95",
+    "arabic": "مُبِين",
+    "transliteration": "mubīn",
+    "english": "Clear"
+  },
+  {
+    "id": "w96",
+    "arabic": "يَد",
+    "transliteration": "yad",
+    "english": "Hand"
+  },
+  {
+    "id": "w97",
+    "arabic": "عَظِيم",
+    "transliteration": "ʿaẓīm",
+    "english": "Great"
+  },
+  {
+    "id": "w98",
+    "arabic": "سَأَلَ",
+    "transliteration": "saʾala",
+    "english": "He asked"
+  },
+  {
+    "id": "w99",
+    "arabic": "ذُو",
+    "transliteration": "dhū",
+    "english": "Owner of"
+  },
+  {
+    "id": "w100",
+    "arabic": "الدُّنْيَا",
+    "transliteration": "al-dunyā",
+    "english": "World"
+  },
+  {
+    "id": "w101",
+    "arabic": "عَزِيز",
+    "transliteration": "ʿazīz",
+    "english": "Mighty"
+  },
+  {
+    "id": "w102",
+    "arabic": "أَجْر",
+    "transliteration": "ajr",
+    "english": "Reward"
+  },
+  {
+    "id": "w103",
+    "arabic": "وَجَدَ",
+    "transliteration": "wajada",
+    "english": "He found"
+  },
+  {
+    "id": "w104",
+    "arabic": "لَنْ",
+    "transliteration": "lan",
+    "english": "Never (future verb)"
+  },
+  {
+    "id": "w105",
+    "arabic": "أَكَلَ",
+    "transliteration": "akala",
+    "english": "He ate/consumed"
+  },
+  {
+    "id": "w106",
+    "arabic": "دِين",
+    "transliteration": "dīn",
+    "english": "Religion/judgement"
+  },
+  {
+    "id": "w107",
+    "arabic": "حَكِيم",
+    "transliteration": "ḥakīm",
+    "english": "Wise"
+  },
+  {
+    "id": "w108",
+    "arabic": "أَخْرَجَ",
+    "transliteration": "akhraja",
+    "english": "Brought forth"
+  },
+  {
+    "id": "w109",
+    "arabic": "هَلْ",
+    "transliteration": "hal",
+    "english": "Is/are/has (question)"
+  },
+  {
+    "id": "w110",
+    "arabic": "فَعَلَ",
+    "transliteration": "faʿala",
+    "english": "He did"
+  },
+  {
+    "id": "w111",
+    "arabic": "شَيْطَان",
+    "transliteration": "shayṭān",
+    "english": "Devil"
+  },
+  {
+    "id": "w112",
+    "arabic": "لَيْس",
+    "transliteration": "laysa",
+    "english": "Not (to be)"
+  },
+  {
+    "id": "w113",
+    "arabic": "غَفُور",
+    "transliteration": "ghafūr",
+    "english": "All Forgiving"
+  },
+  {
+    "id": "w114",
+    "arabic": "مَلَك",
+    "transliteration": "malak",
+    "english": "Angel"
+  },
+  {
+    "id": "w115",
+    "arabic": "نَظَرَ",
+    "transliteration": "naẓara",
+    "english": "He looked/saw"
+  },
+  {
+    "id": "w116",
+    "arabic": "مِثْل",
+    "transliteration": "mithl",
+    "english": "Like/as"
+  },
+  {
+    "id": "w117",
+    "arabic": "فَضْل",
+    "transliteration": "faḍl",
+    "english": "Kindness/bounty"
+  },
+  {
+    "id": "w118",
+    "arabic": "ذَكَرَ",
+    "transliteration": "dhakara",
+    "english": "He mentioned"
+  },
+  {
+    "id": "w119",
+    "arabic": "وَالِ",
+    "transliteration": "wālī",
+    "english": "Friend/protector"
+  },
+  {
+    "id": "w120",
+    "arabic": "مَال",
+    "transliteration": "māl",
+    "english": "Wealth"
+  },
+  {
+    "id": "w121",
+    "arabic": "خَافَ",
+    "transliteration": "khāfa",
+    "english": "He feared"
+  },
+  {
+    "id": "w122",
+    "arabic": "كَيْفَ",
+    "transliteration": "kayfa",
+    "english": "How"
+  },
+  {
+    "id": "w123",
+    "arabic": "قَتَلَ",
+    "transliteration": "qatala",
+    "english": "He killed"
+  },
+  {
+    "id": "w124",
+    "arabic": "لَيْل",
+    "transliteration": "layl",
+    "english": "Night"
+  },
+  {
+    "id": "w125",
+    "arabic": "الصَّلَاة",
+    "transliteration": "al-ṣalāh",
+    "english": "Prayer/Salat"
+  },
+  {
+    "id": "w126",
+    "arabic": "رَجَعَ",
+    "transliteration": "rajaʿa",
+    "english": "He came back"
+  },
+  {
+    "id": "w127",
+    "arabic": "أَكْثَر",
+    "transliteration": "akthara",
+    "english": "More/most"
+  },
+  {
+    "id": "w128",
+    "arabic": "الأَوَّل",
+    "transliteration": "al-awwal",
+    "english": "First"
+  },
+  {
+    "id": "w129",
+    "arabic": "دَخَلَ",
+    "transliteration": "dakhala",
+    "english": "He entered"
+  },
+  {
+    "id": "w130",
+    "arabic": "الزَّوْج",
+    "transliteration": "al-zawj",
+    "english": "The Partner/Pair"
+  },
+  {
+    "id": "w131",
+    "arabic": "جَهَنَّم",
+    "transliteration": "jahannam",
+    "english": "Hellfire"
+  },
+  {
+    "id": "w132",
+    "arabic": "صَاحِب",
+    "transliteration": "ṣāḥib",
+    "english": "Companions"
+  },
+  {
+    "id": "w133",
+    "arabic": "سَمِعَ",
+    "transliteration": "samiʿa",
+    "english": "He heard"
+  },
+  {
+    "id": "w134",
+    "arabic": "الأَخ",
+    "transliteration": "al-akh",
+    "english": "The brother"
+  },
+  {
+    "id": "w135",
+    "arabic": "الْحَيَاة",
+    "transliteration": "al-ḥayāh",
+    "english": "The life"
+  },
+  {
+    "id": "w136",
+    "arabic": "تَوَلَّ",
+    "transliteration": "tawallā",
+    "english": "He turned"
+  },
+  {
+    "id": "w137",
+    "arabic": "خَالِدُون",
+    "transliteration": "khālidūn",
+    "english": "Permanent/eternal"
+  },
+  {
+    "id": "w138",
+    "arabic": "أَحَد",
+    "transliteration": "aḥad",
+    "english": "One/anyone"
+  },
+  {
+    "id": "w139",
+    "arabic": "نَبِيّ",
+    "transliteration": "nabī",
+    "english": "Prophet"
+  },
+  {
+    "id": "w140",
+    "arabic": "مَثَل",
+    "transliteration": "mathal",
+    "english": "Example"
+  },
+  {
+    "id": "w141",
+    "arabic": "أَوْحَى",
+    "transliteration": "awḥā",
+    "english": "He revealed"
+  },
+  {
+    "id": "w142",
+    "arabic": "أَلِيم",
+    "transliteration": "alīm",
+    "english": "Painful"
+  },
+  {
+    "id": "w143",
+    "arabic": "أَطَاعَ",
+    "transliteration": "aṭāʿa",
+    "english": "He obeyed"
+  },
+  {
+    "id": "w144",
+    "arabic": "جَزَى",
+    "transliteration": "jazā",
+    "english": "He rewarded"
+  },
+  {
+    "id": "w145",
+    "arabic": "بَيِّنَة",
+    "transliteration": "bayyinah",
+    "english": "Evidence"
+  },
+  {
+    "id": "w146",
+    "arabic": "إِنْسَان",
+    "transliteration": "insān",
+    "english": "Human"
+  },
+  {
+    "id": "w147",
+    "arabic": "أَشْرَكَ",
+    "transliteration": "ashraka",
+    "english": "He made partner"
+  },
+  {
+    "id": "w148",
+    "arabic": "وَجْه",
+    "transliteration": "wajh",
+    "english": "Face"
+  },
+  {
+    "id": "w149",
+    "arabic": "قِيَامَة",
+    "transliteration": "qiyāmah",
+    "english": "Day of resurrection"
+  },
+  {
+    "id": "w150",
+    "arabic": "قَلِيل",
+    "transliteration": "qalīl",
+    "english": "Little"
+  },
+  {
+    "id": "w151",
+    "arabic": "أَيّ",
+    "transliteration": "ayy",
+    "english": "What/any"
+  },
+  {
+    "id": "w152",
+    "arabic": "آخَر",
+    "transliteration": "ākhar",
+    "english": "Another"
+  },
+  {
+    "id": "w153",
+    "arabic": "بَيْت",
+    "transliteration": "bayt",
+    "english": "House"
+  },
+  {
+    "id": "w154",
+    "arabic": "يَوْمَئِذٍ",
+    "transliteration": "yawmaʾidhin",
+    "english": "That day"
+  },
+  {
+    "id": "w155",
+    "arabic": "أَنفَقَ",
+    "transliteration": "anfaqa",
+    "english": "He spent"
+  },
+  {
+    "id": "w156",
+    "arabic": "وَعَدَ",
+    "transliteration": "waʿada",
+    "english": "He promised"
+  },
+  {
+    "id": "w157",
+    "arabic": "أَصَابَ",
+    "transliteration": "aṣāba",
+    "english": "He bestowed/been affected"
+  },
+  {
+    "id": "w158",
+    "arabic": "أَحَبَّ",
+    "transliteration": "aḥabba",
+    "english": "He loved"
+  },
+  {
+    "id": "w159",
+    "arabic": "أَب",
+    "transliteration": "ab",
+    "english": "Father"
+  },
+  {
+    "id": "w160",
+    "arabic": "صَلُحَ",
+    "transliteration": "ṣaluḥa",
+    "english": "Be righteous"
+  },
+  {
+    "id": "w161",
+    "arabic": "أُمَّة",
+    "transliteration": "ummah",
+    "english": "People/nation"
+  },
+  {
+    "id": "w162",
+    "arabic": "أَضَلَّ",
+    "transliteration": "aḍalla",
+    "english": "He made astray"
+  },
+  {
+    "id": "w163",
+    "arabic": "يَمِين",
+    "transliteration": "yamīn",
+    "english": "Right/Vow"
+  },
+  {
+    "id": "w164",
+    "arabic": "غَفَرَ",
+    "transliteration": "ghafara",
+    "english": "He forgave"
+  },
+  {
+    "id": "w165",
+    "arabic": "كَسَبَ",
+    "transliteration": "kasaba",
+    "english": "He earned"
+  },
+  {
+    "id": "w166",
+    "arabic": "ابْن",
+    "transliteration": "ibn",
+    "english": "Son"
+  },
+  {
+    "id": "w167",
+    "arabic": "مَاء",
+    "transliteration": "māʾ",
+    "english": "Water"
+  },
+  {
+    "id": "w168",
+    "arabic": "تَابَ",
+    "transliteration": "tāba",
+    "english": "He repented"
+  },
+  {
+    "id": "w169",
+    "arabic": "صَدَقَ",
+    "transliteration": "ṣadaqa",
+    "english": "He said the truth"
+  },
+  {
+    "id": "w170",
+    "arabic": "رَزَقَ",
+    "transliteration": "razaqa",
+    "english": "He provided"
+  },
+  {
+    "id": "w171",
+    "arabic": "تَلَى",
+    "transliteration": "talā",
+    "english": "He recited"
+  },
+  {
+    "id": "w172",
+    "arabic": "نَزَّلَ",
+    "transliteration": "nazzala",
+    "english": "He revealed"
+  },
+  {
+    "id": "w173",
+    "arabic": "صَبَرَ",
+    "transliteration": "ṣabara",
+    "english": "He became patient"
+  },
+  {
+    "id": "w174",
+    "arabic": "نَصَرَ",
+    "transliteration": "naṣara",
+    "english": "He helped"
+  },
+  {
+    "id": "w175",
+    "arabic": "امْرَأَة",
+    "transliteration": "imraʾah",
+    "english": "Lady"
+  },
+  {
+    "id": "w176",
+    "arabic": "قَضَى",
+    "transliteration": "qaḍā",
+    "english": "He judged/decided"
+  },
+  {
+    "id": "w177",
+    "arabic": "شَدِيد",
+    "transliteration": "shadīd",
+    "english": "Tough/hard"
+  },
+  {
+    "id": "w178",
+    "arabic": "نَهَار",
+    "transliteration": "nahār",
+    "english": "Day (light)"
+  },
+  {
+    "id": "w179",
+    "arabic": "قَرْيَة",
+    "transliteration": "qaryah",
+    "english": "Village"
+  },
+  {
+    "id": "w180",
+    "arabic": "نَذِير",
+    "transliteration": "nadhīr",
+    "english": "A warning/Warner"
+  },
+  {
+    "id": "w181",
+    "arabic": "وَلَد",
+    "transliteration": "walad",
+    "english": "Child"
+  },
+  {
+    "id": "w182",
+    "arabic": "مَسَّ",
+    "transliteration": "massa",
+    "english": "To touch"
+  },
+  {
+    "id": "w183",
+    "arabic": "شَهِيد",
+    "transliteration": "shahīd",
+    "english": "Witness/martyr"
+  },
+  {
+    "id": "w184",
+    "arabic": "جَرَى",
+    "transliteration": "jarā",
+    "english": "To flow/run"
+  },
+  {
+    "id": "w185",
+    "arabic": "أَمَّا",
+    "transliteration": "ammā",
+    "english": "However/then/as for"
+  },
+  {
+    "id": "w186",
+    "arabic": "أَقَامَ",
+    "transliteration": "aqāma",
+    "english": "To establish"
+  },
+  {
+    "id": "w187",
+    "arabic": "قَتَلَ",
+    "transliteration": "qatala",
+    "english": "To kill"
+  },
+  {
+    "id": "w188",
+    "arabic": "عَيْن",
+    "transliteration": "ʿayn",
+    "english": "Eye/water-well"
+  },
+  {
+    "id": "w189",
+    "arabic": "ضَرَبَ",
+    "transliteration": "ḍaraba",
+    "english": "To strike/beat up"
+  },
+  {
+    "id": "w190",
+    "arabic": "خَرَجَ",
+    "transliteration": "kharaja",
+    "english": "To exit"
+  },
+  {
+    "id": "w191",
+    "arabic": "جَمِيع",
+    "transliteration": "jamīʿ",
+    "english": "All"
+  },
+  {
+    "id": "w192",
+    "arabic": "نَهَر",
+    "transliteration": "nahr",
+    "english": "A river"
+  },
+  {
+    "id": "w193",
+    "arabic": "مُجْرِم",
+    "transliteration": "mujrim",
+    "english": "A criminal"
+  },
+  {
+    "id": "w194",
+    "arabic": "أَحْيَا",
+    "transliteration": "aḥyā",
+    "english": "To give life"
+  },
+  {
+    "id": "w195",
+    "arabic": "بَعَثَ",
+    "transliteration": "baʿatha",
+    "english": "To resurrect"
+  },
+  {
+    "id": "w196",
+    "arabic": "أَجَل",
+    "transliteration": "ajal",
+    "english": "Term/time/yes"
+  },
+  {
+    "id": "w197",
+    "arabic": "كَتَبَ",
+    "transliteration": "kataba",
+    "english": "He wrote/ordained"
+  },
+  {
+    "id": "w198",
+    "arabic": "افْتَرَى",
+    "transliteration": "iftarā",
+    "english": "He fabricated"
+  },
+  {
+    "id": "w199",
+    "arabic": "سُوء",
+    "transliteration": "sūʾ",
+    "english": "Harm"
+  },
+  {
+    "id": "w200",
+    "arabic": "أَهْلَكَ",
+    "transliteration": "ahlaka",
+    "english": "He destroyed"
+  },
+  {
+    "id": "w201",
+    "arabic": "وَعَدَ",
+    "transliteration": "waʿada",
+    "english": "He promised"
+  },
+  {
+    "id": "w202",
+    "arabic": "زَادَ",
+    "transliteration": "zāda",
+    "english": "He increased"
+  },
+  {
+    "id": "w203",
+    "arabic": "عَدُوّ",
+    "transliteration": "ʿaduww",
+    "english": "Enemy"
+  },
+  {
+    "id": "w204",
+    "arabic": "بَصِير",
+    "transliteration": "baṣīr",
+    "english": "All seer"
+  },
+  {
+    "id": "w205",
+    "arabic": "الدَّار",
+    "transliteration": "al-dār",
+    "english": "House"
+  },
+  {
+    "id": "w206",
+    "arabic": "عَقَلَ",
+    "transliteration": "ʿaqala",
+    "english": "He understood"
+  },
+  {
+    "id": "w207",
+    "arabic": "الْمَوْت",
+    "transliteration": "al-mawt",
+    "english": "Death"
+  },
+  {
+    "id": "w208",
+    "arabic": "تَحْت",
+    "transliteration": "taḥt",
+    "english": "Beneath/under"
+  },
+  {
+    "id": "w209",
+    "arabic": "السَّاعَة",
+    "transliteration": "al-sāʿah",
+    "english": "Hour/Time/Qiyamah"
+  },
+  {
+    "id": "w210",
+    "arabic": "الْغَيْب",
+    "transliteration": "al-ghayb",
+    "english": "Unseen"
+  },
+  {
+    "id": "w211",
+    "arabic": "النِّعْمَة",
+    "transliteration": "al-niʿmah",
+    "english": "Favour/blessings"
+  },
+  {
+    "id": "w212",
+    "arabic": "تَذَكَّرَ",
+    "transliteration": "tadhakkara",
+    "english": "He remembered"
+  },
+  {
+    "id": "w213",
+    "arabic": "الصِّرَاط",
+    "transliteration": "al-ṣirāṭ",
+    "english": "Path/way"
+  },
+  {
+    "id": "w214",
+    "arabic": "نَبَّأَ",
+    "transliteration": "nabbaʾa",
+    "english": "He informed"
+  },
+  {
+    "id": "w215",
+    "arabic": "شَكَرَ",
+    "transliteration": "shakara",
+    "english": "He thanked"
+  },
+  {
+    "id": "w216",
+    "arabic": "ظَنَّ",
+    "transliteration": "ẓanna",
+    "english": "He assumed"
+  },
+  {
+    "id": "w217",
+    "arabic": "حَمَلَ",
+    "transliteration": "ḥamala",
+    "english": "He carried"
+  },
+  {
+    "id": "w218",
+    "arabic": "سَبَّحَ",
+    "transliteration": "sabbaḥa",
+    "english": "He glorified"
+  },
+  {
+    "id": "w219",
+    "arabic": "صَدْر",
+    "transliteration": "ṣadr",
+    "english": "Chest"
+  },
+  {
+    "id": "w220",
+    "arabic": "يَذَرَ",
+    "transliteration": "yadhara",
+    "english": "He left"
+  },
+  {
+    "id": "w221",
+    "arabic": "فَوْق",
+    "transliteration": "fawq",
+    "english": "Above/top"
+  },
+  {
+    "id": "w222",
+    "arabic": "سَلَّمَ",
+    "transliteration": "sallama",
+    "english": "He submitted/saluted"
+  },
+  {
+    "id": "w223",
+    "arabic": "نَادَى",
+    "transliteration": "nādā",
+    "english": "He called"
+  },
+  {
+    "id": "w224",
+    "arabic": "أَنذَرَ",
+    "transliteration": "andhara",
+    "english": "He warned"
+  },
+  {
+    "id": "w225",
+    "arabic": "أَرَى",
+    "transliteration": "arā",
+    "english": "To show"
+  },
+  {
+    "id": "w226",
+    "arabic": "اسْتَطَاعَ",
+    "transliteration": "istaṭāʿa",
+    "english": "He was able to"
+  },
+  {
+    "id": "w227",
+    "arabic": "حَمِدَ",
+    "transliteration": "ḥamida",
+    "english": "He praised"
+  },
+  {
+    "id": "w228",
+    "arabic": "حَسِبَ",
+    "transliteration": "ḥasiba",
+    "english": "He thought"
+  },
+  {
+    "id": "w229",
+    "arabic": "بِئْس",
+    "transliteration": "biʾsa",
+    "english": "To be bad/evil"
+  },
+  {
+    "id": "w230",
+    "arabic": "بَحْر",
+    "transliteration": "baḥr",
+    "english": "Sea"
+  },
+  {
+    "id": "w231",
+    "arabic": "نُور",
+    "transliteration": "nūr",
+    "english": "Light"
+  },
+  {
+    "id": "w232",
+    "arabic": "شَهِدَ",
+    "transliteration": "shahida",
+    "english": "He bore witness"
+  },
+  {
+    "id": "w233",
+    "arabic": "خَشِيَ",
+    "transliteration": "khashiya",
+    "english": "He feared"
+  },
+  {
+    "id": "w234",
+    "arabic": "تَوَكَّلَ",
+    "transliteration": "tawakkala",
+    "english": "He relied upon"
+  },
+  {
+    "id": "w235",
+    "arabic": "تَرَكَ",
+    "transliteration": "taraka",
+    "english": "He left"
+  },
+  {
+    "id": "w236",
+    "arabic": "بَلَغَ",
+    "transliteration": "balaghа",
+    "english": "He reached"
+  },
+  {
+    "id": "w237",
+    "arabic": "سُلْطَان",
+    "transliteration": "sulṭān",
+    "english": "Ruler"
+  },
+  {
+    "id": "w238",
+    "arabic": "مَعْرُوف",
+    "transliteration": "maʿrūf",
+    "english": "Known"
+  },
+  {
+    "id": "w239",
+    "arabic": "مَاتَ",
+    "transliteration": "māta",
+    "english": "He died"
+  },
+  {
+    "id": "w240",
+    "arabic": "وَيْل",
+    "transliteration": "wayl",
+    "english": "Woe"
+  },
+  {
+    "id": "w241",
+    "arabic": "صَدَّ",
+    "transliteration": "ṣadda",
+    "english": "He hindered"
+  },
+  {
+    "id": "w242",
+    "arabic": "مَيِّت",
+    "transliteration": "mayyit",
+    "english": "Dead"
+  },
+  {
+    "id": "w243",
+    "arabic": "بَشَّرَ",
+    "transliteration": "bashshara",
+    "english": "He gave good news"
+  },
+  {
+    "id": "w244",
+    "arabic": "إِذْن",
+    "transliteration": "idhn",
+    "english": "Permission"
+  },
+  {
+    "id": "w245",
+    "arabic": "فَاسِق",
+    "transliteration": "fāsiq",
+    "english": "Sinner"
+  },
+  {
+    "id": "w246",
+    "arabic": "بَشَر",
+    "transliteration": "bashar",
+    "english": "Human"
+  },
+  {
+    "id": "w247",
+    "arabic": "رَضِيَ",
+    "transliteration": "raḍiya",
+    "english": "He is satisfied"
+  },
+  {
+    "id": "w248",
+    "arabic": "جَبَل",
+    "transliteration": "jabal",
+    "english": "Mountain"
+  },
+  {
+    "id": "w249",
+    "arabic": "مُسْتَقِيم",
+    "transliteration": "mustaqīm",
+    "english": "Straight"
+  },
+  {
+    "id": "w250",
+    "arabic": "حَشَرَ",
+    "transliteration": "ḥashara",
+    "english": "He gathered"
+  },
+  {
+    "id": "w251",
+    "arabic": "ضَلَّلَ",
+    "transliteration": "ḍallala",
+    "english": "He misguided"
+  },
+  {
+    "id": "w252",
+    "arabic": "حَرَّمَ",
+    "transliteration": "ḥarrama",
+    "english": "Prohibited"
+  },
+  {
+    "id": "w253",
+    "arabic": "نَجَّى",
+    "transliteration": "najjā",
+    "english": "He saved"
+  },
+  {
+    "id": "w254",
+    "arabic": "ذَنْب",
+    "transliteration": "dhanb",
+    "english": "Sin"
+  },
+  {
+    "id": "w255",
+    "arabic": "مُحْسِن",
+    "transliteration": "muḥsin",
+    "english": "Improver"
+  },
+  {
+    "id": "w256",
+    "arabic": "حِسَاب",
+    "transliteration": "ḥisāb",
+    "english": "Account"
+  },
+  {
+    "id": "w257",
+    "arabic": "رَدَّ",
+    "transliteration": "radda",
+    "english": "He returned"
+  },
+  {
+    "id": "w258",
+    "arabic": "ذَاقَ",
+    "transliteration": "dhāqa",
+    "english": "He tasted"
+  },
+  {
+    "id": "w259",
+    "arabic": "أَحْسَنَ",
+    "transliteration": "aḥsana",
+    "english": "He excelled"
+  },
+  {
+    "id": "w260",
+    "arabic": "حَزِنَ",
+    "transliteration": "ḥazina",
+    "english": "He grieved"
+  },
+  {
+    "id": "w261",
+    "arabic": "مَتَاع",
+    "transliteration": "matāʿ",
+    "english": "Provision"
+  },
+  {
+    "id": "w262",
+    "arabic": "حِين",
+    "transliteration": "ḥīn",
+    "english": "Time/when"
+  },
+  {
+    "id": "w263",
+    "arabic": "إِثْم",
+    "transliteration": "ithm",
+    "english": "Sin"
+  },
+  {
+    "id": "w264",
+    "arabic": "سَيِّئَة",
+    "transliteration": "sayyiʾah",
+    "english": "Evil"
+  },
+  {
+    "id": "w265",
+    "arabic": "نَسِيَ",
+    "transliteration": "nasiya",
+    "english": "He forgot"
+  },
+  {
+    "id": "w266",
+    "arabic": "ذَهَبَ",
+    "transliteration": "dhahaba",
+    "english": "He went"
+  },
+  {
+    "id": "w267",
+    "arabic": "بَيَّنَ",
+    "transliteration": "bayyana",
+    "english": "He described"
+  },
+  {
+    "id": "w268",
+    "arabic": "آلَاء",
+    "transliteration": "ālāʾ",
+    "english": "Signs/bounty"
+  },
+  {
+    "id": "w269",
+    "arabic": "اخْتَلَفَ",
+    "transliteration": "ikhtilāf",
+    "english": "He deferred"
+  },
+  {
+    "id": "w270",
+    "arabic": "سَجَدَ",
+    "transliteration": "sajada",
+    "english": "He prostrated"
+  },
+  {
+    "id": "w271",
+    "arabic": "اسْتَوَى",
+    "transliteration": "istawā",
+    "english": "He established"
+  },
+  {
+    "id": "w272",
+    "arabic": "أُمّ",
+    "transliteration": "umm",
+    "english": "Mother"
+  },
+  {
+    "id": "w273",
+    "arabic": "خَاسِر",
+    "transliteration": "khāsir",
+    "english": "Loser"
+  },
+  {
+    "id": "w274",
+    "arabic": "كَلَّا",
+    "transliteration": "kallā",
+    "english": "Nay/Never"
+  },
+  {
+    "id": "w275",
+    "arabic": "شَمْس",
+    "transliteration": "shams",
+    "english": "Sun"
+  },
+  {
+    "id": "w276",
+    "arabic": "فِتْنَة",
+    "transliteration": "fitnah",
+    "english": "Trial/test"
+  },
+  {
+    "id": "w277",
+    "arabic": "زَكَاة",
+    "transliteration": "zakāh",
+    "english": "Charity"
+  },
+  {
+    "id": "w278",
+    "arabic": "أَنْعَام",
+    "transliteration": "anʿām",
+    "english": "Cattle"
+  },
+  {
+    "id": "w279",
+    "arabic": "فَرِيق",
+    "transliteration": "farīq",
+    "english": "Group/team"
+  },
+  {
+    "id": "w280",
+    "arabic": "ابْتَغَى",
+    "transliteration": "ibtaghā",
+    "english": "He sought"
+  },
+  {
+    "id": "w281",
+    "arabic": "سَاءَ",
+    "transliteration": "sāʾa",
+    "english": "Became bad"
+  },
+  {
+    "id": "w282",
+    "arabic": "حُكْم",
+    "transliteration": "ḥukm",
+    "english": "Ruling"
+  },
+  {
+    "id": "w283",
+    "arabic": "نَهَى",
+    "transliteration": "nahā",
+    "english": "He forbidden"
+  },
+  {
+    "id": "w284",
+    "arabic": "عَاقِبَة",
+    "transliteration": "ʿāqibah",
+    "english": "End"
+  },
+  {
+    "id": "w285",
+    "arabic": "الْمَلَأ",
+    "transliteration": "al-malaʾ",
+    "english": "The folks/elite/group"
+  },
+  {
+    "id": "w286",
+    "arabic": "شَرّ",
+    "transliteration": "sharr",
+    "english": "Evil/bad"
+  },
+  {
+    "id": "w287",
+    "arabic": "نَفَعَ",
+    "transliteration": "nafaʿa",
+    "english": "He benefited"
+  },
+  {
+    "id": "w288",
+    "arabic": "كَفَى",
+    "transliteration": "kafā",
+    "english": "It sufficed"
+  },
+  {
+    "id": "w289",
+    "arabic": "وَلَّ",
+    "transliteration": "wallā",
+    "english": "He turned"
+  },
+  {
+    "id": "w290",
+    "arabic": "عَسَى",
+    "transliteration": "ʿasā",
+    "english": "Perhaps"
+  },
+  {
+    "id": "w291",
+    "arabic": "رَجُل",
+    "transliteration": "rajul",
+    "english": "Man"
+  },
+  {
+    "id": "w292",
+    "arabic": "أَبَدًا",
+    "transliteration": "abadan",
+    "english": "Ever/forever"
+  },
+  {
+    "id": "w293",
+    "arabic": "أَبْصَرَ",
+    "transliteration": "abṣara",
+    "english": "He saw"
+  },
+  {
+    "id": "w294",
+    "arabic": "قُوَّة",
+    "transliteration": "quwwah",
+    "english": "Power"
+  },
+  {
+    "id": "w295",
+    "arabic": "رِيح",
+    "transliteration": "rīḥ",
+    "english": "Wind"
+  },
+  {
+    "id": "w296",
+    "arabic": "أَصْبَحَ",
+    "transliteration": "aṣbaḥa",
+    "english": "He became"
+  },
+  {
+    "id": "w297",
+    "arabic": "جُنْد",
+    "transliteration": "jund",
+    "english": "Army"
+  },
+  {
+    "id": "w298",
+    "arabic": "كَرِيم",
+    "transliteration": "karīm",
+    "english": "Kind/noble"
+  },
+  {
+    "id": "w299",
+    "arabic": "عَرْش",
+    "transliteration": "ʿarsh",
+    "english": "Throne"
+  },
+  {
+    "id": "w300",
+    "arabic": "أَصْلَحَ",
+    "transliteration": "aṣlaḥa",
+    "english": "He reformed/reconciled"
+  }
+]
