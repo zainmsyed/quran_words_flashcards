@@ -31,11 +31,36 @@
       return;
     }
     speaking = true;
+
+    // Try to play a pre-bundled audio file first (public/audio/<id>.mp3)
+    const audioUrl = `/audio/${word.id}.mp3`;
+    let played = false;
     try {
-      await speak(word.arabic, { lang: 'ar-SA', rate: 0.8, transliteration: word.transliteration, voice: preferredVoice, fallbackLang: 'en-US' });
+      // Use HEAD to check existence to avoid loading full file twice
+      const resp = await fetch(audioUrl, { method: 'HEAD' });
+      if (resp.ok) {
+        const a = new Audio(audioUrl);
+        try {
+          await a.play();
+          played = true;
+        } catch (e) {
+          // if play fails, fall back to TTS
+          console.warn('[TTS] audio play failed, falling back to TTS', e);
+          played = false;
+        }
+      }
     } catch (e) {
-      // ignore
+      // network error or not found — fall back to TTS
     }
+
+    if (!played) {
+      try {
+        await speak(word.arabic, { lang: 'ar-SA', rate: 0.8, transliteration: word.transliteration, voice: preferredVoice, fallbackLang: 'en-US' });
+      } catch (e) {
+        // ignore
+      }
+    }
+
     speaking = false;
   }
 </script>
