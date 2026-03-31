@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Word List - Al-Madrassa</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=Amiri:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed-dim": "#c1dacb",
+              "on-surface-variant": "#5a6062",
+              "error-container": "#fa746f",
+              "tertiary-fixed-dim": "#aae4eb",
+              "on-secondary-container": "#40574b",
+              "inverse-on-surface": "#9b9d9e",
+              "on-tertiary-fixed-variant": "#2d676d",
+              "primary": "#006d4b",
+              "on-surface": "#2d3335",
+              "on-error-container": "#6e0a12",
+              "outline-variant": "#adb3b5",
+              "on-error": "#fff7f6",
+              "surface-container": "#ebeef0",
+              "error-dim": "#67040d",
+              "surface-variant": "#dee3e6",
+              "on-primary-fixed": "#00452e",
+              "on-secondary-fixed": "#2e4439",
+              "on-primary": "#e6ffef",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed": "#cfe9d9",
+              "on-tertiary": "#e8fdff",
+              "tertiary-container": "#b8f2f9",
+              "on-secondary": "#e6ffef",
+              "secondary-container": "#cfe9d9",
+              "primary-fixed": "#7ff3be",
+              "surface-dim": "#d5dbdd",
+              "on-background": "#2d3335",
+              "tertiary-dim": "#1e5b61",
+              "surface-container-low": "#f1f4f5",
+              "on-secondary-fixed-variant": "#4a6054",
+              "on-primary-container": "#005a3d",
+              "surface-container-highest": "#dee3e6",
+              "surface": "#f8f9fa",
+              "surface-bright": "#f8f9fa",
+              "outline": "#767c7e",
+              "inverse-surface": "#0c0f10",
+              "primary-container": "#7ff3be",
+              "primary-dim": "#005f41",
+              "inverse-primary": "#7ff3be",
+              "error": "#a83836",
+              "surface-tint": "#006d4b",
+              "on-primary-fixed-variant": "#006545",
+              "on-tertiary-fixed": "#034a50",
+              "tertiary-fixed": "#b8f2f9",
+              "secondary-dim": "#42584c",
+              "background": "#f8f9fa",
+              "secondary": "#4e6458",
+              "on-tertiary-container": "#215d63",
+              "tertiary": "#2d676d",
+              "surface-container-high": "#e5e9eb",
+              "primary-fixed-dim": "#71e4b1"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "arabic": ["Amiri"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .arabic-text { font-family: 'Amiri', serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-emerald-50/80 dark:bg-slate-950/80 backdrop-blur-xl">
+<div class="flex items-center justify-between px-10 h-16 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-800 dark:text-emerald-400" data-icon="menu_book">menu_book</span>
+<h1 class="text-emerald-900 dark:text-emerald-100 font-manrope font-extrabold italic text-lg tracking-tight">Al-Madrassa</h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-500 hover:bg-emerald-100/50 transition-colors px-4 py-2 rounded-full font-label text-sm font-semibold" href="#">Home</a>
+<a class="text-slate-500 hover:bg-emerald-100/50 transition-colors px-4 py-2 rounded-full font-label text-sm font-semibold" href="#">Stats</a>
+<a class="text-emerald-700 bg-emerald-100/50 px-4 py-2 rounded-full font-label text-sm font-semibold" href="#">Word List</a>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/15">
+<img alt="User Profile" data-alt="minimalist illustrated avatar of a scholar with glasses and a calm expression on a soft teal background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf9W5wFEvXvX-bt3u3J-aZ0s6VEK1SGHQQNvHpkqU0gjdQJOXhUi_N3oxjRTLABuhZB2SDxi1X20P0262XXrmfd_iWH_oRAs13MYHZhJObV7hEQpFLRCKy7vDnqjsts7Krb_p23KwUyQA6c-rZVVpHp3a5gqswu96m8WPA37JbwhiBM8u2zf8ay9HXj6Omn0VIxFPMyu-lLxzuF5LBuwLkSvt39x5HCs3ZYEtDTdIpYTP7w03ipfQmPxvo3LAe47A0QuTgNdVD-W5d"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 md:px-16 max-w-screen-xl mx-auto">
+<!-- Search & Header Section -->
+<section class="mb-12">
+<h2 class="font-headline text-4xl md:text-5xl font-extrabold text-on-surface mb-8 tracking-tight">Vocabulary Inventory</h2>
+<div class="relative group">
+<div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-3xl py-5 pl-16 pr-6 text-on-surface focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-300 placeholder:text-outline/60 text-lg shadow-sm" placeholder="Search by Arabic or English meaning..." type="text"/>
+</div>
+</section>
+<!-- Stats Overview (Asymmetric Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+<div class="bg-primary-container p-8 rounded-3xl flex flex-col justify-between min-h-[160px]">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-on-primary-container font-label text-xs font-bold tracking-widest uppercase">Mastered</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-headline font-bold text-on-primary-container">12</span>
+<span class="text-on-primary-container/60 font-body">/ 30 words</span>
+</div>
+</div>
+<div class="bg-secondary-container p-8 rounded-3xl flex flex-col justify-between min-h-[160px]">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-secondary" data-icon="moving">moving</span>
+<span class="text-on-secondary-container font-label text-xs font-bold tracking-widest uppercase">Learning</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-headline font-bold text-on-secondary-container">8</span>
+<span class="text-on-secondary-container/60 font-body">active words</span>
+</div>
+</div>
+<div class="bg-surface-container-high p-8 rounded-3xl flex flex-col justify-between min-h-[160px]">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="visibility_off">visibility_off</span>
+<span class="text-on-surface-variant font-label text-xs font-bold tracking-widest uppercase">Unseen</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-headline font-bold text-on-surface-variant">10</span>
+<span class="text-on-surface-variant/60 font-body">remaining</span>
+</div>
+</div>
+</section>
+<!-- Word List Groups -->
+<div class="space-y-16">
+<!-- Learning Group -->
+<section>
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[2px] flex-grow bg-outline-variant/15"></div>
+<h3 class="font-headline text-xl font-bold text-on-secondary-fixed-variant flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+                        Active Learning
+                    </h3>
+<div class="h-[2px] flex-grow bg-outline-variant/15"></div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+<!-- Word Row 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex items-center justify-between hover:bg-surface-bright transition-all group border border-outline-variant/5">
+<div class="flex items-center gap-8">
+<span class="arabic-text text-4xl text-primary font-bold">كتاب</span>
+<div>
+<h4 class="font-headline font-bold text-lg text-on-surface">Kitaab</h4>
+<p class="text-on-surface-variant font-body text-sm">Book</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[65%] rounded-full"></div>
+</div>
+<span class="material-symbols-outlined text-secondary opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" data-icon="play_circle">play_circle</span>
+</div>
+</div>
+<!-- Word Row 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex items-center justify-between hover:bg-surface-bright transition-all group border border-outline-variant/5">
+<div class="flex items-center gap-8">
+<span class="arabic-text text-4xl text-primary font-bold">مدرسة</span>
+<div>
+<h4 class="font-headline font-bold text-lg text-on-surface">Madrassa</h4>
+<p class="text-on-surface-variant font-body text-sm">School</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[40%] rounded-full"></div>
+</div>
+<span class="material-symbols-outlined text-secondary opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" data-icon="play_circle">play_circle</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Mastered Group -->
+<section>
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[2px] flex-grow bg-outline-variant/15"></div>
+<h3 class="font-headline text-xl font-bold text-primary flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                        Mastered Lexicon
+                    </h3>
+<div class="h-[2px] flex-grow bg-outline-variant/15"></div>
+</div>
+<div class="space-y-3">
+<!-- Word Item 1 -->
+<div class="bg-surface-container-low/40 p-5 rounded-3xl flex items-center justify-between group hover:bg-primary/5 transition-colors">
+<div class="flex items-center gap-12 flex-1">
+<span class="arabic-text text-3xl text-on-surface-variant font-bold w-32">قلم</span>
+<div class="flex flex-col">
+<h4 class="font-headline font-bold text-on-surface">Qalam</h4>
+<p class="text-on-surface-variant font-body text-sm italic">Pen</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="bg-primary/10 text-primary px-4 py-1 rounded-full font-label text-[10px] font-bold tracking-widest uppercase">Perfected</span>
+<span class="material-symbols-outlined text-primary-dim/30 group-hover:text-primary transition-colors cursor-pointer" data-icon="volume_up">volume_up</span>
+</div>
+</div>
+<!-- Word Item 2 -->
+<div class="bg-surface-container-low/40 p-5 rounded-3xl flex items-center justify-between group hover:bg-primary/5 transition-colors">
+<div class="flex items-center gap-12 flex-1">
+<span class="arabic-text text-3xl text-on-surface-variant font-bold w-32">بيت</span>
+<div class="flex flex-col">
+<h4 class="font-headline font-bold text-on-surface">Bayt</h4>
+<p class="text-on-surface-variant font-body text-sm italic">House</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="bg-primary/10 text-primary px-4 py-1 rounded-full font-label text-[10px] font-bold tracking-widest uppercase">Perfected</span>
+<span class="material-symbols-outlined text-primary-dim/30 group-hover:text-primary transition-colors cursor-pointer" data-icon="volume_up">volume_up</span>
+</div>
+</div>
+<!-- Word Item 3 -->
+<div class="bg-surface-container-low/40 p-5 rounded-3xl flex items-center justify-between group hover:bg-primary/5 transition-colors">
+<div class="flex items-center gap-12 flex-1">
+<span class="arabic-text text-3xl text-on-surface-variant font-bold w-32">شاي</span>
+<div class="flex flex-col">
+<h4 class="font-headline font-bold text-on-surface">Shay</h4>
+<p class="text-on-surface-variant font-body text-sm italic">Tea</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="bg-primary/10 text-primary px-4 py-1 rounded-full font-label text-[10px] font-bold tracking-widest uppercase">Perfected</span>
+<span class="material-symbols-outlined text-primary-dim/30 group-hover:text-primary transition-colors cursor-pointer" data-icon="volume_up">volume_up</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Not Yet Seen -->
+<section>
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[2px] flex-grow bg-outline-variant/15"></div>
+<h3 class="font-headline text-xl font-bold text-on-surface-variant flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="lock_open">lock_open</span>
+                        Locked Discoveries
+                    </h3>
+<div class="h-[2px] flex-grow bg-outline-variant/15"></div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Locked Card 1 -->
+<div class="bg-surface-container p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-3 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-help border border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-outline" data-icon="question_mark">question_mark</span>
+<div class="space-y-1">
+<div class="h-4 w-16 bg-outline-variant/20 rounded mx-auto"></div>
+<div class="h-3 w-10 bg-outline-variant/10 rounded mx-auto"></div>
+</div>
+</div>
+<!-- Locked Card 2 -->
+<div class="bg-surface-container p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-3 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-help border border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-outline" data-icon="question_mark">question_mark</span>
+<div class="space-y-1">
+<div class="h-4 w-16 bg-outline-variant/20 rounded mx-auto"></div>
+<div class="h-3 w-10 bg-outline-variant/10 rounded mx-auto"></div>
+</div>
+</div>
+<!-- Locked Card 3 -->
+<div class="bg-surface-container p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-3 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-help border border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-outline" data-icon="question_mark">question_mark</span>
+<div class="space-y-1">
+<div class="h-4 w-16 bg-outline-variant/20 rounded mx-auto"></div>
+<div class="h-3 w-10 bg-outline-variant/10 rounded mx-auto"></div>
+</div>
+</div>
+<!-- Locked Card 4 -->
+<div class="bg-surface-container p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-3 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-help border border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-outline" data-icon="question_mark">question_mark</span>
+<div class="space-y-1">
+<div class="h-4 w-16 bg-outline-variant/20 rounded mx-auto"></div>
+<div class="h-3 w-10 bg-outline-variant/10 rounded mx-auto"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-24 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex justify-around items-center px-8 pb-4 z-50 rounded-t-[2.5rem] shadow-[0_-10px_30px_rgba(0,109,75,0.06)]">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-6 py-2 hover:text-emerald-700 dark:hover:text-emerald-300 active:scale-90 transition-all duration-200 tap-highlight-none" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-6 py-2 hover:text-emerald-700 dark:hover:text-emerald-300 active:scale-90 transition-all duration-200 tap-highlight-none" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-emerald-100 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-100 rounded-full px-6 py-2 transition-all active:scale-90 tap-highlight-none" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-inter text-[11px] font-semibold uppercase tracking-wider mt-1">Word List</span>
+</a>
+</nav>
+<!-- Floating Action Button: Add New Word (Contextual Context) -->
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-gradient-to-br from-primary to-primary-dim text-on-primary rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(0,109,75,0.2)] hover:scale-110 active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</body></html>

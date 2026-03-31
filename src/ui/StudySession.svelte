@@ -59,7 +59,7 @@
     if (savedSession && Array.isArray(savedSession.queue) && savedSession.index != null && savedSession.index < savedSession.queue.length) {
       sessionItems = savedSession.queue
         .filter((si) => wordMap.has(si.id))
-        .map((si) => ({ id: si.id, mode: si.mode }));
+        .map((si) => ({ id: si.id, mode: 'ar2en' }));
       currentIndex = savedSession.index || 0;
 
       const itemStates = sessionItems.map((si) => states[si.id]).filter(Boolean);
@@ -87,7 +87,7 @@
       sessionNewCount = newCards.length;
 
       const combined = [...dueReviews, ...newCards];
-      sessionItems = combined.map((w) => ({ id: w.id, mode: Math.random() < 0.5 ? 'ar2en' : 'en2ar' }));
+      sessionItems = combined.map((w) => ({ id: w.id, mode: 'ar2en' }));
       currentIndex = 0;
       await persistSession();
     }
@@ -130,7 +130,7 @@
     await persistStats();
 
     if (rating === 'hard') {
-      const newItem: SessionItem = { id: word.id, mode: Math.random() < 0.5 ? 'ar2en' : 'en2ar' };
+      const newItem: SessionItem = { id: word.id, mode: 'ar2en' };
       sessionItems.push(newItem);
       deck.push(word);
     }
@@ -176,24 +176,33 @@
     </div>
 
     {#if currentIndex >= deck.length}
-      <div class="card session-card session-done">
+      <div class="session-card session-done">
         <div class="big">🕌</div>
         <h3>Session complete</h3>
         <p>You studied {sessionNewCount} new words and reviewed {sessionReviewCount} due words.</p>
       </div>
     {:else}
-      <div class="card session-card">
-        <Card word={deck[currentIndex]} mode={sessionItems[currentIndex]?.mode || 'ar2en'} on:rate={(e) => handleRate(e.detail)} />
+      <div class="session-card">
+        {#key currentIndex}
+          <Card word={deck[currentIndex]} mode={sessionItems[currentIndex]?.mode || 'ar2en'} on:rate={(e) => handleRate(e.detail)} />
+        {/key}
       </div>
     {/if}
   </div>
 {/if}
 
 <style>
-  .session-stack{display:grid;gap:16px}
+  .session-stack{display:grid;gap:1rem}
   .session-card{margin-top:0}
-  .session-done{text-align:center;padding:2rem 1.5rem}
+  .session-done{
+    text-align:center;
+    padding:2.5rem 1.75rem;
+    border-radius:var(--radius-xl);
+    background:var(--card);
+    border:0.5px solid var(--border);
+    box-shadow:var(--shadow-primary);
+  }
   .session-done .big{font-size:48px;margin-bottom:0.5rem}
-  .session-done h3{font-size:20px;font-weight:700;margin-bottom:0.5rem}
-  .session-done p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+  .session-done h3{font-size:20px;font-weight:800;margin-bottom:0.5rem;font-family:'Manrope', sans-serif}
+  .session-done p{font-size:14px;color:var(--text-secondary);line-height:1.7;max-width:32ch;margin:0 auto}
 </style>
