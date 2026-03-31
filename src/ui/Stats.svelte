@@ -18,21 +18,16 @@
     return { word, state, interval, mastered, due };
   });
   $: studiedEntries = entries.filter((entry) => (entry.state?.reviewCount ?? 0) > 0);
-  $: studiedCount = appStats.studied;
+  $: studiedCount = appStats.studied ?? studiedEntries.length;
   $: masteredCount = entries.filter((entry) => entry.mastered).length;
   $: dueCount = entries.filter((entry) => entry.due).length;
-  $: newCount = entries.filter((entry) => !entry.state || entry.state.interval === 0).length;
-  $: reviewCount = studiedEntries.reduce((sum, entry) => sum + (entry.state?.reviewCount ?? 0), 0);
-  $: easyCount = appStats.easy;
-  $: accuracy = studiedCount > 0 ? Math.round((easyCount / studiedCount) * 100) : 0;
-  $: avgEase = studiedEntries.length > 0
-    ? (studiedEntries.reduce((sum, entry) => sum + (entry.state?.ease ?? 0), 0) / studiedEntries.length).toFixed(2)
-    : '0.00';
+  $: streak = appStats.streak ?? 0;
+
   $: recent = studiedEntries
     .filter((entry) => Boolean(entry.state?.lastReviewedAt))
     .slice()
     .sort((a, b) => new Date(b.state?.lastReviewedAt || 0).getTime() - new Date(a.state?.lastReviewedAt || 0).getTime())
-    .slice(0, 8);
+    .slice(0, 6);
 
   function statLabel(entry: (typeof entries)[number]): string {
     if (!entry.state || entry.state.interval === 0) return 'New';
@@ -58,31 +53,12 @@
       <div class="stat-label">mastered</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">{appStats.streak}</div>
+      <div class="stat-num">{streak}</div>
       <div class="stat-label">day streak</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">{accuracy}%</div>
-      <div class="stat-label">easy rate</div>
-    </div>
-  </div>
-
-  <div class="secondary-grid">
-    <div class="secondary-card">
-      <div class="secondary-value">{dueCount}</div>
-      <div class="secondary-label">due now</div>
-    </div>
-    <div class="secondary-card">
-      <div class="secondary-value">{newCount}</div>
-      <div class="secondary-label">new words remaining</div>
-    </div>
-    <div class="secondary-card">
-      <div class="secondary-value">{avgEase}</div>
-      <div class="secondary-label">average ease</div>
-    </div>
-    <div class="secondary-card">
-      <div class="secondary-value">{reviewCount}</div>
-      <div class="secondary-label">total reviews</div>
+      <div class="stat-num">{dueCount}</div>
+      <div class="stat-label">due today</div>
     </div>
   </div>
 
@@ -111,10 +87,10 @@
   .panel{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;box-shadow:0 6px 18px rgba(2,6,23,0.05)}
   .panel-heading h2{margin:0 0 4px 0;font-size:1.1rem}
   .panel-heading p{margin:0 0 12px 0;color:var(--text-secondary);font-size:0.9rem}
-  .stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-  .stat-card{padding:12px;border-radius:10px;background:var(--bg-secondary);border:0.5px solid var(--border);text-align:center}
-  .stat-num{font-size:1.6rem;font-weight:700;color:var(--text)}
-  .stat-label{font-size:0.82rem;color:var(--text-secondary);margin-top:2px}
+  .stats-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+  .stat-card{padding:16px;border-radius:10px;background:var(--bg-secondary);border:0.5px solid var(--border);text-align:center;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .stat-num{font-size:28px;font-weight:800;color:var(--text)}
+  .stat-label{font-size:0.95rem;color:var(--text-secondary);margin-top:6px}
   .secondary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
   .secondary-card{padding:10px 12px;border-radius:10px;background:var(--bg-secondary);border:0.5px solid var(--border)}
   .secondary-value{font-size:1.15rem;font-weight:700;color:var(--text)}
