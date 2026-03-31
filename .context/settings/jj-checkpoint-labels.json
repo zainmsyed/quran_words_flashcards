@@ -1,5 +1,6 @@
 {
   "labels": {
+    "16640317": "yes please contiue. like please make the cards no chnage in size as well",
     "acba9015": "im on fedora and the latest build of chrom",
     "3a1ded4d": "i am using chrome not chrmium. the app is running i can see it jsut dont hear an",
     "a93a9be2": ":5180/favicon.ico:1  Failed to load resource: the server responded with a status",
@@ -29,6 +30,15 @@
     "7bc87cb5": "ok lets move onto story 3",
     "797ece35": "yes please work on story 3 until your ready for me to review it",
     "1b86270f": "wehn i am seeing it it is always starting at card 16 why?",
-    "526e7704": "ok fair enough. lets leave it as is. the one thhing we could add is a back butto"
+    "526e7704": "ok fair enough. lets leave it as is. the one thhing we could add is a back butto",
+    "df6c8a84": "ok great lets commit and push after we make sure story 3 is completed",
+    "fad1922a": "i think what i want to do is polish the ui we have some work to do. first lets m",
+    "bb1ffc59": "ok so i still see the stats on the main page can we remove them from the main pa",
+    "489359ef": "ok so right now when i hit the setting button the flash cards move down. no the ",
+    "e9456c12": "now can we use the css styling from the poc in the intake folder?",
+    "e3a61516": "please make the buttons all the same as well as the new and how many to review. ",
+    "70b26dd6": "please update the stats as well RIGHT NOW CANT READ ANYTHING ITS GREY ON WHITE. ",
+    "afd722c3": "we dont need the study and settings buttons up top we should just have hamburger",
+    "97a3f3ca": "a couple of things clicking the hamburger menu should get us back as well. the f"
   }
 }

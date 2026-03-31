@@ -1,8 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Card from './components/Card.svelte';
-  import Stats from './Stats.svelte';
-  import WordList from './WordList.svelte';
   import { loadSeedWords, Word } from '../core/wordlist';
   import { browserStorage } from '../core/storage-adapter';
   import { initialCardState, applyRatingToCard, normalizeCardState, CardState } from '../core/srs';
@@ -25,6 +23,7 @@
   let loading = true;
   let sessionNewCount = 0;
   let sessionReviewCount = 0;
+  $: progressPercent = deck.length > 0 ? Math.round((Math.min(currentIndex, deck.length) / deck.length) * 100) : 0;
 
   function normalizeStates(input: Record<string, CardState> | null | undefined) {
     const out: Record<string, CardState> = {};
@@ -57,7 +56,6 @@
   async function buildSession(savedSession?: { queue: SessionItem[]; index?: number; createdAt?: string }) {
     const wordMap = makeWordMap(words);
 
-    // If there is a resumable session, load it
     if (savedSession && Array.isArray(savedSession.queue) && savedSession.index != null && savedSession.index < savedSession.queue.length) {
       sessionItems = savedSession.queue
         .filter((si) => wordMap.has(si.id))
@@ -68,7 +66,6 @@
       sessionNewCount = itemStates.filter((s) => s.interval === 0).length;
       sessionReviewCount = sessionItems.length - sessionNewCount;
     } else {
-      // ensure state entries exist for every word in the app deck
       words.forEach((w) => {
         if (!states[w.id]) states[w.id] = initialCardState(w.id);
       });
@@ -132,17 +129,13 @@
     await saveStates();
     await persistStats();
 
-    // If the user marked HARD, re-queue this card near the end of the session
     if (rating === 'hard') {
       const newItem: SessionItem = { id: word.id, mode: Math.random() < 0.5 ? 'ar2en' : 'en2ar' };
       sessionItems.push(newItem);
       deck.push(word);
     }
 
-    // advance
     currentIndex += 1;
-
-    // persist session metadata
     await persistSession();
   }
 
@@ -150,52 +143,57 @@
     await browserStorage.removeItem(SESSION_KEY);
     await buildSession(undefined);
   }
+
+  async function goBack() {
+    if (currentIndex >= deck.length && deck.length > 0) {
+      currentIndex = deck.length - 1;
+    } else if (currentIndex > 0) {
+      currentIndex -= 1;
+    }
+    await persistSession();
+  }
 </script>
 
 {#if loading}
   <p>Loading session…</p>
 {:else}
   <div class="session-stack">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Card {Math.min(currentIndex + 1, deck.length || 1)} of {deck.length}</span>
+        <span>{sessionNewCount} new · {sessionReviewCount} review</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style={`width:${progressPercent}%`}></div>
+      </div>
+    </div>
+
+    <div class="session-toolbar">
+      <div class="session-chip new">{sessionNewCount} new</div>
+      <div class="session-chip review">{sessionReviewCount} review</div>
+      <button class="action-btn" on:click={goBack} disabled={deck.length === 0 || currentIndex === 0} aria-label="Previous card">Back</button>
+      <button class="action-btn primary" on:click={startNewSession}>New session</button>
+    </div>
+
     {#if currentIndex >= deck.length}
-      <div class="card session-card">
+      <div class="card session-card session-done">
+        <div class="big">🕌</div>
         <h3>Session complete</h3>
         <p>You studied {sessionNewCount} new words and reviewed {sessionReviewCount} due words.</p>
-        <button on:click={startNewSession}>Start a new session</button>
       </div>
     {:else}
       <div class="card session-card">
-        <div class="session-topline">
-          <div class="session-controls">
-            <button on:click={async () => { 
-              if (currentIndex >= deck.length && deck.length > 0) {
-                // if session was complete, step back to last card
-                currentIndex = deck.length - 1;
-              } else if (currentIndex > 0) {
-                currentIndex -= 1;
-              }
-              await persistSession();
-            }} disabled={deck.length === 0 || currentIndex === 0} aria-label="Previous card">Back</button>
-          </div>
-
-          <div class="session-progress">Card {currentIndex + 1} of {deck.length}</div>
-          <div class="session-counts">{sessionNewCount} new · {sessionReviewCount} review</div>
-        </div>
-
         <Card word={deck[currentIndex]} mode={sessionItems[currentIndex]?.mode || 'ar2en'} on:rate={(e) => handleRate(e.detail)} />
       </div>
     {/if}
-
-    <Stats words={words} states={states} appStats={appStats} />
-    <WordList words={words} states={states} />
   </div>
 {/if}
 
 <style>
   .session-stack{display:grid;gap:16px}
-  .session-card{margin-top:12px}
-  .session-topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px}
-  .session-controls{margin-right:8px}
-  .session-progress,.session-counts{font-size:0.9rem;color:#666}
-  .session-controls button{padding:6px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer;margin-right:6px}
-  button{padding:8px 12px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer}
+  .session-card{margin-top:0}
+  .session-done{text-align:center;padding:2rem 1.5rem}
+  .session-done .big{font-size:48px;margin-bottom:0.5rem}
+  .session-done h3{font-size:20px;font-weight:700;margin-bottom:0.5rem}
+  .session-done p{font-size:14px;color:var(--text-secondary);line-height:1.6}
 </style>

@@ -81,6 +81,11 @@
 </div>
 
 <style>
-  .voice-settings{padding:12px;border:1px solid #eee;border-radius:8px;background:#fff}
-  label{display:block;margin:6px 0}
+  /* Use app panel styling and tokens; keep internal spacing only */
+  .voice-settings{padding:12px}
+  .voice-list label{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;color:var(--text);}
+  .voice-list label:hover{background:var(--bg-secondary)}
+  .voice-list small{color:var(--text-secondary);margin-left:6px}
+  label{display:block;margin:6px 0;color:var(--text)}
+  button{padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg)}
 </style>
