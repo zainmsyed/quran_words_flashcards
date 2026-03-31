@@ -22,6 +22,13 @@
     flipped = !flipped;
   }
 
+  function handleCardKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      flip();
+    }
+  }
+
   function rate(r: 'hard' | 'got' | 'easy') {
     dispatch('rate', r);
   }
@@ -68,7 +75,7 @@
   }
 </script>
 
-<div on:click={flip} style="cursor:pointer">
+<div role="button" tabindex="0" aria-label="Flip flashcard" on:click={flip} on:keydown={handleCardKeydown} style="cursor:pointer">
   {#if !flipped}
     <div class="front card">
       {#if mode === 'ar2en'}

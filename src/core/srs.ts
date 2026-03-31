@@ -1,8 +1,16 @@
+export type Rating = 'hard' | 'got' | 'easy';
+
 export type CardState = {
   id: string;
   interval: number; // days
   ease: number;
   dueDate: string; // ISO
+  reviewCount: number;
+  hardCount: number;
+  gotCount: number;
+  easyCount: number;
+  lastRating?: Rating;
+  lastReviewedAt?: string;
 };
 
 export function initialCardState(id: string): CardState {
@@ -11,12 +19,33 @@ export function initialCardState(id: string): CardState {
     interval: 0,
     ease: 2.5,
     dueDate: new Date().toISOString(),
+    reviewCount: 0,
+    hardCount: 0,
+    gotCount: 0,
+    easyCount: 0,
+    lastRating: undefined,
+    lastReviewedAt: undefined,
   };
 }
 
-export function applyRatingToCard(state: CardState, rating: 'hard' | 'got' | 'easy'): CardState {
-  let interval = state.interval;
-  let ease = state.ease;
+export function normalizeCardState(state: Partial<CardState> & { id: string }): CardState {
+  const base = initialCardState(state.id);
+  return {
+    ...base,
+    ...state,
+    reviewCount: state.reviewCount ?? base.reviewCount,
+    hardCount: state.hardCount ?? base.hardCount,
+    gotCount: state.gotCount ?? base.gotCount,
+    easyCount: state.easyCount ?? base.easyCount,
+    lastRating: state.lastRating,
+    lastReviewedAt: state.lastReviewedAt,
+  };
+}
+
+export function applyRatingToCard(state: CardState, rating: Rating): CardState {
+  const normalized = normalizeCardState(state);
+  let interval = normalized.interval;
+  let ease = normalized.ease;
   const now = new Date();
 
   if (interval === 0) {
@@ -37,5 +66,17 @@ export function applyRatingToCard(state: CardState, rating: 'hard' | 'got' | 'ea
   }
 
   const due = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
-  return { ...state, interval, ease, dueDate: due.toISOString() };
+
+  return {
+    ...normalized,
+    interval,
+    ease,
+    dueDate: due.toISOString(),
+    reviewCount: normalized.reviewCount + 1,
+    hardCount: normalized.hardCount + (rating === 'hard' ? 1 : 0),
+    gotCount: normalized.gotCount + (rating === 'got' ? 1 : 0),
+    easyCount: normalized.easyCount + (rating === 'easy' ? 1 : 0),
+    lastRating: rating,
+    lastReviewedAt: now.toISOString(),
+  };
 }

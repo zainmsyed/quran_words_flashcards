@@ -14,9 +14,8 @@ function normalizeTransliteration(s?: string): string | undefined {
   if (!s) return undefined;
   // Decompose then map common IPA/diacritic characters to ASCII
   const map: Record<string, string> = {
-    '\u0101': 'a', // ā
     'ā': 'a', 'Ā': 'A',
-    'ī': 'i', 'Ī': 'I', '\u012B': 'i',
+    'ī': 'i', 'Ī': 'I',
     'ū': 'u', 'Ū': 'U',
     'ḥ': 'h', 'Ḥ': 'H',
     'ṣ': 's', 'Ṣ': 'S',
