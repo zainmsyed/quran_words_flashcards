@@ -3,7 +3,10 @@
   import { speak, stop as stopSpeak, isSupported as isTtsSupported } from '../../core/tts-adapter';
   import { browserStorage } from '../../core/storage-adapter';
   import type { Word } from '../../core/wordlist';
+
   export let word: Word;
+  export let mode: 'ar2en' | 'en2ar' = 'ar2en';
+
   const dispatch = createEventDispatcher();
   let flipped = false;
   let speaking = false;
@@ -68,21 +71,42 @@
 <div on:click={flip} style="cursor:pointer">
   {#if !flipped}
     <div class="front card">
-      <div class="arabic">
-        <div class="arabic-content">
-          <div class="arabic-word">{word.arabic}</div>
-          {#if word.transliteration}
-            <div class="translit">{word.transliteration}</div>
-          {/if}
+      {#if mode === 'ar2en'}
+        <div class="arabic">
+          <div class="arabic-content">
+            <div class="arabic-word">{word.arabic}</div>
+            {#if word.transliteration}
+              <div class="translit">{word.transliteration}</div>
+            {/if}
+          </div>
+          <button class="tts" on:click|stopPropagation={handleTtsClick} aria-label="Pronounce Arabic word" disabled={!ttsAvailable}>
+            {#if speaking}Stop{:else}Play{/if}
+          </button>
         </div>
-        <button class="tts" on:click|stopPropagation={handleTtsClick} aria-label="Pronounce Arabic word" disabled={!ttsAvailable}>
-          {#if speaking}Stop{:else}Play{/if}
-        </button>
-      </div>
+      {:else}
+        <div class="front-english card">
+          <div class="english-front">{word.english}</div>
+        </div>
+      {/if}
     </div>
   {:else}
     <div class="back card">
-      <div class="english">{word.english}</div>
+      {#if mode === 'ar2en'}
+        <div class="english">{word.english}</div>
+      {:else}
+        <div class="arabic">
+          <div class="arabic-content">
+            <div class="arabic-word">{word.arabic}</div>
+            {#if word.transliteration}
+              <div class="translit">{word.transliteration}</div>
+            {/if}
+          </div>
+          <button class="tts" on:click|stopPropagation={handleTtsClick} aria-label="Pronounce Arabic word" disabled={!ttsAvailable}>
+            {#if speaking}Stop{:else}Play{/if}
+          </button>
+        </div>
+      {/if}
+
       <div class="buttons">
         <button on:click|stopPropagation={() => rate('hard')}>Hard</button>
         <button on:click|stopPropagation={() => rate('got')}>Got it</button>
@@ -101,6 +125,7 @@
   .tts{margin-left:8px;border:0;background:transparent;cursor:pointer;font-size:1.1rem}
   .tts[disabled]{opacity:0.4;cursor:default}
   .english{font-size:1.1rem;margin-top:8px}
+  .front-english .english-front{font-size:1.6rem;font-weight:400}
   .buttons{display:flex;gap:8px;margin-top:12px}
   button{padding:8px 12px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer}
 </style>

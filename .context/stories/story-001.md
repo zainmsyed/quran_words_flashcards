@@ -73,6 +73,14 @@ Notes / verification:
 - Pronunciation: Web Speech integration in src/core/tts-adapter.ts with fallback transliteration; Card.svelte exposes play/stop controls.
 - UI: cards display Arabic (RTL), English gloss, and an example verse; StudySession walks through a small deck and persists ratings.
 
+Learnings
+- Font and data are separate concerns: applying a high-quality Arabic font (Amiri) improves shaping and ligature rendering, but diacritics (tashkeel) must be present in the text to see full punctuation — we needed to use the diacritized forms from the intake CSV to get the visual quality we wanted.
+- Browser TTS is inconsistent across platforms (Linux desktops often lack good Arabic voices). A robust production UX requires either native platform TTS (Android) or pre-generated audio files (build-time). The Web Speech API is useful as a runtime fallback but not a production guarantee.
+- Transliteration matters: some transliteration strings in the CSV contained non-ASCII characters or unexpected glyphs (accidental Cyrillic letters). Normalizing transliteration to a simple ASCII form produces more predictable browser-TTS fallbacks.
+- Practical POC choices: pre-generating audio (we added a gTTS POC for the first 10 words) is the fastest way to guarantee consistent audio across browsers and on Android; Google Cloud WaveNet gives higher quality at low cost and should be used for production generation.
+- UX: add a voice picker so the user can choose a preferred browser voice; persist that choice and use it when speaking transliterations or when falling back from missing audio files.
+- Data flow: we converted the intake CSV to a seed JSON for the app; in the long run the CSV should remain canonical and a build-time conversion step should produce the app JSON.
+
 Next steps (recommended):
 - Mark story-004 (scaffold) as completed or reconcile its status with the existing scaffold files.
 - Proceed to story-002 to implement/reinforce study flow features (session size limits, due review selection, stats view, CSV → build-time JSON conversion).
