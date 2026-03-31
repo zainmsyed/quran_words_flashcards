@@ -199,7 +199,7 @@
     gap:1.25rem;
     height:100%;
   }
-  .back-core{justify-content:space-between}
+  .back-core{justify-content:flex-start;height:100%}
   .card-mode-label{
     font-size:11px;
     letter-spacing:0.18em;
@@ -236,6 +236,15 @@
     line-height:1.2;
     font-family:'Manrope', sans-serif;
   }
+  /* keep the meaning centered on the back face while keeping buttons pinned to the bottom */
+  .card-face.back .english-text{
+    margin-top:auto;
+    margin-bottom:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0 0.5rem;
+  }
   .audio-row{display:flex;align-items:center;justify-content:center;margin-top:10px}
   .audio-btn{
     background:var(--surface-container-low);
@@ -250,7 +259,7 @@
     transition:opacity 0.15s, transform 0.15s;
   }
   .audio-btn:hover{opacity:0.85;transform:translateY(-1px)}
-  .buttons{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px;width:100%;margin-top:18px}
+  .buttons{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px;width:100%;margin-top:auto}
   .buttons button{
     padding:0.9rem 0.75rem;
     border-radius:999px;
