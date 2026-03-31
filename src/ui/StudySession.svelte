@@ -6,8 +6,10 @@
   import { loadSeedWords, Word } from '../core/wordlist';
   import { browserStorage } from '../core/storage-adapter';
   import { initialCardState, applyRatingToCard, normalizeCardState, CardState } from '../core/srs';
+  import { initialAppStats, normalizeAppStats, recordStudy, AppStats } from '../core/app-stats';
 
   const STATES_KEY = 'qfc2_states';
+  const STATS_KEY = 'qfc2_stats';
   const SESSION_KEY = 'qfc2_session';
   const NEW_PER_SESSION = 10;
   const REVIEW_PER_SESSION = 5;
@@ -19,6 +21,7 @@
   let sessionItems: SessionItem[] = [];
   let currentIndex = 0;
   let states: Record<string, CardState> = {};
+  let appStats: AppStats = initialAppStats();
   let loading = true;
   let sessionNewCount = 0;
   let sessionReviewCount = 0;
@@ -31,6 +34,10 @@
     return out;
   }
 
+  function normalizeStats(input: AppStats | null | undefined) {
+    return normalizeAppStats(input || undefined);
+  }
+
   function makeWordMap(list: Word[]) {
     return new Map(list.map((word) => [word.id, word] as const));
   }
@@ -41,6 +48,10 @@
       index,
       createdAt: new Date().toISOString(),
     });
+  }
+
+  async function persistStats() {
+    await browserStorage.setItem(STATS_KEY, appStats);
   }
 
   async function buildSession(savedSession?: { queue: SessionItem[]; index?: number; createdAt?: string }) {
@@ -93,6 +104,9 @@
     const savedStates = await browserStorage.getItem<Record<string, CardState>>(STATES_KEY);
     states = normalizeStates(savedStates);
 
+    const savedStats = await browserStorage.getItem<AppStats>(STATS_KEY);
+    appStats = normalizeStats(savedStats);
+
     const savedSession = await browserStorage.getItem<{ queue: SessionItem[]; index: number; createdAt?: string }>(SESSION_KEY);
     await buildSession(savedSession || undefined);
 
@@ -114,7 +128,9 @@
     const prev = getStateFor(word.id);
     const updated = applyRatingToCard(prev, rating);
     states[word.id] = updated;
+    appStats = recordStudy(appStats, rating);
     await saveStates();
+    await persistStats();
 
     // If the user marked HARD, re-queue this card near the end of the session
     if (rating === 'hard') {
@@ -149,6 +165,18 @@
     {:else}
       <div class="card session-card">
         <div class="session-topline">
+          <div class="session-controls">
+            <button on:click={async () => { 
+              if (currentIndex >= deck.length && deck.length > 0) {
+                // if session was complete, step back to last card
+                currentIndex = deck.length - 1;
+              } else if (currentIndex > 0) {
+                currentIndex -= 1;
+              }
+              await persistSession();
+            }} disabled={deck.length === 0 || currentIndex === 0} aria-label="Previous card">Back</button>
+          </div>
+
           <div class="session-progress">Card {currentIndex + 1} of {deck.length}</div>
           <div class="session-counts">{sessionNewCount} new · {sessionReviewCount} review</div>
         </div>
@@ -157,7 +185,7 @@
       </div>
     {/if}
 
-    <Stats words={words} states={states} />
+    <Stats words={words} states={states} appStats={appStats} />
     <WordList words={words} states={states} />
   </div>
 {/if}
@@ -166,6 +194,8 @@
   .session-stack{display:grid;gap:16px}
   .session-card{margin-top:12px}
   .session-topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px}
+  .session-controls{margin-right:8px}
   .session-progress,.session-counts{font-size:0.9rem;color:#666}
+  .session-controls button{padding:6px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer;margin-right:6px}
   button{padding:8px 12px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer}
 </style>

@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { Word } from '../core/wordlist';
   import type { CardState } from '../core/srs';
+  import type { AppStats } from '../core/app-stats';
 
   export let words: Word[] = [];
   export let states: Record<string, CardState> = {};
+  export let appStats: AppStats = { studied: 0, easy: 0, streak: 0, lastStudyDate: undefined };
 
   const MASTERED_INTERVAL = 3;
 
@@ -16,15 +18,15 @@
     return { word, state, interval, mastered, due };
   });
   $: studiedEntries = entries.filter((entry) => (entry.state?.reviewCount ?? 0) > 0);
-  $: studiedCount = studiedEntries.length;
+  $: studiedCount = appStats.studied;
   $: masteredCount = entries.filter((entry) => entry.mastered).length;
   $: dueCount = entries.filter((entry) => entry.due).length;
   $: newCount = entries.filter((entry) => !entry.state || entry.state.interval === 0).length;
   $: reviewCount = studiedEntries.reduce((sum, entry) => sum + (entry.state?.reviewCount ?? 0), 0);
-  $: easyCount = studiedEntries.reduce((sum, entry) => sum + (entry.state?.easyCount ?? 0), 0);
-  $: accuracy = reviewCount > 0 ? Math.round((easyCount / reviewCount) * 100) : 0;
-  $: avgEase = studiedCount > 0
-    ? (studiedEntries.reduce((sum, entry) => sum + (entry.state?.ease ?? 0), 0) / studiedCount).toFixed(2)
+  $: easyCount = appStats.easy;
+  $: accuracy = studiedCount > 0 ? Math.round((easyCount / studiedCount) * 100) : 0;
+  $: avgEase = studiedEntries.length > 0
+    ? (studiedEntries.reduce((sum, entry) => sum + (entry.state?.ease ?? 0), 0) / studiedEntries.length).toFixed(2)
     : '0.00';
   $: recent = studiedEntries
     .filter((entry) => Boolean(entry.state?.lastReviewedAt))
@@ -56,8 +58,8 @@
       <div class="stat-label">mastered</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num">{dueCount}</div>
-      <div class="stat-label">due now</div>
+      <div class="stat-num">{appStats.streak}</div>
+      <div class="stat-label">day streak</div>
     </div>
     <div class="stat-card">
       <div class="stat-num">{accuracy}%</div>
@@ -66,6 +68,10 @@
   </div>
 
   <div class="secondary-grid">
+    <div class="secondary-card">
+      <div class="secondary-value">{dueCount}</div>
+      <div class="secondary-label">due now</div>
+    </div>
     <div class="secondary-card">
       <div class="secondary-value">{newCount}</div>
       <div class="secondary-label">new words remaining</div>
@@ -109,7 +115,7 @@
   .stat-card{padding:12px;border-radius:10px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center}
   .stat-num{font-size:1.6rem;font-weight:700}
   .stat-label{font-size:0.82rem;color:#64748b;margin-top:2px}
-  .secondary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+  .secondary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
   .secondary-card{padding:10px 12px;border-radius:10px;background:#fbfdff;border:1px solid #e2e8f0}
   .secondary-value{font-size:1.15rem;font-weight:700}
   .secondary-label{font-size:0.82rem;color:#64748b;margin-top:2px}
@@ -129,7 +135,7 @@
   small{color:#64748b}
   @media (max-width: 640px){
     .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-    .secondary-grid{grid-template-columns:1fr;}
+    .secondary-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
     .recent-row{flex-direction:column;}
     .recent-meta{align-items:flex-start;}
   }
