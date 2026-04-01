@@ -23,11 +23,15 @@
   $: dueCount = entries.filter((entry) => entry.due).length;
   $: streak = appStats.streak ?? 0;
 
-  $: recent = studiedEntries
-    .filter((entry) => Boolean(entry.state?.lastReviewedAt))
-    .slice()
-    .sort((a, b) => new Date(b.state?.lastReviewedAt || 0).getTime() - new Date(a.state?.lastReviewedAt || 0).getTime())
-    .slice(0, 6);
+  let selectedFilter: 'none' | 'studied' | 'mastered' | 'due' = 'none';
+  $: filteredEntries = selectedFilter === 'studied'
+    ? studiedEntries
+    : (selectedFilter === 'mastered'
+      ? entries.filter((e) => e.mastered)
+      : (selectedFilter === 'due' ? entries.filter((e) => e.due) : []));
+  function toggleFilter(f: 'studied' | 'mastered' | 'due') {
+    selectedFilter = selectedFilter === f ? 'none' : f;
+  }
 
   function statLabel(entry: (typeof entries)[number]): string {
     if (!entry.state || entry.state.interval === 0) return 'New';
@@ -44,43 +48,47 @@
   </div>
 
   <div class="stats-grid">
-    <div class="stat-card">
+    <div class="stat-card clickable" role="button" tabindex="0" on:click={() => toggleFilter('studied')} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFilter('studied'); } }} aria-pressed={selectedFilter === 'studied'}>
       <div class="stat-num">{studiedCount}</div>
       <div class="stat-label">studied</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card clickable" role="button" tabindex="0" on:click={() => toggleFilter('mastered')} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFilter('mastered'); } }} aria-pressed={selectedFilter === 'mastered'}>
       <div class="stat-num">{masteredCount}</div>
       <div class="stat-label">mastered</div>
+    </div>
+    <div class="stat-card clickable" role="button" tabindex="0" on:click={() => toggleFilter('due')} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFilter('due'); } }} aria-pressed={selectedFilter === 'due'}>
+      <div class="stat-num">{dueCount}</div>
+      <div class="stat-label">due today</div>
     </div>
     <div class="stat-card">
       <div class="stat-num">{streak}</div>
       <div class="stat-label">day streak</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-num">{dueCount}</div>
-      <div class="stat-label">due today</div>
-    </div>
-  </div>
+  </div> 
 
-  <div class="recent-list">
-    <div class="section-title">Recent progress</div>
-    {#if recent.length === 0}
-      <p class="empty">No study history yet — start rating cards to see progress here.</p>
-    {:else}
-      {#each recent as entry}
-        <div class="recent-row">
-          <div class="recent-main">
-            <div class="ar">{entry.word.arabic}</div>
-            <div class="en">{entry.word.english}</div>
+  {#if selectedFilter !== 'none'}
+    <div class="recent-list">
+      <div class="section-title">
+        {selectedFilter === 'studied' ? `Studied words (${filteredEntries.length})` : (selectedFilter === 'mastered' ? `Mastered words (${filteredEntries.length})` : `Due today (${filteredEntries.length})`)}
+      </div>
+      {#if filteredEntries.length === 0}
+        <p class="empty">{selectedFilter === 'due' ? 'No due words today.' : `No ${selectedFilter} words yet.`}</p>
+      {:else}
+        {#each filteredEntries as entry}
+          <div class="recent-row">
+            <div class="recent-main">
+              <div class="ar">{entry.word.arabic}</div>
+              <div class="en">{entry.word.english}</div>
+            </div>
+            <div class="recent-meta">
+              <span class="badge badge-{statLabel(entry).toLowerCase()}">{statLabel(entry)}</span>
+              <small>{entry.state?.lastRating}</small>
+            </div>
           </div>
-          <div class="recent-meta">
-            <span class="badge badge-{statLabel(entry).toLowerCase()}">{statLabel(entry)}</span>
-            <small>{entry.state?.lastRating}</small>
-          </div>
-        </div>
-      {/each}
-    {/if}
-  </div>
+        {/each}
+      {/if}
+    </div>
+  {/if}
 </section>
 
 <style>
@@ -89,6 +97,9 @@
   .panel-heading p{margin:0 0 12px 0;color:var(--text-secondary);font-size:0.9rem}
   .stats-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
   .stat-card{padding:16px;border-radius:10px;background:var(--bg-secondary);border:0.5px solid var(--border);text-align:center;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .stat-card.clickable{cursor:pointer;transition:transform 0.12s, box-shadow 0.12s}
+  .stat-card.clickable:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(2,6,23,0.06)}
+  .stat-card[aria-pressed="true"]{border-color:var(--primary);box-shadow:0 10px 30px rgba(0,109,75,0.08)}
   .stat-num{font-size:28px;font-weight:800;color:var(--text)}
   .stat-label{font-size:0.95rem;color:var(--text-secondary);margin-top:6px}
   .secondary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
