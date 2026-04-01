@@ -41,28 +41,157 @@
   }
 </script>
 
-<section class="panel settings-panel">
-  <div class="topbar" style="margin-bottom: 1rem;">
-    <h1>Settings</h1>
-    <button class="action-btn" on:click={close} aria-label="Close settings">Back</button>
-  </div>
+<section class="settings-shell">
+  <header class="settings-head">
+    <button class="nav-btn" type="button" on:click={close} aria-label="Return to study">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
 
-  <div class="settings-layout">
-    <nav class="settings-nav">
-      <button class="action-btn" class:active={tab === 'stats'} on:click={() => tab = 'stats'}>Stats</button>
-      <button class="action-btn" class:active={tab === 'voice'} on:click={() => tab = 'voice'}>Audio / Voice</button>
-    </nav>
-
-    <div class="settings-main">
-      {#if loading}
-        <p>Loading…</p>
-      {:else}
-        {#if tab === 'stats'}
-          <Stats {words} {states} appStats={appStats} />
-        {:else}
-          <VoiceSettings />
-        {/if}
-      {/if}
+    <div class="settings-copy">
+      <div class="eyebrow">Preferences</div>
+      <h1>Settings</h1>
     </div>
+  </header>
+
+  <nav class="settings-tabs" aria-label="Settings sections">
+    <button type="button" class="settings-tab" class:active={tab === 'stats'} on:click={() => tab = 'stats'}>Stats</button>
+    <button type="button" class="settings-tab" class:active={tab === 'voice'} on:click={() => tab = 'voice'}>Audio / Voice</button>
+  </nav>
+
+  <div class="settings-content">
+    {#if loading}
+      <div class="settings-loading">Loading…</div>
+    {:else}
+      {#if tab === 'stats'}
+        <Stats {words} {states} appStats={appStats} />
+      {:else}
+        <VoiceSettings />
+      {/if}
+    {/if}
   </div>
 </section>
+
+<style>
+  .settings-shell {
+    --session-gutter: clamp(1.25rem, 3.5vw, 2.5rem);
+    width: min(100%, calc(100vw - 1.5rem));
+    min-height: calc(100vh - 1.5rem);
+    margin: 0 auto;
+    padding: 1rem 0 1.1rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 253, 251, 0.96));
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+  }
+
+  .settings-head {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding-inline: var(--session-gutter);
+  }
+
+  .nav-btn {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(213, 247, 236, 0.98);
+    color: #12805b;
+    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.06);
+  }
+
+  .nav-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .settings-copy {
+    min-width: 0;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.2rem;
+  }
+
+  .settings-copy h1 {
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(1.55rem, 3.4vw, 2.15rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--text);
+  }
+
+  .settings-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding-inline: var(--session-gutter);
+    margin-top: 1rem;
+  }
+
+  .settings-tab {
+    appearance: none;
+    width: 100%;
+    min-height: 54px;
+    padding: 0.9rem 1rem;
+    border-radius: 999px;
+    border: 0.5px solid rgba(173, 179, 181, 0.14);
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: 0 10px 20px rgba(0, 109, 75, 0.05);
+  }
+
+  .settings-tab.active {
+    background: var(--primary-container);
+    color: var(--primary);
+    border-color: rgba(0, 109, 75, 0.12);
+    box-shadow: 0 12px 24px rgba(0, 109, 75, 0.08);
+  }
+
+  .settings-content {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    margin-top: 1rem;
+    padding-inline: var(--session-gutter);
+  }
+
+  .settings-loading {
+    padding: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 720px) {
+    .settings-shell {
+      width: min(100%, calc(100vw - 1rem));
+      min-height: calc(100vh - 1rem);
+      padding: 0.95rem 0 1rem;
+      border-radius: 20px;
+    }
+
+    .settings-tabs {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

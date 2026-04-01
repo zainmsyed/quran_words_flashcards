@@ -183,7 +183,7 @@
     <header class="session-header">
       <button class="nav-btn" type="button" on:click={openSettings} aria-label="Open settings">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
     </header>

@@ -36,56 +36,160 @@
 
   async function playSample() {
     if (!supported) return;
-    // sample Arabic phrase and its transliteration fallback will be used if needed
     try {
       if (selected) await speak('بِسْمِ اللَّهِ الرَّحْمَٰنِ', { voice: selected, lang: 'ar-SA', rate: 0.9, fallbackLang: 'en-US' });
       else await speak('بِسْمِ اللَّهِ الرَّحْمَٰنِ', { lang: 'ar-SA', rate: 0.9, fallbackLang: 'en-US' });
-    } catch (e) { console.warn(e); }
+    } catch (e) {
+      console.warn(e);
+    }
   }
 </script>
 
-<div class="voice-settings">
-  <h3>Voice settings</h3>
+<section class="settings-card voice-settings">
+  <div class="panel-heading">
+    <div class="eyebrow">Audio / Voice</div>
+    <h2>Pronunciation</h2>
+    <p>Pick a browser voice or let the app choose automatically.</p>
+  </div>
+
   {#if !supported}
-    <p>Your browser does not support the Web Speech API.</p>
+    <p class="voice-note">Your browser does not support the Web Speech API.</p>
   {:else}
-    <div style="margin-bottom:8px">
-      <button on:click={refresh} disabled={loading}>Refresh voices</button>
-      <button on:click={playSample} style="margin-left:8px">Play sample</button>
+    <div class="voice-actions">
+      <button class="action-btn" type="button" on:click={refresh} disabled={loading}>Refresh voices</button>
+      <button class="action-btn primary" type="button" on:click={playSample}>Play sample</button>
+      <button class="action-btn" type="button" on:click={save}>Save preference</button>
     </div>
 
     {#if loading}
-      <div>Loading available voices…</div>
+      <div class="voice-note">Loading available voices…</div>
     {:else}
       {#if voices.length === 0}
-        <div>No voices detected. Try refreshing or restarting your browser.</div>
+        <div class="voice-note">No voices detected. Try refreshing or restarting your browser.</div>
       {:else}
         <div class="voice-list">
-          <label>
+          <label class="voice-item">
             <input type="radio" bind:group={selected} value={null}>
-            Auto (let the app pick the best voice)
+            <div>
+              <strong>Auto</strong>
+              <span>Let the app pick the best voice</span>
+            </div>
           </label>
           {#each voices as v}
-            <label>
+            <label class="voice-item">
               <input type="radio" bind:group={selected} value={v.name}>
-              {v.name} — <small>{v.lang}{v.default ? ' • default' : ''}</small>
+              <div>
+                <strong>{v.name}</strong>
+                <span>{v.lang}{v.default ? ' • default' : ''}</span>
+              </div>
             </label>
           {/each}
-        </div>
-        <div style="margin-top:8px">
-          <button on:click={save}>Save preference</button>
         </div>
       {/if}
     {/if}
   {/if}
-</div>
+</section>
 
 <style>
-  /* Use app panel styling and tokens; keep internal spacing only */
-  .voice-settings{padding:12px}
-  .voice-list label{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;color:var(--text);}
-  .voice-list label:hover{background:var(--bg-secondary)}
-  .voice-list small{color:var(--text-secondary);margin-left:6px}
-  label{display:block;margin:6px 0;color:var(--text)}
-  button{padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg)}
+  .settings-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(249,252,250,0.98));
+    border-radius: 24px;
+    border: 0.5px solid rgba(173, 179, 181, 0.15);
+    box-shadow: 0 16px 32px rgba(0, 109, 75, 0.07);
+    padding: 1.4rem;
+  }
+
+  .panel-heading {
+    margin-bottom: 1.15rem;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.35rem;
+  }
+
+  .panel-heading h2 {
+    margin: 0 0 0.35rem 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--text);
+  }
+
+  .panel-heading p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .voice-note {
+    padding: 1rem 1.05rem;
+    border-radius: 20px;
+    background: rgba(241, 244, 245, 0.8);
+    border: 0.5px solid rgba(173, 179, 181, 0.14);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .voice-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .voice-actions .action-btn {
+    min-height: 56px;
+    width: 100%;
+  }
+
+  .voice-list {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .voice-item {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1.05rem;
+    border-radius: 22px;
+    border: 0.5px solid rgba(173, 179, 181, 0.14);
+    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(248,251,249,0.98));
+    box-shadow: 0 10px 18px rgba(0, 109, 75, 0.04);
+    cursor: pointer;
+  }
+
+  .voice-item:hover {
+    border-color: rgba(0, 109, 75, 0.16);
+    box-shadow: 0 10px 20px rgba(0, 109, 75, 0.06);
+  }
+
+  .voice-item input {
+    margin: 0;
+    accent-color: var(--primary);
+    flex: 0 0 auto;
+  }
+
+  .voice-item strong {
+    display: block;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .voice-item span {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.4;
+    margin-top: 0.15rem;
+  }
 </style>

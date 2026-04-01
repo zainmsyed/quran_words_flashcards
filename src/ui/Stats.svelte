@@ -29,6 +29,7 @@
     : (selectedFilter === 'mastered'
       ? entries.filter((e) => e.mastered)
       : (selectedFilter === 'due' ? entries.filter((e) => e.due) : []));
+
   function toggleFilter(f: 'studied' | 'mastered' | 'due') {
     selectedFilter = selectedFilter === f ? 'none' : f;
   }
@@ -41,30 +42,34 @@
   }
 </script>
 
-<section class="panel stats-panel">
+<section class="settings-card stats-panel">
   <div class="panel-heading">
-    <h2>Progress</h2>
+    <div class="eyebrow">Progress</div>
+    <h2>Study overview</h2>
     <p>Based on your saved card state.</p>
   </div>
 
   <div class="stats-grid">
-    <div class="stat-card clickable" role="button" tabindex="0" on:click={() => toggleFilter('studied')} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFilter('studied'); } }} aria-pressed={selectedFilter === 'studied'}>
+    <button class="stat-card clickable" type="button" on:click={() => toggleFilter('studied')} aria-pressed={selectedFilter === 'studied'}>
       <div class="stat-num">{studiedCount}</div>
       <div class="stat-label">studied</div>
-    </div>
-    <div class="stat-card clickable" role="button" tabindex="0" on:click={() => toggleFilter('mastered')} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFilter('mastered'); } }} aria-pressed={selectedFilter === 'mastered'}>
+    </button>
+
+    <button class="stat-card clickable" type="button" on:click={() => toggleFilter('mastered')} aria-pressed={selectedFilter === 'mastered'}>
       <div class="stat-num">{masteredCount}</div>
       <div class="stat-label">mastered</div>
-    </div>
-    <div class="stat-card clickable" role="button" tabindex="0" on:click={() => toggleFilter('due')} on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFilter('due'); } }} aria-pressed={selectedFilter === 'due'}>
+    </button>
+
+    <button class="stat-card clickable" type="button" on:click={() => toggleFilter('due')} aria-pressed={selectedFilter === 'due'}>
       <div class="stat-num">{dueCount}</div>
       <div class="stat-label">due today</div>
-    </div>
+    </button>
+
     <div class="stat-card">
       <div class="stat-num">{streak}</div>
       <div class="stat-label">day streak</div>
     </div>
-  </div> 
+  </div>
 
   {#if selectedFilter !== 'none'}
     <div class="recent-list">
@@ -92,38 +97,190 @@
 </section>
 
 <style>
-  .panel{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;box-shadow:0 6px 18px rgba(2,6,23,0.05)}
-  .panel-heading h2{margin:0 0 4px 0;font-size:1.1rem}
-  .panel-heading p{margin:0 0 12px 0;color:var(--text-secondary);font-size:0.9rem}
-  .stats-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
-  .stat-card{padding:16px;border-radius:10px;background:var(--bg-secondary);border:0.5px solid var(--border);text-align:center;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .stat-card.clickable{cursor:pointer;transition:transform 0.12s, box-shadow 0.12s}
-  .stat-card.clickable:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(2,6,23,0.06)}
-  .stat-card[aria-pressed="true"]{border-color:var(--primary);box-shadow:0 10px 30px rgba(0,109,75,0.08)}
-  .stat-num{font-size:28px;font-weight:800;color:var(--text)}
-  .stat-label{font-size:0.95rem;color:var(--text-secondary);margin-top:6px}
-  .secondary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
-  .secondary-card{padding:10px 12px;border-radius:10px;background:var(--bg-secondary);border:0.5px solid var(--border)}
-  .secondary-value{font-size:1.15rem;font-weight:700;color:var(--text)}
-  .secondary-label{font-size:0.82rem;color:var(--text-secondary);margin-top:2px}
-  .recent-list{margin-top:14px}
-  .section-title{font-weight:600;margin-bottom:8px}
-  .recent-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:0.5px solid var(--border)}
-  .recent-main{min-width:0}
-  .ar{font-family:'Amiri', serif;direction:rtl;font-size:1.15rem}
-  .en{font-size:0.9rem;color:var(--text-secondary)}
-  .recent-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;white-space:nowrap}
-  .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:0.72rem;font-weight:700;background:#e2e8f0;color:#334155}
-  .badge-mastered{background:#dcfce7;color:#166534}
-  .badge-learning{background:#fef3c7;color:#92400e}
-  .badge-due{background:#fee2e2;color:#991b1b}
-  .badge-new{background:#dbeafe;color:#1d4ed8}
-  .empty{color:var(--text-secondary);font-size:0.92rem}
-  small{color:var(--text-secondary)}
-  @media (max-width: 640px){
-    .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-    .secondary-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-    .recent-row{flex-direction:column;}
-    .recent-meta{align-items:flex-start;}
+  .settings-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(249,252,250,0.98));
+    border-radius: 24px;
+    border: 0.5px solid rgba(173, 179, 181, 0.15);
+    box-shadow: 0 16px 32px rgba(0, 109, 75, 0.07);
+    padding: 1.4rem;
+  }
+
+  .panel-heading {
+    margin-bottom: 1.15rem;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.35rem;
+  }
+
+  .panel-heading h2 {
+    margin: 0 0 0.35rem 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--text);
+  }
+
+  .panel-heading p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .stat-card {
+    appearance: none;
+    border: 0.5px solid rgba(173, 179, 181, 0.14);
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(242,246,244,0.98));
+    min-height: 128px;
+    padding: 1.1rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 12px 22px rgba(0, 109, 75, 0.05);
+  }
+
+  .stat-card.clickable {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .stat-card.clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 24px rgba(0, 109, 75, 0.08);
+  }
+
+  .stat-card[aria-pressed='true'] {
+    border-color: rgba(0, 109, 75, 0.18);
+    background: linear-gradient(180deg, rgba(213,247,236,0.98), rgba(238,250,245,0.98));
+    box-shadow: 0 14px 28px rgba(0, 109, 75, 0.09);
+  }
+
+  .stat-num {
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(2.1rem, 4.6vw, 3rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--primary);
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.35rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .recent-list {
+    margin-top: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  .empty {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    padding: 0.5rem 0;
+  }
+
+  .recent-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.9rem;
+    padding: 1rem 1.05rem;
+    border-radius: 22px;
+    border: 0.5px solid rgba(173, 179, 181, 0.14);
+    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(248,251,249,0.98));
+    margin-bottom: 0.75rem;
+    box-shadow: 0 10px 18px rgba(0, 109, 75, 0.04);
+  }
+
+  .recent-main {
+    min-width: 0;
+  }
+
+  .ar {
+    font-family: 'Amiri', serif;
+    direction: rtl;
+    font-size: 1.55rem;
+    line-height: 1.1;
+    color: var(--primary);
+  }
+
+  .en {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 0.18rem;
+  }
+
+  .recent-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.38rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 900;
+    background: var(--primary-container);
+    color: var(--primary);
+    letter-spacing: 0.02em;
+  }
+
+  .badge-mastered { background: var(--success-bg); color: var(--success-text); }
+  .badge-learning { background: var(--warn-bg); color: var(--warn-text); }
+  .badge-due { background: var(--danger-bg); color: var(--danger-text); }
+  .badge-new { background: var(--info-bg); color: var(--info-text); }
+
+  small {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 720px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .recent-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .recent-meta {
+      align-items: flex-start;
+    }
   }
 </style>
