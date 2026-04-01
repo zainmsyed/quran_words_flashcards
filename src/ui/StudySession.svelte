@@ -41,6 +41,18 @@
     return new Map(list.map((word) => [word.id, word] as const));
   }
 
+  function toLocalDateKey(date: Date = new Date()): string {
+    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+    return local.toISOString().slice(0, 10);
+  }
+
+  function isSameLocalDay(isoDate?: string) {
+    if (!isoDate) return false;
+    const parsed = new Date(isoDate);
+    if (Number.isNaN(parsed.getTime())) return false;
+    return toLocalDateKey(parsed) === toLocalDateKey();
+  }
+
   async function persistSession(index = currentIndex, queue = sessionItems) {
     await browserStorage.setItem(SESSION_KEY, {
       queue,
@@ -56,11 +68,11 @@
   async function buildSession(savedSession?: { queue: SessionItem[]; index?: number; createdAt?: string }) {
     const wordMap = makeWordMap(words);
 
-    if (savedSession && Array.isArray(savedSession.queue) && savedSession.index != null && savedSession.index < savedSession.queue.length) {
+    if (savedSession && Array.isArray(savedSession.queue) && savedSession.index != null) {
       sessionItems = savedSession.queue
         .filter((si) => wordMap.has(si.id))
         .map((si) => ({ id: si.id, mode: 'ar2en' }));
-      currentIndex = savedSession.index || 0;
+      currentIndex = Math.min(savedSession.index || 0, sessionItems.length);
 
       const itemStates = sessionItems.map((si) => states[si.id]).filter(Boolean);
       sessionNewCount = itemStates.filter((s) => s.interval === 0).length;
@@ -105,7 +117,13 @@
     appStats = normalizeStats(savedStats);
 
     const savedSession = await browserStorage.getItem<{ queue: SessionItem[]; index: number; createdAt?: string }>(SESSION_KEY);
-    await buildSession(savedSession || undefined);
+
+    if (savedSession && !isSameLocalDay(savedSession.createdAt)) {
+      await browserStorage.removeItem(SESSION_KEY);
+      await buildSession(undefined);
+    } else {
+      await buildSession(savedSession || undefined);
+    }
 
     loading = false;
   });
@@ -144,6 +162,12 @@
     await buildSession(undefined);
   }
 
+  async function retrySession() {
+    if (deck.length === 0) return;
+    currentIndex = 0;
+    await persistSession();
+  }
+
   async function goBack() {
     if (currentIndex >= deck.length && deck.length > 0) {
       currentIndex = deck.length - 1;
@@ -180,6 +204,7 @@
         <div class="big">🕌</div>
         <h3>Session complete</h3>
         <p>You studied {sessionNewCount} new words and reviewed {sessionReviewCount} due words.</p>
+        <button class="action-btn primary" on:click={retrySession}>Review again</button>
       </div>
     {:else}
       <div class="session-card">
