@@ -186,7 +186,6 @@
           <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
-      <div class="session-title">SESSION: QURANIC WORDS</div>
     </header>
 
     <div class="session-main">
@@ -296,19 +295,6 @@
   .nav-btn svg {
     width: 18px;
     height: 18px;
-  }
-
-  .session-title {
-    flex: 1;
-    min-width: 0;
-    font-size: 18px;
-    font-weight: 900;
-    letter-spacing: 0.42em;
-    text-transform: uppercase;
-    color: #cfeee4;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .session-main {
