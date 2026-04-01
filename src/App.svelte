@@ -11,7 +11,6 @@
       <div class="brand-mark">📖</div>
       <div class="brand-copy">
         <p>Quranic Arabic</p>
-        <h1>Al-Madrassa</h1>
       </div>
     </div>
     <button class="action-btn tertiary" aria-label="Toggle settings" on:click={() => currentPage = currentPage === 'settings' ? 'study' : 'settings'}>
