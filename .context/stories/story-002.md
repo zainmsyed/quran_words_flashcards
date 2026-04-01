@@ -32,6 +32,11 @@ Developer test: from the project root run `npm install` and `npm run dev`, open 
 - Server-side code or user accounts
 - Full 300-word import tuning (v2)
 
+## Dependencies
+- None
+
+---
+
 ## Checklist
 - [x] Implement core domain modules: SRS, wordlist loader, storage adapter
 - [x] Create Svelte components for card, study session, and rating buttons

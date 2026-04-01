@@ -8,3 +8,4 @@
 - Never mark a story complete or update story status to completed unless the user has given explicit permission in the current conversation.
 
 ## Learned Rules
+- No learned rules promoted during consolidation (no complaints present)
