@@ -315,8 +315,8 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
   border: 0.5px solid rgba(173, 179, 181, 0.14);
   background: var(--card);
   color: var(--text);
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 900;
   text-align: center;
   box-shadow: var(--shadow-primary);
 }

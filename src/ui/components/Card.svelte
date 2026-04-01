@@ -1,10 +1,18 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import type { Word } from '../../core/wordlist';
+  import { speak, stop, isSupported } from '../../core/tts-adapter';
 
   export let word: Word;
   export let mode: 'ar2en' | 'en2ar' = 'ar2en';
 
   let flipped = false;
+  let speaking = false;
+  let ttsAvailable = false;
+
+  onMount(() => {
+    ttsAvailable = isSupported();
+  });
 
   function flip() {
     flipped = !flipped;
@@ -15,6 +23,22 @@
       event.preventDefault();
       flip();
     }
+  }
+
+  async function handleTtsClick(e?: MouseEvent) {
+    if (!ttsAvailable || !word?.arabic) return;
+    if (speaking) {
+      try { stop(); } catch (err) {}
+      speaking = false;
+      return;
+    }
+    speaking = true;
+    try {
+      await speak(word.arabic, { lang: 'ar-SA', rate: 0.9, transliteration: word.transliteration, fallbackLang: 'en-US' });
+    } catch (e) {
+      // ignore
+    }
+    speaking = false;
   }
 </script>
 
@@ -31,6 +55,14 @@
     <div class="card-face front">
       {#if mode === 'ar2en'}
         <div class="card-core front-core">
+          <button class="audio-btn" type="button" aria-pressed={speaking} aria-label={speaking ? 'Stop pronunciation' : 'Pronounce Arabic'} on:click|stopPropagation={handleTtsClick} disabled={!ttsAvailable}>
+            {#if speaking}
+              <svg class="audio-icon stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
+            {:else}
+              <svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.75V13.25H8L12.5 17.75V6.25L8 10.75H4Z" fill="currentColor"/><path d="M15.25 8.75C16.36 9.86 16.36 14.14 15.25 15.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17.75 6.25C19.61 8.11 19.61 15.89 17.75 17.75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            {/if}
+          </button>
+
           <div class="card-mode-label">arabic → english</div>
           <div class="center-zone">
             <div class="arabic-text">{word.arabic}</div>
@@ -60,6 +92,14 @@
     <div class="card-face back">
       {#if mode === 'ar2en'}
         <div class="card-core back-core">
+          <button class="audio-btn" type="button" aria-pressed={speaking} aria-label={speaking ? 'Stop pronunciation' : 'Pronounce Arabic'} on:click|stopPropagation={handleTtsClick} disabled={!ttsAvailable}>
+            {#if speaking}
+              <svg class="audio-icon stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
+            {:else}
+              <svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.75V13.25H8L12.5 17.75V6.25L8 10.75H4Z" fill="currentColor"/><path d="M15.25 8.75C16.36 9.86 16.36 14.14 15.25 15.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17.75 6.25C19.61 8.11 19.61 15.89 17.75 17.75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            {/if}
+          </button>
+
           <div class="card-mode-label">meaning</div>
           <div class="english-text">{word.english}</div>
           {#if word.transliteration}
@@ -124,6 +164,37 @@
     pointer-events: none;
   }
 
+  .audio-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 46px;
+    height: 46px;
+    border-radius: 999px;
+    border: 0;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    background: rgba(213, 247, 236, 0.98);
+    color: #12805b;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.06);
+  }
+
+  .audio-btn[disabled] { opacity: 0.45; cursor: default; }
+
+  .audio-icon {
+    width: 22px;
+    height: 22px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .audio-icon.stop {
+    width: 18px;
+    height: 18px;
+  }
+
   .card-face.front {
     z-index: 2;
     background:
@@ -160,12 +231,12 @@
   }
 
   .card-mode-label {
-    font-size: 11px;
+    font-size: 16px;
     line-height: 1;
-    letter-spacing: 0.34em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #c8ddd6;
-    font-weight: 800;
+    font-weight: 900;
   }
 
   .center-zone {
@@ -177,6 +248,8 @@
     flex-direction: column;
     gap: 0.65rem;
     min-height: 0;
+    /* allow absolute-positioning of hints/transliteration without affecting Arabic centering */
+    position: relative;
   }
 
   .arabic-text {
@@ -193,30 +266,45 @@
   }
 
   .english-text {
-    font-size: clamp(24px, 6vw, 34px);
+    font-size: clamp(30px, 8vw, 48px);
     line-height: 1.15;
-    font-weight: 600;
-    color: #66a896;
+    font-weight: 900;
+    color: #3b8b71;
     font-family: 'Manrope', sans-serif;
     font-style: italic;
   }
 
   .transliteration {
-    font-size: 14px;
-    color: #b7cfc7;
+    font-size: 18px;
+    color: #8fb39f;
     font-style: italic;
     line-height: 1.2;
+    font-weight: 800;
+  }
+
+  /* move the transliteration in the front face down without affecting the Arabic vertical centering */
+  .card-face.front .center-zone .transliteration {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 44px; /* tuned so it sits above the flip hint */
+  }
+
+  @media (max-width: 520px) {
+    .card-face.front .center-zone .transliteration {
+      bottom: 34px;
+    }
   }
 
   .flip-hint {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 10px;
-    letter-spacing: 0.24em;
+    font-size: 14px;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #d2ddd8;
-    font-weight: 800;
+    color: #93bfb1;
+    font-weight: 900;
     padding-top: 0.2rem;
   }
 

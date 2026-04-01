@@ -236,8 +236,6 @@
         </div>
       {/if}
     </div>
-
-    <footer class="session-footer">QURANIC ARABIC | MINIMAL MODE</footer>
   </div>
 {/if}
 
@@ -303,8 +301,8 @@
   .session-title {
     flex: 1;
     min-width: 0;
-    font-size: 11px;
-    font-weight: 800;
+    font-size: 18px;
+    font-weight: 900;
     letter-spacing: 0.42em;
     text-transform: uppercase;
     color: #cfeee4;
@@ -325,13 +323,13 @@
     grid-column: 2;
     justify-self: center;
     margin-top: clamp(3.25rem, 14vh, 5.7rem);
-    padding: 0.42rem 0.95rem;
+    padding: 0.48rem 1rem;
     border-radius: 999px;
     background: rgba(213, 247, 236, 0.94);
     color: #1d8f69;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.32em;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     box-shadow: 0 8px 20px rgba(18, 120, 82, 0.08);
   }
@@ -369,9 +367,9 @@
     gap: 0.45rem;
     color: var(--primary);
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    font-size: 10px;
-    font-weight: 800;
+    letter-spacing: 0.12em;
+    font-size: 12px;
+    font-weight: 900;
   }
 
   .rating-btn:hover {
@@ -426,18 +424,8 @@
 
   .rating-label {
     line-height: 1;
-  }
-
-  .session-footer {
-    margin-top: auto;
-    padding-top: 1.2rem;
-    padding-inline: var(--session-gutter);
-    text-align: center;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 0.42em;
-    text-transform: uppercase;
-    color: rgba(175, 219, 202, 0.88);
   }
 
   .session-complete {
