@@ -18,7 +18,8 @@
     return { word, state, interval, mastered, due };
   });
   $: studiedEntries = entries.filter((entry) => (entry.state?.reviewCount ?? 0) > 0);
-  $: studiedCount = appStats.studied ?? studiedEntries.length;
+  // Prefer computed value from persisted card states to ensure accuracy
+  $: studiedCount = studiedEntries.length;
   $: masteredCount = entries.filter((entry) => entry.mastered).length;
   $: dueCount = entries.filter((entry) => entry.due).length;
   $: streak = appStats.streak ?? 0;
