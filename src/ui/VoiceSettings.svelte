@@ -11,6 +11,8 @@
   let loading = true;
   let supported = false;
   let selected: string | null = null;
+  let saveMessage = '';
+  let saveTone: 'success' | 'error' = 'success';
 
   async function refresh() {
     loading = true;
@@ -26,11 +28,18 @@
 
   async function save() {
     try {
-      if (selected) await browserStorage.setItem(STORAGE_VOICE_KEY, selected);
-      else await browserStorage.removeItem(STORAGE_VOICE_KEY);
-      alert('Saved voice preference.');
+      if (selected) {
+        await browserStorage.setItem(STORAGE_VOICE_KEY, selected);
+        saveMessage = 'Voice preference saved.';
+      } else {
+        await browserStorage.removeItem(STORAGE_VOICE_KEY);
+        saveMessage = 'Voice preference cleared. Auto selection will be used.';
+      }
+      saveTone = 'success';
     } catch (e) {
       console.warn('Save voice failed', e);
+      saveTone = 'error';
+      saveMessage = 'Could not save voice preference. Please try again.';
     }
   }
 
@@ -60,6 +69,10 @@
       <button class="action-btn primary" type="button" on:click={playSample}>Play sample</button>
       <button class="action-btn" type="button" on:click={save}>Save preference</button>
     </div>
+
+    {#if saveMessage}
+      <p class="save-feedback" data-tone={saveTone}>{saveMessage}</p>
+    {/if}
 
     {#if loading}
       <div class="voice-note">Loading available voices…</div>
@@ -147,6 +160,22 @@
   .voice-actions .action-btn {
     min-height: 56px;
     width: 100%;
+  }
+
+  .save-feedback {
+    margin: 0 0 1rem 0;
+    padding: 0.9rem 1rem;
+    border-radius: 18px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    font-weight: 700;
+    background: var(--success-bg);
+    color: var(--success-text);
+  }
+
+  .save-feedback[data-tone='error'] {
+    background: rgba(255, 240, 240, 0.95);
+    color: #b44848;
   }
 
   .voice-list {

@@ -2,6 +2,7 @@
   import { onMount, createEventDispatcher } from 'svelte';
   import Stats from './Stats.svelte';
   import VoiceSettings from './VoiceSettings.svelte';
+  import WordList from './WordList.svelte';
   import { loadSeedWords } from '../core/wordlist';
   import { browserStorage } from '../core/storage-adapter';
   import { normalizeCardState } from '../core/srs';
@@ -13,7 +14,7 @@
 
   const dispatch = createEventDispatcher();
 
-  let tab: 'stats' | 'voice' = 'stats';
+  let tab: 'stats' | 'voice' | 'words' = 'stats';
   let words: any[] = [];
   let states: Record<string, CardState> = {};
   let appStats: AppStats = { studied: 0, easy: 0, streak: 0, lastStudyDate: undefined };
@@ -41,7 +42,7 @@
   }
 </script>
 
-<section class="settings-shell">
+<section class="settings-panel settings-shell">
   <header class="settings-head">
     <button class="nav-btn" type="button" on:click={close} aria-label="Return to study">
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -49,15 +50,13 @@
       </svg>
     </button>
 
-    <div class="settings-copy">
-      <div class="eyebrow">Preferences</div>
-      <h1>Settings</h1>
-    </div>
+    <div class="settings-copy" aria-hidden="true"></div>
   </header>
 
   <nav class="settings-tabs" aria-label="Settings sections">
-    <button type="button" class="settings-tab" class:active={tab === 'stats'} on:click={() => tab = 'stats'}>Stats</button>
-    <button type="button" class="settings-tab" class:active={tab === 'voice'} on:click={() => tab = 'voice'}>Audio / Voice</button>
+    <button type="button" class="settings-tab" class:active={tab === 'stats'} aria-pressed={tab === 'stats'} on:click={() => tab = 'stats'}>Stats</button>
+    <button type="button" class="settings-tab" class:active={tab === 'voice'} aria-pressed={tab === 'voice'} on:click={() => tab = 'voice'}>Audio</button>
+    <button type="button" class="settings-tab" class:active={tab === 'words'} aria-pressed={tab === 'words'} on:click={() => tab = 'words'}>Words</button>
   </nav>
 
   <div class="settings-content">
@@ -66,8 +65,10 @@
     {:else}
       {#if tab === 'stats'}
         <Stats {words} {states} appStats={appStats} />
-      {:else}
+      {:else if tab === 'voice'}
         <VoiceSettings />
+      {:else}
+        <WordList {words} {states} />
       {/if}
     {/if}
   </div>
@@ -76,13 +77,10 @@
 <style>
   .settings-shell {
     --session-gutter: clamp(1.25rem, 3.5vw, 2.5rem);
-    width: min(100%, calc(100vw - 1.5rem));
-    min-height: calc(100vh - 1.5rem);
-    margin: 0 auto;
     padding: 1rem 0 1.1rem;
     display: flex;
     flex-direction: column;
-    border-radius: 22px;
+    border-radius: 0;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 253, 251, 0.96));
     border: 1px solid rgba(255, 255, 255, 0.72);
     box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
@@ -119,26 +117,9 @@
     min-width: 0;
   }
 
-  .eyebrow {
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--primary);
-    margin-bottom: 0.2rem;
-  }
-
-  .settings-copy h1 {
-    font-family: 'Manrope', sans-serif;
-    font-size: clamp(1.55rem, 3.4vw, 2.15rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
-    color: var(--text);
-  }
-
   .settings-tabs {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.75rem;
     padding-inline: var(--session-gutter);
     margin-top: 1rem;
@@ -184,14 +165,15 @@
 
   @media (max-width: 720px) {
     .settings-shell {
-      width: min(100%, calc(100vw - 1rem));
-      min-height: calc(100vh - 1rem);
       padding: 0.95rem 0 1rem;
       border-radius: 20px;
     }
 
-    .settings-tabs {
-      grid-template-columns: 1fr;
+    .settings-tab {
+      min-height: 50px;
+      padding-inline: 0.7rem;
+      font-size: 12px;
+      letter-spacing: 0.1em;
     }
   }
 </style>

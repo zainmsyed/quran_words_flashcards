@@ -27,6 +27,7 @@
   let sessionReviewCount = 0;
   let currentCardNumber = 0;
   let progressPercent = 0;
+  let ratingBusy = false;
 
   $: currentCardNumber = deck.length > 0 ? Math.min(currentIndex + 1, deck.length) : 0;
   $: progressPercent = deck.length > 0 ? Math.round((currentCardNumber / deck.length) * 100) : 0;
@@ -144,35 +145,75 @@
   }
 
   async function handleRate(rating: 'hard' | 'got' | 'easy') {
+    if (ratingBusy) return;
+
     const word = deck[currentIndex];
     if (!word) return;
-    const prev = getStateFor(word.id);
-    const updated = applyRatingToCard(prev, rating);
-    states[word.id] = updated;
-    appStats = recordStudy(appStats, rating);
-    await saveStates();
-    await persistStats();
 
-    if (rating === 'hard') {
-      const newItem: SessionItem = { id: word.id, mode: 'ar2en' };
-      sessionItems.push(newItem);
-      deck.push(word);
+    ratingBusy = true;
+    try {
+      const prev = getStateFor(word.id);
+      const updated = applyRatingToCard(prev, rating);
+      states[word.id] = updated;
+      appStats = recordStudy(appStats, rating);
+      await saveStates();
+      await persistStats();
+
+      if (rating === 'hard') {
+        const newItem: SessionItem = { id: word.id, mode: 'ar2en' };
+        sessionItems.push(newItem);
+        deck.push(word);
+      }
+
+      currentIndex += 1;
+      await persistSession();
+    } finally {
+      ratingBusy = false;
     }
+  }
 
-    currentIndex += 1;
+  async function reviewCompletedSession() {
+    if (sessionItems.length === 0) return;
+    currentIndex = 0;
     await persistSession();
   }
 
-  async function retrySession() {
-    if (deck.length === 0) return;
-    currentIndex = 0;
-    await persistSession();
+  async function startFreshSession() {
+    loading = true;
+    try {
+      await browserStorage.removeItem(SESSION_KEY);
+      await buildSession(undefined);
+    } finally {
+      loading = false;
+    }
+  }
+
+  function handleWindowKeydown(event: KeyboardEvent) {
+    if (loading || ratingBusy || currentIndex >= deck.length || event.repeat) return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+    const target = event.target as HTMLElement | null;
+    const tagName = target?.tagName?.toLowerCase();
+    if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') return;
+
+    if (event.key === '1') {
+      event.preventDefault();
+      void handleRate('hard');
+    } else if (event.key === '2') {
+      event.preventDefault();
+      void handleRate('got');
+    } else if (event.key === '3') {
+      event.preventDefault();
+      void handleRate('easy');
+    }
   }
 
   function openSettings() {
     dispatch('openSettings');
   }
 </script>
+
+<svelte:window on:keydown={handleWindowKeydown} />
 
 {#if loading}
   <div class="loading-screen">
@@ -183,21 +224,47 @@
     <header class="session-header">
       <button class="nav-btn" type="button" on:click={openSettings} aria-label="Open settings">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
     </header>
 
     <div class="session-main">
-      <div class="progress-badge">PROGRESS {currentCardNumber} / {deck.length}</div>
-
       <div class="card-stage">
+        {#if deck.length > 0}
+          <div class="progress-scene">
+            <div class="progress-card" aria-label={`Session progress ${currentCardNumber} of ${deck.length}`}>
+              <div class="progress-label">
+                <span>Session progress</span>
+                <strong>{currentCardNumber} / {deck.length}</strong>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style={`width: ${progressPercent}%`}></div>
+              </div>
+              <div class="progress-meta">{progressPercent}% complete</div>
+            </div>
+          </div>
+        {/if}
+
         {#if currentIndex >= deck.length}
           <div class="session-complete">
             <div class="complete-mark">✓</div>
-            <h2>Session complete</h2>
-            <p>You studied {sessionNewCount} new words and reviewed {sessionReviewCount} due words.</p>
-            <button type="button" class="review-again" on:click={retrySession}>Review again</button>
+            <h2>{deck.length === 0 ? 'All caught up' : 'Session complete'}</h2>
+            <p>
+              {#if deck.length === 0}
+                No new or due cards are available right now. You can check again or come back later.
+              {:else}
+                You studied {sessionNewCount} new words and reviewed {sessionReviewCount} due words.
+              {/if}
+            </p>
+            <div class="session-actions">
+              <button type="button" class="review-again" on:click={startFreshSession}>
+                {deck.length === 0 ? 'Check again' : 'Start new session'}
+              </button>
+              {#if sessionItems.length > 0}
+                <button type="button" class="review-again secondary" on:click={reviewCompletedSession}>Review again</button>
+              {/if}
+            </div>
           </div>
         {:else}
           <Card word={deck[currentIndex]} mode={sessionItems[currentIndex]?.mode || 'ar2en'} />
@@ -206,7 +273,7 @@
 
       {#if currentIndex < deck.length}
         <div class="rating-row" aria-label="Rate this card">
-          <button type="button" class="rating-btn hard" on:click={() => handleRate('hard')} aria-label="Hard">
+          <button type="button" class="rating-btn hard" on:click={() => handleRate('hard')} aria-label="Hard" disabled={ratingBusy}>
             <span class="rating-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M13 3c-1.6 2.6-1.5 4.7-.4 6.4 1 1.6 2.7 2.9 3.7 4.2 1.1 1.4 1.5 3 .9 5.2-.2.8-.8 1.7-1.7 2.2-1.2.7-2.6.8-3.9.4-1.5-.4-2.8-1.3-3.8-2.6-.9-1.2-1.4-2.7-1.4-4.3 0-2.2.9-4.1 2.2-5.7C9.9 6.4 11.4 4.7 13 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -215,7 +282,7 @@
             <span class="rating-label">Hard</span>
           </button>
 
-          <button type="button" class="rating-btn got" on:click={() => handleRate('got')} aria-label="Got it">
+          <button type="button" class="rating-btn got" on:click={() => handleRate('got')} aria-label="Got it" disabled={ratingBusy}>
             <span class="rating-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 12.5l4.1 4.2L19 6.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -224,7 +291,7 @@
             <span class="rating-label">Got it</span>
           </button>
 
-          <button type="button" class="rating-btn easy" on:click={() => handleRate('easy')} aria-label="Easy">
+          <button type="button" class="rating-btn easy" on:click={() => handleRate('easy')} aria-label="Easy" disabled={ratingBusy}>
             <span class="rating-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M13.3 2.8L5.8 13h4.8l-1 8.1 8.6-11.3H13l.3-7Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/>
@@ -257,7 +324,7 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    border-radius: 22px;
+    border-radius: 0;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 253, 251, 0.96));
     border: 1px solid rgba(255, 255, 255, 0.72);
     box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
@@ -274,13 +341,13 @@
   }
 
   .nav-btn {
-    width: 1.9rem;
-    height: 1.9rem;
+    width: 52px;
+    height: 52px;
     border: 0;
     border-radius: 999px;
-    background: transparent;
-    color: #9fdcc8;
-    box-shadow: none;
+    background: rgba(213, 247, 236, 0.98);
+    color: #12805b;
+    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.06);
     padding: 0;
     display: grid;
     place-items: center;
@@ -293,8 +360,8 @@
   }
 
   .nav-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
   }
 
   .session-main {
@@ -305,19 +372,62 @@
     align-content: start;
   }
 
-  .progress-badge {
-    grid-column: 2;
-    justify-self: center;
-    margin-top: clamp(3.25rem, 14vh, 5.7rem);
-    padding: 0.48rem 1rem;
-    border-radius: 999px;
-    background: rgba(213, 247, 236, 0.94);
-    color: #1d8f69;
-    font-size: 13px;
-    font-weight: 900;
-    letter-spacing: 0.28em;
+  .progress-scene {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-inline: auto;
+  }
+
+  .progress-card {
+    width: 100%;
+    padding: 1.35rem 1.15rem;
+    border-radius: 24px;
+    border: 1px solid rgba(214, 237, 229, 0.95);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(251, 253, 252, 0.99));
+    box-shadow: 0 12px 24px rgba(23, 78, 58, 0.06);
+  }
+
+  .progress-label {
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 11px;
+    line-height: 1.2;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.08);
+    color: #98b7ae;
+    font-weight: 900;
+  }
+
+  .progress-label strong {
+    color: #1d8f69;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+  }
+
+  .progress-bar {
+    height: 12px;
+    background: rgba(173, 179, 181, 0.18);
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(173, 179, 181, 0.08);
+  }
+
+  .progress-fill {
+    background: linear-gradient(90deg, #2cb883, #84e0b6);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.36);
+  }
+
+  .progress-meta {
+    margin-top: 0.55rem;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #95afaa;
   }
 
   .card-stage {
@@ -325,8 +435,10 @@
     width: 100%;
     min-width: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 1rem;
     margin-top: 1.2rem;
   }
 
@@ -361,6 +473,11 @@
   .rating-btn:hover {
     opacity: 1;
     transform: none;
+  }
+
+  .rating-btn[disabled] {
+    opacity: 0.55;
+    pointer-events: none;
   }
 
   .rating-icon {
@@ -454,6 +571,11 @@
     margin-bottom: 1.1rem;
   }
 
+  .session-actions {
+    display: grid;
+    gap: 0.7rem;
+  }
+
   .review-again {
     width: 100%;
     border: 0;
@@ -468,6 +590,12 @@
     box-shadow: 0 10px 18px rgba(18, 120, 82, 0.08);
   }
 
+  .review-again.secondary {
+    background: rgba(255, 255, 255, 0.94);
+    color: #4f7b6d;
+    box-shadow: inset 0 0 0 1px rgba(194, 229, 216, 0.78), 0 10px 18px rgba(18, 120, 82, 0.04);
+  }
+
   @media (max-width: 520px) {
     .device-shell {
       --session-gutter: 0.95rem;
@@ -476,8 +604,22 @@
       border-radius: 20px;
     }
 
-    .progress-badge {
-      margin-top: clamp(3rem, 14vh, 5.2rem);
+    .nav-btn {
+      width: 46px;
+      height: 46px;
+    }
+
+    .nav-btn svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .progress-card {
+      padding: 1.1rem 1rem 1.05rem;
+    }
+
+    .progress-bar {
+      height: 10px;
     }
   }
 </style>

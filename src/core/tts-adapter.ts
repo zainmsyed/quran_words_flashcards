@@ -12,7 +12,82 @@ export type TtsOptions = {
   transliteration?: string;
   // when using transliteration fallback, prefer this language (e.g. 'en-US')
   fallbackLang?: string;
+  // optional bundled/local audio candidates to try before Web Speech
+  audioSources?: string[];
 };
+
+let activeAudio: HTMLAudioElement | null = null;
+
+function hasSpeechSupport(): boolean {
+  if (typeof window === 'undefined') return false;
+  const synth = (window as any).speechSynthesis;
+  const Utterance = (window as any).SpeechSynthesisUtterance;
+  return Boolean(synth && typeof synth.speak === 'function' && typeof Utterance === 'function');
+}
+
+function hasAudioSupport(): boolean {
+  return typeof window !== 'undefined' && typeof Audio !== 'undefined';
+}
+
+async function tryPlayAudioSource(source: string): Promise<boolean> {
+  if (!source || !hasAudioSupport()) return false;
+
+  try {
+    const audio = new Audio(source);
+    audio.preload = 'auto';
+    activeAudio = audio;
+
+    return await new Promise<boolean>((resolve) => {
+      let settled = false;
+
+      const cleanup = () => {
+        audio.removeEventListener('ended', handleEnded);
+        audio.removeEventListener('pause', handlePause);
+        audio.removeEventListener('error', handleError);
+      };
+
+      const finish = (played: boolean) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        if (activeAudio === audio) activeAudio = null;
+        resolve(played);
+      };
+
+      const handleEnded = () => finish(true);
+      const handlePause = () => finish(true);
+      const handleError = () => finish(false);
+
+      audio.addEventListener('ended', handleEnded);
+      audio.addEventListener('pause', handlePause);
+      audio.addEventListener('error', handleError);
+
+      try {
+        const playPromise = audio.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => finish(false));
+        }
+      } catch (err) {
+        finish(false);
+      }
+    });
+  } catch (err) {
+    if (activeAudio) activeAudio = null;
+    return false;
+  }
+}
+
+async function tryPlayBundledAudio(sources?: string[]): Promise<boolean> {
+  const candidates = (sources || []).filter(Boolean);
+  if (candidates.length === 0) return false;
+
+  for (const source of candidates) {
+    const played = await tryPlayAudioSource(source);
+    if (played) return true;
+  }
+
+  return false;
+}
 
 function voicesLoaded(timeout = 3000): Promise<any[]> {
   return new Promise((resolve) => {
@@ -46,14 +121,21 @@ export async function getAvailableVoices(): Promise<{name: string; lang: string;
 }
 
 export function isSupported(): boolean {
-  if (typeof window === 'undefined') return false;
-  const synth = (window as any).speechSynthesis;
-  const Utterance = (window as any).SpeechSynthesisUtterance;
-  return Boolean(synth && typeof synth.speak === 'function' && typeof Utterance === 'function');
+  return hasSpeechSupport() || hasAudioSupport();
 }
 
 export function stop(): void {
   if (typeof window === 'undefined') return;
+  try {
+    if (activeAudio) {
+      activeAudio.pause();
+      activeAudio.currentTime = 0;
+      activeAudio = null;
+    }
+  } catch (e) {
+    // ignore
+  }
+
   try {
     const synth = (window as any).speechSynthesis;
     if (synth && typeof synth.cancel === 'function') synth.cancel();
@@ -131,6 +213,12 @@ export async function speak(text: string, opts?: TtsOptions): Promise<void> {
   if (!isSupported()) return;
 
   try {
+    stop();
+
+    const playedBundledAudio = await tryPlayBundledAudio(opts?.audioSources);
+    if (playedBundledAudio) return;
+    if (!hasSpeechSupport()) return;
+
     const synth = (window as any).speechSynthesis;
     const Utterance = (window as any).SpeechSynthesisUtterance;
 

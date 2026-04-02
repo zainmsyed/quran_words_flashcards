@@ -1,17 +1,26 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { Word } from '../../core/wordlist';
+  import { browserStorage } from '../../core/storage-adapter';
   import { speak, stop, isSupported } from '../../core/tts-adapter';
 
   export let word: Word;
   export let mode: 'ar2en' | 'en2ar' = 'ar2en';
 
+  const STORAGE_VOICE_KEY = 'qfc2_tts_voice';
+
   let flipped = false;
   let speaking = false;
   let ttsAvailable = false;
+  let preferredVoice: string | null = null;
 
-  onMount(() => {
+  onMount(async () => {
     ttsAvailable = isSupported();
+    try {
+      preferredVoice = await browserStorage.getItem<string>(STORAGE_VOICE_KEY);
+    } catch (err) {
+      preferredVoice = null;
+    }
   });
 
   function flip() {
@@ -34,7 +43,17 @@
     }
     speaking = true;
     try {
-      await speak(word.arabic, { lang: 'ar-SA', rate: 0.9, transliteration: word.transliteration, fallbackLang: 'en-US' });
+      await speak(word.arabic, {
+        lang: 'ar-SA',
+        rate: 0.9,
+        voice: preferredVoice || undefined,
+        transliteration: word.transliteration,
+        fallbackLang: 'en-US',
+        audioSources: [
+          `/audio/${word.id}.mp3`,
+          `/audio/gcp/${word.id}.mp3`
+        ]
+      });
     } catch (e) {
       // ignore
     }

@@ -42,71 +42,81 @@
   }
 </script>
 
-<section class="settings-card stats-panel">
-  <div class="panel-heading">
-    <div class="eyebrow">Progress</div>
-    <h2>Study overview</h2>
-    <p>Based on your saved card state.</p>
-  </div>
-
-  <div class="stats-grid">
-    <button class="stat-card clickable" type="button" on:click={() => toggleFilter('studied')} aria-pressed={selectedFilter === 'studied'}>
-      <div class="stat-num">{studiedCount}</div>
-      <div class="stat-label">studied</div>
-    </button>
-
-    <button class="stat-card clickable" type="button" on:click={() => toggleFilter('mastered')} aria-pressed={selectedFilter === 'mastered'}>
-      <div class="stat-num">{masteredCount}</div>
-      <div class="stat-label">mastered</div>
-    </button>
-
-    <button class="stat-card clickable" type="button" on:click={() => toggleFilter('due')} aria-pressed={selectedFilter === 'due'}>
-      <div class="stat-num">{dueCount}</div>
-      <div class="stat-label">due today</div>
-    </button>
-
-    <div class="stat-card">
-      <div class="stat-num">{streak}</div>
-      <div class="stat-label">day streak</div>
+<section class="stats-scene">
+  <div class="stats-card stats-panel">
+    <div class="panel-heading">
+      <div class="eyebrow">Progress</div>
+      <h2>Study overview</h2>
+      <p>Based on your saved card state.</p>
     </div>
-  </div>
 
-  {#if selectedFilter !== 'none'}
-    <div class="recent-list">
-      <div class="section-title">
-        {selectedFilter === 'studied' ? `Studied words (${filteredEntries.length})` : (selectedFilter === 'mastered' ? `Mastered words (${filteredEntries.length})` : `Due today (${filteredEntries.length})`)}
+    <div class="stats-grid">
+      <button class="stat-card clickable" type="button" on:click={() => toggleFilter('studied')} aria-pressed={selectedFilter === 'studied'}>
+        <div class="stat-num">{studiedCount}</div>
+        <div class="stat-label">studied</div>
+      </button>
+
+      <button class="stat-card clickable" type="button" on:click={() => toggleFilter('mastered')} aria-pressed={selectedFilter === 'mastered'}>
+        <div class="stat-num">{masteredCount}</div>
+        <div class="stat-label">mastered</div>
+      </button>
+
+      <button class="stat-card clickable" type="button" on:click={() => toggleFilter('due')} aria-pressed={selectedFilter === 'due'}>
+        <div class="stat-num">{dueCount}</div>
+        <div class="stat-label">due today</div>
+      </button>
+
+      <div class="stat-card">
+        <div class="stat-num">{streak}</div>
+        <div class="stat-label">day streak</div>
       </div>
-      {#if filteredEntries.length === 0}
-        <p class="empty">{selectedFilter === 'due' ? 'No due words today.' : `No ${selectedFilter} words yet.`}</p>
-      {:else}
-        {#each filteredEntries as entry}
-          <div class="recent-row">
-            <div class="recent-main">
-              <div class="ar">{entry.word.arabic}</div>
-              <div class="en">{entry.word.english}</div>
-            </div>
-            <div class="recent-meta">
-              <span class="badge badge-{statLabel(entry).toLowerCase()}">{statLabel(entry)}</span>
-              <small>{entry.state?.lastRating}</small>
-            </div>
-          </div>
-        {/each}
-      {/if}
     </div>
-  {/if}
+
+    {#if selectedFilter !== 'none'}
+      <div class="recent-list">
+        <div class="section-title">
+          {selectedFilter === 'studied' ? `Studied words (${filteredEntries.length})` : (selectedFilter === 'mastered' ? `Mastered words (${filteredEntries.length})` : `Due today (${filteredEntries.length})`)}
+        </div>
+        {#if filteredEntries.length === 0}
+          <p class="empty">{selectedFilter === 'due' ? 'No due words today.' : `No ${selectedFilter} words yet.`}</p>
+        {:else}
+          {#each filteredEntries as entry}
+            <div class="recent-row">
+              <div class="recent-main">
+                <div class="ar">{entry.word.arabic}</div>
+                <div class="en">{entry.word.english}</div>
+              </div>
+              <div class="recent-meta">
+                <span class="badge badge-{statLabel(entry).toLowerCase()}">{statLabel(entry)}</span>
+                <small>{entry.state?.lastRating}</small>
+              </div>
+            </div>
+          {/each}
+        {/if}
+      </div>
+    {/if}
+  </div>
 </section>
 
 <style>
-  .settings-card {
+  .stats-scene {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-inline: auto;
+  }
+
+  .stats-card {
+    width: 100%;
     background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(249,252,250,0.98));
     border-radius: 24px;
     border: 0.5px solid rgba(173, 179, 181, 0.15);
     box-shadow: 0 16px 32px rgba(0, 109, 75, 0.07);
-    padding: 1.4rem;
+    padding: 1.35rem 1.15rem;
   }
 
   .panel-heading {
-    margin-bottom: 1.15rem;
+    margin-bottom: 1.1rem;
   }
 
   .eyebrow {
@@ -137,7 +147,7 @@
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.9rem;
+    gap: 0.85rem;
     margin-bottom: 1rem;
   }
 
