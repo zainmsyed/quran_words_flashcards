@@ -29,7 +29,7 @@ export function normalizeAppStats(input?: Partial<AppStats> | null): AppStats {
   };
 }
 
-export function recordStudy(stats: AppStats, rating: 'hard' | 'got' | 'easy', now: Date = new Date()): AppStats {
+export function recordStudy(stats: AppStats, rating: 'hard' | 'got' | 'easy', now: Date = new Date(), countStudied: boolean = true): AppStats {
   const today = toLocalDateKey(now);
   const yesterday = toLocalDateKey(new Date(now.getTime() - 24 * 60 * 60 * 1000));
   let streak = stats.streak;
@@ -43,7 +43,7 @@ export function recordStudy(stats: AppStats, rating: 'hard' | 'got' | 'easy', no
   }
 
   return {
-    studied: stats.studied + 1,
+    studied: stats.studied + (countStudied ? 1 : 0),
     easy: stats.easy + (rating === 'easy' ? 1 : 0),
     streak,
     lastStudyDate: today,

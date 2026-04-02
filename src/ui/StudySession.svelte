@@ -123,6 +123,17 @@
     const savedStats = await browserStorage.getItem<AppStats>(STATS_KEY);
     appStats = normalizeStats(savedStats);
 
+    // Recompute "studied" from persisted card states to avoid double-counting reviews
+    try {
+      const actualStudied = Object.values(states).filter((s) => (s?.reviewCount ?? 0) > 0).length;
+      if (appStats.studied !== actualStudied) {
+        appStats = { ...appStats, studied: actualStudied };
+        await persistStats();
+      }
+    } catch (e) {
+      // ignore
+    }
+
     const savedSession = await browserStorage.getItem<{ queue: SessionItem[]; index: number; createdAt?: string }>(SESSION_KEY);
 
     if (savedSession && !isSameLocalDay(savedSession.createdAt)) {
@@ -155,7 +166,9 @@
       const prev = getStateFor(word.id);
       const updated = applyRatingToCard(prev, rating);
       states[word.id] = updated;
-      appStats = recordStudy(appStats, rating);
+      // only increment "studied" for genuinely new cards (interval === 0)
+      const isNew = prev.interval === 0;
+      appStats = recordStudy(appStats, rating, new Date(), isNew);
       await saveStates();
       await persistStats();
 
