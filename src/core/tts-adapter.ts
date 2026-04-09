@@ -94,30 +94,73 @@ function voicesLoaded(timeout = 3000): Promise<any[]> {
     if (typeof window === 'undefined') return resolve([]);
     const synth = (window as any).speechSynthesis;
     if (!synth) return resolve([]);
-    let voices = synth.getVoices && synth.getVoices();
-    if (voices && voices.length > 0) return resolve(voices);
 
-    const handler = () => {
-      voices = synth.getVoices && synth.getVoices();
-      synth.removeEventListener('voiceschanged', handler);
-      resolve(voices || []);
+    const readVoices = () => {
+      try {
+        return typeof synth.getVoices === 'function' ? synth.getVoices() || [] : [];
+      } catch {
+        return [];
+      }
     };
 
-    synth.addEventListener('voiceschanged', handler);
+    const initial = readVoices();
+    if (initial.length > 0) return resolve(initial);
 
-    // fallback: timeout
-    setTimeout(() => {
-      try { synth.removeEventListener('voiceschanged', handler); } catch (e) {}
-      const v = synth.getVoices && synth.getVoices();
-      resolve(v || []);
-    }, timeout);
+    let settled = false;
+    let previousOnVoicesChanged: any = null;
+    const supportsEventTarget = typeof synth.addEventListener === 'function';
+    const supportsProperty = 'onvoiceschanged' in synth;
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+
+      try {
+        if (supportsEventTarget && typeof synth.removeEventListener === 'function') {
+          synth.removeEventListener('voiceschanged', handler);
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      if (supportsProperty && synth.onvoiceschanged === handler) {
+        try { synth.onvoiceschanged = previousOnVoicesChanged; } catch (e) {}
+      }
+
+      resolve(readVoices());
+    };
+
+    const handler = () => finish();
+
+    if (supportsProperty) {
+      try {
+        previousOnVoicesChanged = synth.onvoiceschanged ?? null;
+        synth.onvoiceschanged = handler;
+      } catch (e) {
+        previousOnVoicesChanged = null;
+      }
+    }
+
+    if (supportsEventTarget) {
+      try {
+        synth.addEventListener('voiceschanged', handler);
+      } catch (e) {
+        // some browsers expose only the property listener; fall through
+      }
+    }
+
+    setTimeout(finish, timeout);
   });
 }
 
 export async function getAvailableVoices(): Promise<{name: string; lang: string; default?: boolean}[]> {
   if (typeof window === 'undefined') return [];
-  const voices = await voicesLoaded(3000);
-  return (voices || []).map((v: any) => ({ name: v.name, lang: v.lang, default: !!v.default }));
+  try {
+    const voices = await voicesLoaded(3000);
+    return (voices || []).map((v: any) => ({ name: v.name, lang: v.lang, default: !!v.default }));
+  } catch (e) {
+    return [];
+  }
 }
 
 export function isSupported(): boolean {
@@ -222,7 +265,12 @@ export async function speak(text: string, opts?: TtsOptions): Promise<void> {
     const synth = (window as any).speechSynthesis;
     const Utterance = (window as any).SpeechSynthesisUtterance;
 
-    const voices = await voicesLoaded(3000);
+    let voices: any[] = [];
+    try {
+      voices = await voicesLoaded(3000);
+    } catch (e) {
+      voices = [];
+    }
     try { console.debug('[TTS] available voices:', voices.map((v: any) => `${v.name} (${v.lang})`)); } catch (e) {}
 
     const u = new Utterance(text);

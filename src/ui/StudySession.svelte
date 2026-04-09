@@ -5,14 +5,14 @@
   import { browserStorage } from '../core/storage-adapter';
   import { initialCardState, applyRatingToCard, normalizeCardState, CardState } from '../core/srs';
   import { initialAppStats, normalizeAppStats, recordStudy, AppStats } from '../core/app-stats';
+  import { buildSessionPlan, isSameLocalDay, retrySessionItem, type SavedSession, type SessionItem } from '../core/session';
+  import { summarizeStudyProgress } from '../core/progress-summary';
 
   const STATES_KEY = 'qfc2_states';
   const STATS_KEY = 'qfc2_stats';
   const SESSION_KEY = 'qfc2_session';
   const NEW_PER_SESSION = 10;
   const REVIEW_PER_SESSION = 5;
-
-  type SessionItem = { id: string; mode: 'ar2en' | 'en2ar' };
 
   const dispatch = createEventDispatcher<{ openSettings: undefined }>();
 
@@ -48,16 +48,10 @@
     return new Map(list.map((word) => [word.id, word] as const));
   }
 
-  function toLocalDateKey(date: Date = new Date()): string {
-    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
-    return local.toISOString().slice(0, 10);
-  }
-
-  function isSameLocalDay(isoDate?: string) {
-    if (!isoDate) return false;
-    const parsed = new Date(isoDate);
-    if (Number.isNaN(parsed.getTime())) return false;
-    return toLocalDateKey(parsed) === toLocalDateKey();
+  function ensureCardStates() {
+    words.forEach((word) => {
+      if (!states[word.id]) states[word.id] = initialCardState(word.id);
+    });
   }
 
   async function persistSession(index = currentIndex, queue = sessionItems) {
@@ -72,45 +66,16 @@
     await browserStorage.setItem(STATS_KEY, appStats);
   }
 
-  async function buildSession(savedSession?: { queue: SessionItem[]; index?: number; createdAt?: string }) {
+  async function buildSession(savedSession?: SavedSession) {
     const wordMap = makeWordMap(words);
+    const plan = buildSessionPlan(words, states, savedSession, {
+      limits: { newPerSession: NEW_PER_SESSION, reviewPerSession: REVIEW_PER_SESSION },
+    });
 
-    if (savedSession && Array.isArray(savedSession.queue) && savedSession.index != null) {
-      sessionItems = savedSession.queue
-        .filter((si) => wordMap.has(si.id))
-        .map((si) => ({ id: si.id, mode: 'ar2en' }));
-      currentIndex = Math.min(savedSession.index || 0, sessionItems.length);
-
-      const itemStates = sessionItems.map((si) => states[si.id]).filter(Boolean);
-      sessionNewCount = itemStates.filter((s) => s.interval === 0).length;
-      sessionReviewCount = sessionItems.length - sessionNewCount;
-    } else {
-      words.forEach((w) => {
-        if (!states[w.id]) states[w.id] = initialCardState(w.id);
-      });
-
-      const now = Date.now();
-      const dueReviews = words
-        .filter((w) => {
-          const s = states[w.id];
-          return s && s.interval > 0 && new Date(s.dueDate).getTime() <= now;
-        })
-        .sort((a, b) => new Date(states[a.id].dueDate).getTime() - new Date(states[b.id].dueDate).getTime())
-        .slice(0, REVIEW_PER_SESSION);
-
-      const newCards = words
-        .filter((w) => states[w.id] && states[w.id].interval === 0)
-        .slice(0, NEW_PER_SESSION);
-
-      sessionReviewCount = dueReviews.length;
-      sessionNewCount = newCards.length;
-
-      const combined = [...dueReviews, ...newCards];
-      sessionItems = combined.map((w) => ({ id: w.id, mode: 'ar2en' }));
-      currentIndex = 0;
-      await persistSession();
-    }
-
+    sessionItems = plan.queue;
+    currentIndex = plan.currentIndex;
+    sessionNewCount = plan.newCount;
+    sessionReviewCount = plan.reviewCount;
     deck = sessionItems.map((si) => wordMap.get(si.id)).filter(Boolean) as Word[];
   }
 
@@ -119,22 +84,28 @@
 
     const savedStates = await browserStorage.getItem<Record<string, CardState>>(STATES_KEY);
     states = normalizeStates(savedStates);
+    ensureCardStates();
 
     const savedStats = await browserStorage.getItem<AppStats>(STATS_KEY);
     appStats = normalizeStats(savedStats);
 
-    // Recompute "studied" from persisted card states to avoid double-counting reviews
+    // Keep persisted summary fields aligned with the actual card states.
     try {
-      const actualStudied = Object.values(states).filter((s) => (s?.reviewCount ?? 0) > 0).length;
-      if (appStats.studied !== actualStudied) {
-        appStats = { ...appStats, studied: actualStudied };
+      const progress = summarizeStudyProgress(words, states, new Date());
+      const syncedStats = {
+        ...appStats,
+        studied: progress.seenWords,
+        easy: progress.easyCount,
+      };
+      if (appStats.studied !== syncedStats.studied || appStats.easy !== syncedStats.easy) {
+        appStats = syncedStats;
         await persistStats();
       }
     } catch (e) {
       // ignore
     }
 
-    const savedSession = await browserStorage.getItem<{ queue: SessionItem[]; index: number; createdAt?: string }>(SESSION_KEY);
+    const savedSession = await browserStorage.getItem<SavedSession>(SESSION_KEY);
 
     if (savedSession && !isSameLocalDay(savedSession.createdAt)) {
       await browserStorage.removeItem(SESSION_KEY);
@@ -161,6 +132,8 @@
     const word = deck[currentIndex];
     if (!word) return;
 
+    const currentItem = sessionItems[currentIndex];
+
     ratingBusy = true;
     try {
       const prev = getStateFor(word.id);
@@ -172,9 +145,8 @@
       await saveStates();
       await persistStats();
 
-      if (rating === 'hard') {
-        const newItem: SessionItem = { id: word.id, mode: 'ar2en' };
-        sessionItems.push(newItem);
+      if (rating === 'hard' && currentItem) {
+        sessionItems.push(retrySessionItem(currentItem));
         deck.push(word);
       }
 
@@ -195,6 +167,7 @@
     loading = true;
     try {
       await browserStorage.removeItem(SESSION_KEY);
+      ensureCardStates();
       await buildSession(undefined);
     } finally {
       loading = false;

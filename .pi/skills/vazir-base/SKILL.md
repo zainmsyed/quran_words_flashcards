@@ -17,7 +17,7 @@ disable-model-invocation: false
 - When you believe a story is done, state what you can and cannot verify mechanically, then ask the user to verify.
 - Never set a story status to `complete` or `retired` unless the user's immediately preceding message explicitly confirms that transition.
 - You may set `not-started → in-progress` when beginning work on a story.
-- Update the story's `last_accessed` frontmatter to today's date every time you work on it.
+- Update the story's `**Last accessed:**` field to today's date every time you work on it.
 
 ## Planning flow
 - In `/plan`, ask exactly one clarifying question at a time.
@@ -33,6 +33,7 @@ disable-model-invocation: false
 ## Learning workflow
 - Use `/remember` only for confirmed, reusable lessons that should persist as memory. If the user runs `/remember` with no text, draft one concise rule from the recent fix context instead of asking them to write it manually.
 - Use `/review` to capture review findings in `.context/reviews/` and let repeated rule candidates promote into `.context/memory/system.md`.
+- Use `/memory-review` only when the user explicitly asks for knowledge-base cleanup. Never trigger it automatically.
 
 ## Verification honesty
 - Before claiming any task complete, state: what you verified mechanically, and what requires user confirmation.

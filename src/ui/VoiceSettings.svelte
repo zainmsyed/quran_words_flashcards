@@ -13,11 +13,20 @@
   let selected: string | null = null;
   let saveMessage = '';
   let saveTone: 'success' | 'error' = 'success';
+  let loadError = '';
 
   async function refresh() {
     loading = true;
-    voices = await getAvailableVoices();
-    loading = false;
+    loadError = '';
+    try {
+      voices = await getAvailableVoices();
+    } catch (err) {
+      console.warn('Failed to load voices', err);
+      voices = [];
+      loadError = 'Could not load browser voices. Please refresh the list or try another browser.';
+    } finally {
+      loading = false;
+    }
   }
 
   onMount(async () => {
@@ -72,6 +81,10 @@
 
     {#if saveMessage}
       <p class="save-feedback" data-tone={saveTone}>{saveMessage}</p>
+    {/if}
+
+    {#if loadError}
+      <p class="voice-note error">{loadError}</p>
     {/if}
 
     {#if loading}
@@ -148,6 +161,12 @@
     border: 0.5px solid rgba(173, 179, 181, 0.14);
     color: var(--text-secondary);
     line-height: 1.6;
+  }
+
+  .voice-note.error {
+    background: rgba(255, 240, 240, 0.95);
+    border-color: rgba(208, 121, 121, 0.18);
+    color: #a74e4e;
   }
 
   .voice-actions {

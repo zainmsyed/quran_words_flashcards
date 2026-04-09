@@ -2,6 +2,7 @@
   import type { Word } from '../core/wordlist';
   import type { CardState } from '../core/srs';
   import type { AppStats } from '../core/app-stats';
+  import { summarizeStudyProgress } from '../core/progress-summary';
 
   export let words: Word[] = [];
   export let states: Record<string, CardState> = {};
@@ -17,21 +18,23 @@
     const due = Boolean(state && interval > 0 && new Date(state.dueDate).getTime() <= now);
     return { word, state, interval, mastered, due };
   });
-  $: studiedEntries = entries.filter((entry) => (entry.state?.reviewCount ?? 0) > 0);
-  // Prefer computed value from persisted card states to ensure accuracy
-  $: studiedCount = studiedEntries.length;
-  $: masteredCount = entries.filter((entry) => entry.mastered).length;
-  $: dueCount = entries.filter((entry) => entry.due).length;
+  $: seenEntries = entries.filter((entry) => (entry.state?.reviewCount ?? 0) > 0);
+  $: summary = summarizeStudyProgress(words, states, new Date(now));
+  $: seenCount = summary.seenWords;
+  $: reviewCount = summary.reviewCount;
+  $: easyRate = reviewCount > 0 ? Math.round((summary.easyCount / reviewCount) * 100) : 0;
+  $: masteredCount = summary.masteredCount;
+  $: dueCount = summary.dueCount;
   $: streak = appStats.streak ?? 0;
 
-  let selectedFilter: 'none' | 'studied' | 'mastered' | 'due' = 'none';
-  $: filteredEntries = selectedFilter === 'studied'
-    ? studiedEntries
+  let selectedFilter: 'none' | 'seen' | 'mastered' | 'due' = 'none';
+  $: filteredEntries = selectedFilter === 'seen'
+    ? seenEntries
     : (selectedFilter === 'mastered'
       ? entries.filter((e) => e.mastered)
       : (selectedFilter === 'due' ? entries.filter((e) => e.due) : []));
 
-  function toggleFilter(f: 'studied' | 'mastered' | 'due') {
+  function toggleFilter(f: 'seen' | 'mastered' | 'due') {
     selectedFilter = selectedFilter === f ? 'none' : f;
   }
 
@@ -52,10 +55,17 @@
     </div>
 
     <div class="stats-grid">
-      <button class="stat-card clickable" type="button" on:click={() => toggleFilter('studied')} aria-pressed={selectedFilter === 'studied'}>
-        <div class="stat-num">{studiedCount}</div>
-        <div class="stat-label">studied</div>
+      <button class="stat-card clickable" type="button" on:click={() => toggleFilter('seen')} aria-pressed={selectedFilter === 'seen'}>
+        <div class="stat-num">{seenCount}</div>
+        <div class="stat-label">seen words</div>
+        <div class="stat-meta">unique cards with at least one review</div>
       </button>
+
+      <div class="stat-card">
+        <div class="stat-num">{reviewCount}</div>
+        <div class="stat-label">reviews</div>
+        <div class="stat-meta">{easyRate}% easy · {summary.easyCount} easy picks</div>
+      </div>
 
       <button class="stat-card clickable" type="button" on:click={() => toggleFilter('mastered')} aria-pressed={selectedFilter === 'mastered'}>
         <div class="stat-num">{masteredCount}</div>
@@ -76,7 +86,7 @@
     {#if selectedFilter !== 'none'}
       <div class="recent-list">
         <div class="section-title">
-          {selectedFilter === 'studied' ? `Studied words (${filteredEntries.length})` : (selectedFilter === 'mastered' ? `Mastered words (${filteredEntries.length})` : `Due today (${filteredEntries.length})`)}
+          {selectedFilter === 'seen' ? `Seen words (${filteredEntries.length})` : (selectedFilter === 'mastered' ? `Mastered words (${filteredEntries.length})` : `Due today (${filteredEntries.length})`)}
         </div>
         {#if filteredEntries.length === 0}
           <p class="empty">{selectedFilter === 'due' ? 'No due words today.' : `No ${selectedFilter} words yet.`}</p>
@@ -147,7 +157,7 @@
 
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
     gap: 0.85rem;
     margin-bottom: 1rem;
   }
@@ -164,6 +174,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    gap: 0.18rem;
     box-shadow: 0 12px 22px rgba(0, 109, 75, 0.05);
   }
 
@@ -194,9 +205,15 @@
   .stat-label {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    margin-top: 0.35rem;
+    margin-top: 0.2rem;
     font-weight: 700;
     letter-spacing: 0.02em;
+  }
+
+  .stat-meta {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--text-tertiary);
   }
 
   .recent-list {

@@ -1,8 +1,8 @@
 # Story 004: Scaffold Svelte + Vite + TypeScript starter (core modules & adapters)
 
-**Status:** not-started  
+**Status:** in-progress  
 **Created:** 2026-03-29  
-**Last accessed:** 2026-03-29  
+**Last accessed:** 2026-04-09  
 **Completed:** —
 
 ---
@@ -45,6 +45,13 @@ Developer test: from repo root run `npm install` and `npm run dev` and confirm t
 ---
 
 ## Issues
+
+### /fix — "the voices arent working"
+- **Reported:** 2026-04-09  
+- **Status:** resolved  
+- **Agent note:** Pronunciation control now renders on both card faces and voice loading is more defensive. Code changes were applied, tests and build passed. User requested this be marked resolved.  
+- **Solution:** Show the audio button on every card face and avoid voice-loading failures from blocking speech playback.
+
 - Package manager chosen: npm (minimal dependencies preferred). If you want yarn/pnpm instead, update this before scaffold changes.
 
 ---

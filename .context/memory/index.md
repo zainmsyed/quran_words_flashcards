@@ -1,30 +1,38 @@
 # File Index
 
-.pi/extensions/vazir-context.ts — Context injection, init, plan, and consolidation extension
-.pi/extensions/vazir-tracker.ts — Change tracker, diff, fix, and reset extension
+.pi/extensions/vazir-context/helpers.ts — Context injection, init, plan, and consolidation extension
+.pi/extensions/vazir-context/index.ts — Context injection, init, plan, and consolidation extension
+.pi/extensions/vazir-live-reload.ts — Watches `.pi/extensions` and reloads Pi on changes
+.pi/extensions/vazir-tracker/chrome.ts — Change tracker, diff, fix, and reset extension
+.pi/extensions/vazir-tracker/index.ts — Change tracker, diff, fix, and reset extension
+.pi/extensions/vazir-tracker/vcs.ts — Change tracker, diff, fix, and reset extension
+.pi/lib/vazir-helpers.ts — Shared Pi extension helpers for stories and repo checks
 .pi/skills/vazir-base/SKILL.md — Vazir baseline skill instructions
 AGENTS.md — Cross-framework project guidance and working notes
+capacitor.config.ts — Example Capacitor v2 config with `webDir: dist`
+index.html — Vite app shell with Google Fonts and the `#app` mount point
+package-lock.json — package-lock.json configuration file
+package.json — package.json configuration file
+scripts/generate_audio_gtts.py — gTTS script that generates seed-word MP3s into `public/audio`
+src/app.css — Global design tokens and shared layout styles
+src/App.svelte — Top-level screen switcher between study and settings
+src/core/app-stats.ts — App-level study counters and streak tracking
+src/core/srs.ts — Simplified SRS card state, normalization, and rating logic
+src/core/storage-adapter.ts — Promise-based localStorage adapter
+src/core/tts-adapter.ts — Web Speech/audio TTS with transliteration fallback
+src/core/wordlist.ts — Loads seeded words from JSON and normalizes transliteration
+src/data/seed-words.json — seed-words.json configuration file
+src/main.ts — Svelte entry point that mounts App
+src/ui/components/Card.svelte — Flippable flashcard with pronunciation control
+src/ui/Settings.svelte — Settings shell with stats, audio, and deck tabs
+src/ui/Stats.svelte — Study progress dashboard and word filters
+src/ui/StudySession.svelte — Session queue controller, progress, and rating actions
+src/ui/VoiceSettings.svelte — Browser voice picker and sample playback
+src/ui/WordList.svelte — Deck browser grouped by mastery state
+svelte.config.js — Svelte preprocess config for TypeScript
+tsconfig.json — tsconfig.json configuration file
+vite.config.ts — Vite config with Svelte plugin and dev server port
 
-capacitor.config.ts — Capacitor configuration for Android wrapper (webDir and app settings)
-index.html — Vite/Svelte app HTML entry template (dev server mount point)
-package.json — Node package manifest with dev/build scripts and dependencies
-src/app.css — Global application styles and CSS variables
-src/App.svelte — Root Svelte component / app shell and top-level layout
-src/core/srs.ts — Simplified SM-2 spaced-repetition logic and card state management
-src/core/storage-adapter.ts — StorageAdapter interface with browser/localStorage implementation
-src/core/wordlist.ts — Seed wordlist loader and helpers (CSV → JSON, transliteration normalization)
-src/data/seed-words.json — Canonical seeded deck (JSON) of Quranic words used by the app
-src/main.ts — App bootstrap (instantiate and mount the Svelte App)
-src/ui/components/Card.svelte — Flashcard component (Arabic front, meaning back) with flip, TTS, and rating buttons
-src/ui/StudySession.svelte — Study session orchestration: queue building, persistence, and review flow
-svelte.config.js — Svelte preprocessor and Vite plugin configuration
-tsconfig.json — TypeScript compiler options and path settings
-vite.config.ts — Vite configuration with Svelte plugin and build settings
-package-lock.json — npm lockfile recording exact installed dependency versions
-src/core/tts-adapter.ts — Web Speech API wrapper and local-audio-first playback fallback
-src/ui/VoiceSettings.svelte — Voice picker UI and persistence for preferred TTS voice
-scripts/generate_audio_gtts.py — Proof-of-concept script to generate MP3s using gTTS
-src/ui/Stats.svelte — Stats view showing studied/mastered/due/streak and per-word lists
-src/ui/WordList.svelte — Word list view grouping deck by status (mastered / learning / new)
-src/core/app-stats.ts — App-level stats calculations and persistence (streaks, totals)
-src/ui/Settings.svelte — Settings panel (Stats, audio/voice settings, storage helpers)
+scripts/run-tests.mjs — (undescribed)
+src/core/progress-summary.ts — (undescribed)
+src/core/session.ts — (undescribed)

@@ -1,8 +1,1 @@
-# Context Map
-
-<!-- Keep this under 150 tokens. Vazir injects this before agent turns. -->
-
-- Project: arabic_flashcards — repo for an Arabic flashcards project; current files are agent tooling and memory.
-- Stack: Vazir/PI agent extensions in TypeScript (.pi/extensions, .pi/skills); no application manifest detected.
-- Key dirs: .pi (agent code), .context (memory/intake/stories), .jj, .git
-- Fragile: AGENTS.md lacks metadata; .context/intake and stories are minimal; edits to .pi/extensions directly affect agent behavior.
+Quranic Flashcards is a root-level Svelte 4 + Vite + TypeScript SPA. `src/core` holds SRS, stats, storage, TTS, and seeded-word loading; `src/ui` holds study/settings screens; `src/data/seed-words.json`, `public/audio/`, and `scripts/generate_audio_gtts.py` keep the deck/audio in sync. Fragile: `qfc2_*` localStorage/session keys, TTS fallback, and `.pi/extensions` edits change agent behavior; use `.context/intake` first, then `.context/stories`.
