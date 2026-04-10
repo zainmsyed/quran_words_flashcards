@@ -1,59 +1,43 @@
-# Story 004: Scaffold Svelte + Vite + TypeScript starter (core modules & adapters)
+# Story 004: Account settings — change password, reset password, and invite-only onboarding docs
 
-**Status:** in-progress  
-**Created:** 2026-03-29  
-**Last accessed:** 2026-04-09  
+**Status:** not-started
+**Created:** 2026-04-09
+**Last accessed:** 2026-04-09
 **Completed:** —
 
----
-
 ## Goal
-Create a Capacitor-ready Svelte + Vite + TypeScript starter layout with core domain modules separated for reuse. Provide minimal working app bootstrapped so the core study flow can be implemented without reworking project structure later.
+Add a custom account/settings experience for signed-in users, including change-password and forgot/reset-password flows, plus the final invite-only onboarding notes that explain how admins create accounts manually in PocketBase.
 
 ## Verification
-Developer test: from repo root run `npm install` and `npm run dev` and confirm the Vite dev server starts and the app UI shows a minimal placeholder (App.svelte) that imports core modules. `npm run build` should produce a `dist/` folder suitable for Capacitor webDir.
+From the settings/account screen, a signed-in user can change their password and request a password reset. The repo documentation explains the manual invite-only provisioning process for PocketBase admins.
 
-## Scope — files this story may touch / create
-- package.json (scripts: dev, build, preview)
-- tsconfig.json
-- vite.config.ts (Svelte plugin and PWA plugin stub)
-- src/main.ts, src/App.svelte
-- src/core/srs.ts (stubbed implementation), src/core/storage-adapter.ts (browser adapter), src/core/wordlist.ts (CSV -> JSON helper)
-- src/ui/components/ (Card.svelte, StudySession.svelte placeholder)
-- public/ (index.html or Vite template, manifest.webmanifest, icons)
-- .gitignore additions for node_modules, dist
-- Optional: capacitor.config.ts example and README notes for v2
+## Scope — files this story may touch
+- `src/ui/Settings.svelte`
+- new auth/account Svelte components under `src/ui/`
+- `src/core/` auth helpers used for password change and reset flows
+- `README.md`
+- `docs/` onboarding or setup notes
 
 ## Out of scope — do not touch
-- Full SRS tuning and complete UI implementation
-- Native plugin wiring for Capacitor (v2)
+- Open registration or self-signup
+- OAuth/social login
+- Importing old localStorage progress
+- Reworking the study flow or PocketBase schema
 
 ## Dependencies
 - Requires: story-001
-- Blocks: story-002
-
----
+- Requires: story-002
 
 ## Checklist
-- [ ] Create Vite + Svelte + TypeScript project scaffold files
-- [ ] Add src/core module stubs (SRS, storage adapter, wordlist) with TypeScript types
-- [ ] Add src/ui minimal Svelte components and placeholder UI
-- [ ] Add basic package.json scripts and dev/build validation
-- [ ] Add PWA plugin placeholder and manifest
-- [ ] Add capacitor.config.ts example in repo root for later v2 use
-
----
+- [ ] Add an account/profile area that shows the signed-in user
+- [ ] Add a change-password form for authenticated users
+- [ ] Add a forgot-password request flow
+- [ ] Add a reset-password completion flow
+- [ ] Add a logout affordance inside the account/settings area
+- [ ] Document manual admin-created invite-only onboarding in the README
 
 ## Issues
-
-### /fix — "the voices arent working"
-- **Reported:** 2026-04-09  
-- **Status:** resolved  
-- **Agent note:** Pronunciation control now renders on both card faces and voice loading is more defensive. Code changes were applied, tests and build passed. User requested this be marked resolved.  
-- **Solution:** Show the audio button on every card face and avoid voice-loading failures from blocking speech playback.
-
-- Package manager chosen: npm (minimal dependencies preferred). If you want yarn/pnpm instead, update this before scaffold changes.
-
----
+- None yet.
 
 ## Completion Summary
+This story is planned but not started. It will be complete when users can manage their password flows in the custom UI and the repo documents the invite-only onboarding process.

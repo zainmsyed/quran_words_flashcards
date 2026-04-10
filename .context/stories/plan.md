@@ -1,41 +1,45 @@
 # Project — Plan
 
 **Created:** 2026-03-29  
-**Last updated:** 2026-03-29
+**Last updated:** 2026-04-09
 
 ---
 
 ## What we're building
-A Svelte + Vite + TypeScript single-page flashcard app (POC) to teach the ~300 most frequent Quranic Arabic words. V1 is a minimal study flow: 10 new words + up to 5 due reviews per session, simplified SM-2 SRS, localStorage persistence (via a StorageAdapter), Arabic+English cards, example Quranic verse per card, and Web Speech API pronunciation. Code will be organized so core logic is framework- and platform-agnostic for reuse in a Capacitor-wrapped Android app (v2).
+A Quranic Flashcards Svelte + Vite + TypeScript SPA for a small invited group of friends and family. Keep the original flashcard study flow and word deck from the PRD, but add a PocketBase auth/persistence layer in-repo.
+
+The app will use a custom Svelte login gate and account screens. PocketBase is the source of truth for authentication and per-user study progress. If PocketBase is unavailable, the app is unavailable.
 
 ## What we're not building (v1 scope)
-- User accounts, cloud sync, or any backend
-- Typing/spelling input modes or grammar lessons
-- Gamification, leaderboards, or advanced analytics
-- Native reciter audio (v2)
+- Open self-registration or public signup
+- OAuth/social login
+- Migration/import of old localStorage study data
+- Offline/PWA mode that works without PocketBase
+- Native plugin wiring or broader stack changes
+- New study mechanics beyond the original PRD
 
 ## Features (v1 priorities)
-- Core domain modules in src/core: srs.ts, wordlist.ts (CSV parser / JSON extractor), storage-adapter.ts
-- UI as Svelte components under src/ui; thin layer calling core APIs
-- PWA basics (manifest + service worker) to ease Android packaging (TWA/Capacitor)
-- Persistence via a StorageAdapter interface (localStorage now, Capacitor storage later)
-- Web Speech API for pronunciation with a pluggable TTS adapter for native fallback
-- Simple Stats and Word List views for verification
+- Invite-only PocketBase auth with manual admin account creation
+- Custom Svelte auth UI: login gate, logout, account/profile view, change password, forgot/reset password
+- PocketBase-backed persistence for user study progress and stats
+- Repo-contained deployment assets: PocketBase migrations, access rules, Nginx, systemd, env templates, and README setup notes
+- Preserve the existing study flow, SRS behavior, card content, stats, and word list screens
 
 ## Implementation approach
-- Scaffold a Vite + Svelte + TypeScript starter. Keep core logic in src/core and UI in src/ui.
-- Use vite-plugin-pwa to add offline support; build output (dist) will be configured as the Capacitor webDir for v2.
-- Convert the intake CSV to a small JSON at build-time (or parse in-browser for quick iteration) and keep the CSV in .context/intake as the canonical source.
-- Maintain adapter interfaces (StorageAdapter, TTSAdapter) so native Capacitor plugins can be swapped in v2 without rewriting core logic.
-- Story-004 will scaffold the project; story-002 implements the study flow on top of that scaffold.
+- Keep the Svelte + Vite + TypeScript frontend stack unchanged.
+- Add a small PocketBase client/auth layer under `src/core` and auth-related UI under `src/ui`.
+- Treat PocketBase as required runtime infrastructure; show a login gate or unavailable state until auth/server readiness is confirmed.
+- Define schema and access rules in version-controlled PocketBase migration files.
+- Document manual invite-only provisioning and password recovery in repo docs.
+- Do not rely on localStorage for persisted study data; start fresh on the PocketBase side.
 
 ## Story queue
 | Story | Title | Status | Blocks |
 |---|---|---|---|
-| story-001.md | Scope & foundation — confirm v1 shape and constraints | in-progress | story-004.md, story-002.md |
-| story-004.md | Scaffold Svelte + Vite + TypeScript starter (core modules & adapters) | not-started | story-002.md |
-| story-002.md | Core happy path — implement study flow & persistence | not-started | story-003.md |
-| story-003.md | Verification & polish — stats, word list, edge cases | not-started | — |
+| story-001.md | PocketBase backend foundation — schema, rules, and deployment kit | not-started | story-002.md, story-003.md, story-004.md |
+| story-002.md | Custom auth gate — login, logout, and app access control | not-started | story-003.md, story-004.md |
+| story-003.md | Per-user progress sync — replace localStorage with PocketBase | not-started | story-004.md |
+| story-004.md | Account settings — change password, reset password, and invite-only onboarding docs | not-started | — |
 
 ## Replanning log
-- 2026-03-29: Chosen stack Svelte + Vite + TypeScript. Added scaffold story (story-004) and adapter-driven architecture to ease v2 Capacitor migration.
+- 2026-04-09: Replanned v1 to layer PocketBase auth onto the original study app. Confirmed invite-only manual onboarding for a small friends-and-family group, custom Svelte auth UI, change-password plus forgot/reset-password flows, PocketBase-backed persistence, repo-contained deployment files/instructions, and a fresh start with no localStorage migration.
