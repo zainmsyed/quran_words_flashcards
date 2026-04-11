@@ -1,5 +1,8 @@
 .jj/
 node_modules/
 dist/
+pb_data/
+pocketbase
+pocketbase_*.zip
 .env
 .vscode/

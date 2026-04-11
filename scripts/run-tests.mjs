@@ -184,6 +184,68 @@ test('buildSessionPlan randomizes card mode and preserves saved session mode', a
   assert.equal(isSameLocalDay(new Date(2026, 3, 10, 9, 0, 0).toISOString(), new Date(2026, 3, 9, 18, 0, 0)), false);
 });
 
+test('pocketbase auth helpers normalize urls and parse sessions safely', async () => {
+  const {
+    trimTrailingSlash,
+    parseAuthSession,
+    sessionFromAuthResponse,
+  } = await importTs('src/core/pocketbase-auth.ts');
+
+  assert.equal(trimTrailingSlash('http://127.0.0.1:8090/'), 'http://127.0.0.1:8090');
+  assert.equal(trimTrailingSlash('https://example.com///'), 'https://example.com');
+
+  assert.deepEqual(parseAuthSession({
+    token: 'token-123',
+    user: {
+      id: 'user-1',
+      email: 'user@example.com',
+    },
+  }), {
+    token: 'token-123',
+    user: {
+      id: 'user-1',
+      email: 'user@example.com',
+    },
+  });
+
+  assert.equal(parseAuthSession({ token: 'missing-user' }), null);
+
+  assert.deepEqual(sessionFromAuthResponse({
+    token: 'token-456',
+    record: {
+      id: 'user-2',
+      email: 'friend@example.com',
+    },
+  }), {
+    token: 'token-456',
+    user: {
+      id: 'user-2',
+      email: 'friend@example.com',
+    },
+  });
+});
+
+test('pocketbase bootstrap helpers resolve binary paths and asset names', async () => {
+  const {
+    resolvePocketBaseBinaryPath,
+    resolvePocketBaseAssetName,
+  } = await importTs('scripts/pocketbase-bootstrap.mjs');
+
+  assert.equal(
+    resolvePocketBaseBinaryPath({ repoRoot: '/repo/root' }),
+    process.platform === 'win32' ? '/repo/root/pocketbase.exe' : '/repo/root/pocketbase',
+  );
+  assert.equal(
+    resolvePocketBaseBinaryPath({ repoRoot: '/repo/root', pbBin: '/tmp/custom-pocketbase' }),
+    process.platform === 'win32' ? '/tmp/custom-pocketbase.exe' : '/tmp/custom-pocketbase',
+  );
+
+  const linuxAsset = resolvePocketBaseAssetName({ version: 'v1.2.3', platform: 'linux', arch: 'x64' });
+  assert.equal(linuxAsset.tag, 'v1.2.3');
+  assert.equal(linuxAsset.assetName, 'pocketbase_1.2.3_linux_amd64.zip');
+  assert.equal(linuxAsset.binaryName, 'pocketbase');
+});
+
 let failed = 0;
 for (const { name, fn } of tests) {
   try {

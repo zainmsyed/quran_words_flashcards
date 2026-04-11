@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:full": "node scripts/dev-with-pocketbase.mjs",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node scripts/run-tests.mjs"
+    "test": "node scripts/run-tests.mjs",
+    "smoke:pocketbase": "node scripts/pocketbase-smoke-test.mjs"
   },
   "dependencies": {
     "svelte": "^4.0.0"

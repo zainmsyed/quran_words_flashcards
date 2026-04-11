@@ -1,0 +1,25 @@
+[Unit]
+Description=Quranic Flashcards PocketBase
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=flashcards
+Group=flashcards
+WorkingDirectory=/opt/flashcards
+EnvironmentFile=/opt/flashcards/.env
+ExecStartPre=/bin/sh -c '/opt/flashcards/pocketbase superuser upsert "$PB_ADMIN_EMAIL" "$PB_ADMIN_PASSWORD" --dir=/opt/flashcards/pb_data'
+ExecStartPre=/opt/flashcards/pocketbase migrate up --dir=/opt/flashcards/pb_data --migrationsDir=/opt/flashcards/pb_migrations
+ExecStart=/opt/flashcards/pocketbase serve --http=127.0.0.1:8090 --dir=/opt/flashcards/pb_data
+Restart=always
+RestartSec=5
+LimitNOFILE=4096
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/flashcards/pb_data
+
+[Install]
+WantedBy=multi-user.target

@@ -1,8 +1,8 @@
 # Story 003: Per-user progress sync — replace localStorage with PocketBase
 
-**Status:** not-started
+**Status:** in-progress  
 **Created:** 2026-04-09
-**Last accessed:** 2026-04-09
+**Last accessed:** 2026-04-11  
 **Completed:** —
 
 ## Goal

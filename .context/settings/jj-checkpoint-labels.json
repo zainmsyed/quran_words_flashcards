@@ -172,6 +172,25 @@
     "c49a9129": "start fresh bc there are no usrs right now",
     "577f9347": "yes please",
     "f24a4faf": "please create a new branch called pocketbase implimentation and coomit and push",
-    "d16b7fbc": "cleaned up name is fine"
+    "d16b7fbc": "cleaned up name is fine",
+    "8238a262": "push everything",
+    "3f5f3d51": "impliment story 001",
+    "71c0624a": "how are we testing this? or is it just the scaffolding",
+    "df282f7a": "how are we testing this? or is it just the scaffolding",
+    "3496aa62": "how are we testing this? or is it just the scaffolding",
+    "c514a647": "how are we testing this? or is it just the scaffolding",
+    "7fbd0234": "impliment story 2",
+    "f93ac1f5": "i have an error stating pocket base couldnt be reached so yes please wire it up",
+    "4182392d": "bash: ./pocketbase: No such file or directory",
+    "9cbfcd2b": "yes please",
+    "c46743b6": "zain@2001-1960-8800-818b-3865-e7ed-b3ec-deac:~/Documents/coding/arabic_flashcard",
+    "4a430f37": "can you do it please for me",
+    "4686f12e": "can you do it please for me",
+    "ba24d0b8": "what is the username and password?",
+    "958f92ba": "can we create a superuser and password.\n\nemail: zmsmisc@gmail.com\npassword: this",
+    "650b1c80": "i am able to sign in to the admin dashboard but not able to log in to the app. w",
+    "8752a481": "pocketbase-auth.ts:100  POST http://localhost:5181/api/collections/users/auth-wi",
+    "200fcd32": "i was able to create a new user and was able to login and sign out without error",
+    "e3b0b16c": "i was able to create a new user and was able to login and sign out without error"
   }
 }

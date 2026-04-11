@@ -1,9 +1,9 @@
 # Story 001: PocketBase backend foundation — schema, rules, and deployment kit
 
-**Status:** in-progress  
+**Status:** complete
 **Created:** 2026-04-09
-**Last accessed:** 2026-04-10  
-**Completed:** —
+**Last accessed:** 2026-04-10
+**Completed:** 2026-04-10
 
 ## Goal
 Add the PocketBase backend foundation needed for invite-only accounts and per-user progress. This story creates the version-controlled PocketBase schema, access rules, migrations, and repo-contained deployment files so the app can be booted consistently from a fresh checkout.
@@ -29,16 +29,32 @@ From a clean clone, a reviewer can inspect the repo and find the PocketBase migr
 - None
 
 ## Checklist
-- [ ] Create the PocketBase collection migration for per-user card progress
-- [ ] Define PocketBase access rules so users only access their own records
-- [ ] Add the admin/superuser setup or initialization file needed for invite-only onboarding
-- [ ] Add Nginx and systemd example files to the repo
-- [ ] Add an environment-variable template for PocketBase deployment
-- [ ] Update the README with setup, run, and backup instructions
-- [ ] Document manual account creation in the PocketBase admin dashboard
+- [x] Create the PocketBase collection migration for per-user card progress
+- [x] Define PocketBase access rules so users only access their own records
+- [x] Add the admin/superuser setup or initialization file needed for invite-only onboarding
+- [x] Add Nginx and systemd example files to the repo
+- [x] Add an environment-variable template for PocketBase deployment
+- [x] Update the README with setup, run, and backup instructions
+- [x] Document manual account creation in the PocketBase admin dashboard
 
 ## Issues
-- None yet.
+- No open implementation blockers remain in the repository after the live PocketBase smoke test passed.
+- Manual browser verification is still recommended for the auth-gated app flow before the broader story closeout work continues.
 
 ## Completion Summary
-This story is planned but not started. It will be complete when the repo contains the PocketBase schema, deployment kit, and setup instructions needed for invite-only use.
+Implemented the PocketBase backend foundation for invite-only use:
+
+- Added `pb_migrations/001_create_users_auth.js` to lock down the built-in PocketBase `users` auth collection for invite-only onboarding.
+- Added `pb_migrations/002_create_card_progress.js` to store per-user SRS state and lock access to each user's own records.
+- Added `pb_migrations/003_create_superuser.js` as a bootstrap safeguard for the initial PocketBase admin.
+- Added `scripts/pocketbase-bootstrap.mjs` plus local-dev and smoke-test wiring so PocketBase can be downloaded, bootstrapped, and migrated automatically when needed.
+- Added repo-contained deployment examples for Nginx and systemd.
+- Added `.env.example`, README setup/run/backup guidance, and invite-only onboarding docs.
+- Added PocketBase setup docs that explain first-run startup, backups, and manual account creation.
+
+Verification completed in-repo:
+- `npm test`
+- `npm run build`
+- `npm run smoke:pocketbase`
+
+Readiness: the backend foundation is now ready for closeout from a repository standpoint; remaining work is the manual browser-level auth-flow verification handled in the broader story process.

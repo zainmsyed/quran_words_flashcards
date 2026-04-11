@@ -12,6 +12,9 @@
   const STATES_KEY = 'qfc2_states';
   const STATS_KEY = 'qfc2_stats';
 
+  export let userEmail: string | null = null;
+  export let signOutBusy = false;
+
   const dispatch = createEventDispatcher();
 
   let tab: 'stats' | 'voice' | 'words' = 'stats';
@@ -40,6 +43,10 @@
   function close() {
     dispatch('close');
   }
+
+  function logout() {
+    dispatch('logout');
+  }
 </script>
 
 <section class="settings-panel settings-shell">
@@ -50,7 +57,14 @@
       </svg>
     </button>
 
-    <div class="settings-copy" aria-hidden="true"></div>
+    <div class="settings-copy">
+      <div class="settings-eyebrow">Signed in</div>
+      <div class="settings-user">{userEmail || 'PocketBase user'}</div>
+    </div>
+
+    <button class="signout-btn" type="button" on:click={logout} disabled={signOutBusy}>
+      {signOutBusy ? 'Signing out…' : 'Sign out'}
+    </button>
   </header>
 
   <nav class="settings-tabs" aria-label="Settings sections">
@@ -115,6 +129,36 @@
 
   .settings-copy {
     min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .settings-eyebrow {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+
+  .settings-user {
+    margin-top: 0.2rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .signout-btn {
+    min-height: 46px;
+    padding: 0.8rem 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.06);
   }
 
   .settings-tabs {
@@ -167,6 +211,15 @@
     .settings-shell {
       padding: 0.95rem 0 1rem;
       border-radius: 20px;
+    }
+
+    .settings-head {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .signout-btn {
+      width: 100%;
     }
 
     .settings-tab {
