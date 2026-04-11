@@ -191,6 +191,14 @@
     "650b1c80": "i am able to sign in to the admin dashboard but not able to log in to the app. w",
     "8752a481": "pocketbase-auth.ts:100  POST http://localhost:5181/api/collections/users/auth-wi",
     "200fcd32": "i was able to create a new user and was able to login and sign out without error",
-    "e3b0b16c": "i was able to create a new user and was able to login and sign out without error"
+    "e3b0b16c": "i was able to create a new user and was able to login and sign out without error",
+    "7be67147": "lets commit and push the story 2",
+    "10719ad6": "can we make it so that jj keeps bigger files than 1mb to the checkpoints",
+    "6bbdc912": "repor level for now",
+    "727299a7": "can we update jj so it adds files greater than 1mb in this repo",
+    "b9862a6e": "The user reported an issue via /fix: \"the ui is a little messed up. 1st problem ",
+    "1b6f3ee7": "you can mark it complete",
+    "45e26cf0": "yes commit and push please",
+    "a2bdba41": "what files are uncommited?"
   }
 }

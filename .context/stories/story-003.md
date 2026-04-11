@@ -38,7 +38,13 @@ Log in with two different PocketBase accounts and confirm each account sees its 
 - [ ] Remove reliance on `qfc2_*` localStorage keys for persisted study data
 
 ## Issues
-- None yet.
+
+### /fix — "the ui is a little messed up. 1st problem to fix is that the transliteration is written on the english side of the card. so you are seeing the answer. and also the audio is also availabel on the english side of the card again revealing the answer"
+- **Reported:** 2026-04-11  
+- **Status:** resolved  
+- **Agent note:** Fixed template logic so transliteration and the audio control only appear on the Arabic-facing side of the card. Build succeeded after the change. Runtime UI confirmation was provided by the user in this session.  
+- **Solution:** Edited src/ui/components/Card.svelte to render audio/transliteration only on the Arabic face: removed transliteration from the English/meaning face in `ar2en` mode and removed the front audio button from `en2ar` front-face. Kept audio and transliteration on the Arabic-facing face only.  
+
 
 ## Completion Summary
 This story is planned but not started. It will be complete when the app stores and restores per-user study progress through PocketBase instead of localStorage.

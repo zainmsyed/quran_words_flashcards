@@ -1,2 +1,3 @@
 # Complaints Log
 2026-04-09T23:05:11Z | story-004 | "the voices arent working" | status: resolved | note: audio button now appears on both card faces; speech loading is more defensive; marked resolved by agent at 2026-04-09T23:05:11Z
+2026-04-11T05:03:54Z | story-003 | "the ui is a little messed up. 1st problem to fix is that the transliteration is written on the english side of the card. so you are seeing the answer. and also the audio is also availabel on the english side of the card again revealing the answer" | status: resolved | note: audio/transliteration limited to Arabic-facing side; patched src/ui/components/Card.svelte; build OK; marked resolved by agent at 2026-04-11T05:03:54Z

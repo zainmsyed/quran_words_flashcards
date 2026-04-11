@@ -72,13 +72,15 @@
     on:keydown={handleCardKeydown}
   >
     <div class="card-face front">
-      <button class="audio-btn" type="button" aria-pressed={speaking} aria-label={speaking ? 'Stop pronunciation' : 'Pronounce Arabic'} on:click|stopPropagation={handleTtsClick} disabled={!ttsAvailable}>
-        {#if speaking}
-          <svg class="audio-icon stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
-        {:else}
-          <svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.75V13.25H8L12.5 17.75V6.25L8 10.75H4Z" fill="currentColor"/><path d="M15.25 8.75C16.36 9.86 16.36 14.14 15.25 15.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17.75 6.25C19.61 8.11 19.61 15.89 17.75 17.75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        {/if}
-      </button>
+      {#if mode === 'ar2en'}
+        <button class="audio-btn" type="button" aria-pressed={speaking} aria-label={speaking ? 'Stop pronunciation' : 'Pronounce Arabic'} on:click|stopPropagation={handleTtsClick} disabled={!ttsAvailable}>
+          {#if speaking}
+            <svg class="audio-icon stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
+          {:else}
+            <svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.75V13.25H8L12.5 17.75V6.25L8 10.75H4Z" fill="currentColor"/><path d="M15.25 8.75C16.36 9.86 16.36 14.14 15.25 15.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17.75 6.25C19.61 8.11 19.61 15.89 17.75 17.75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          {/if}
+        </button>
+      {/if}
       {#if mode === 'ar2en'}
         <div class="card-core front-core">
           <div class="card-mode-label">arabic → english</div>
@@ -108,20 +110,19 @@
     </div>
 
     <div class="card-face back">
-      <button class="audio-btn" type="button" aria-pressed={speaking} aria-label={speaking ? 'Stop pronunciation' : 'Pronounce Arabic'} on:click|stopPropagation={handleTtsClick} disabled={!ttsAvailable}>
-        {#if speaking}
-          <svg class="audio-icon stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
-        {:else}
-          <svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.75V13.25H8L12.5 17.75V6.25L8 10.75H4Z" fill="currentColor"/><path d="M15.25 8.75C16.36 9.86 16.36 14.14 15.25 15.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17.75 6.25C19.61 8.11 19.61 15.89 17.75 17.75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        {/if}
-      </button>
+      {#if mode === 'en2ar'}
+        <button class="audio-btn" type="button" aria-pressed={speaking} aria-label={speaking ? 'Stop pronunciation' : 'Pronounce Arabic'} on:click|stopPropagation={handleTtsClick} disabled={!ttsAvailable}>
+          {#if speaking}
+            <svg class="audio-icon stop" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
+          {:else}
+            <svg class="audio-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.75V13.25H8L12.5 17.75V6.25L8 10.75H4Z" fill="currentColor"/><path d="M15.25 8.75C16.36 9.86 16.36 14.14 15.25 15.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17.75 6.25C19.61 8.11 19.61 15.89 17.75 17.75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          {/if}
+        </button>
+      {/if}
       {#if mode === 'ar2en'}
         <div class="card-core back-core">
           <div class="card-mode-label">meaning</div>
           <div class="english-text">{word.english}</div>
-          {#if word.transliteration}
-            <div class="transliteration">{word.transliteration}</div>
-          {/if}
         </div>
       {:else}
         <div class="card-core back-core">
