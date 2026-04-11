@@ -151,6 +151,7 @@ async function main() {
     const collectionNames = new Set((collections.body?.items ?? []).map((item) => item.name));
     assert.ok(collectionNames.has('users'), 'users auth collection missing');
     assert.ok(collectionNames.has('card_progress'), 'card_progress collection missing');
+    assert.ok(collectionNames.has('study_state'), 'study_state collection missing');
 
     const invitedEmail = `invite-${Date.now()}@example.com`;
     const invitedPassword = 'Invited-12345';
@@ -206,6 +207,76 @@ async function main() {
     assert.equal(ownFetch.response.ok, true, `own record fetch failed: ${JSON.stringify(ownFetch.body)}`);
     assert.equal(ownFetch.body?.user, invitedUserId, 'fetched record does not belong to the signed-in user');
 
+    const studyStatePayload = new FormData();
+    const originalStudyState = {
+      stats: { studied: 7, easy: 2, streak: 4, lastStudyDate: '2026-04-11' },
+      session: {
+        queue: [
+          { id: 'w1', mode: 'ar2en' },
+          { id: 'w2', mode: 'en2ar' },
+        ],
+        index: 1,
+        createdAt: new Date().toISOString(),
+      },
+    };
+    studyStatePayload.set('user', invitedUserId);
+    studyStatePayload.set('state_json', JSON.stringify(originalStudyState));
+    const createStudyState = await requestJson(`${baseUrl}/api/collections/study_state/records`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${invitedToken}` },
+      body: studyStatePayload,
+    });
+    assert.equal(createStudyState.response.ok, true, `study_state create failed: ${JSON.stringify(createStudyState.body)}`);
+    const studyStateId = createStudyState.body?.id;
+    assert.ok(studyStateId, 'study_state record id missing');
+
+    const ownStudyStateFetch = await requestJson(`${baseUrl}/api/collections/study_state/records/${studyStateId}`, {
+      headers: { Authorization: `Bearer ${invitedToken}` },
+    });
+    assert.equal(ownStudyStateFetch.response.ok, true, `own study_state fetch failed: ${JSON.stringify(ownStudyStateFetch.body)}`);
+    assert.deepEqual(JSON.parse(ownStudyStateFetch.body?.state_json), originalStudyState, 'study_state did not round-trip correctly');
+
+    const changePasswordPayload = new FormData();
+    const changedPassword = 'Invited-54321';
+    changePasswordPayload.set('oldPassword', invitedPassword);
+    changePasswordPayload.set('password', changedPassword);
+    changePasswordPayload.set('passwordConfirm', changedPassword);
+    const changePasswordResponse = await requestJson(`${baseUrl}/api/collections/users/records/${invitedUserId}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${invitedToken}` },
+      body: changePasswordPayload,
+    });
+    assert.equal(changePasswordResponse.response.ok, true, `change password failed: ${JSON.stringify(changePasswordResponse.body)}`);
+
+    const changedLogin = await requestJson(`${baseUrl}/api/collections/users/auth-with-password`, {
+      method: 'POST',
+      body: JSON.stringify({ identity: invitedEmail, password: changedPassword }),
+    });
+    assert.equal(changedLogin.response.ok, true, `changed password login failed: ${JSON.stringify(changedLogin.body)}`);
+    const changedToken = changedLogin.body?.token;
+    assert.ok(changedToken, 'changed password auth token missing');
+
+    const updatedStudyState = {
+      ...originalStudyState,
+      stats: { ...originalStudyState.stats, easy: 3 },
+      session: { ...originalStudyState.session, index: 2 },
+    };
+    const updateStudyStatePayload = new FormData();
+    updateStudyStatePayload.set('user', invitedUserId);
+    updateStudyStatePayload.set('state_json', JSON.stringify(updatedStudyState));
+    const updateStudyState = await requestJson(`${baseUrl}/api/collections/study_state/records/${studyStateId}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${changedToken}` },
+      body: updateStudyStatePayload,
+    });
+    assert.equal(updateStudyState.response.ok, true, `study_state update failed: ${JSON.stringify(updateStudyState.body)}`);
+
+    const updatedStudyStateFetch = await requestJson(`${baseUrl}/api/collections/study_state/records/${studyStateId}`, {
+      headers: { Authorization: `Bearer ${changedToken}` },
+    });
+    assert.equal(updatedStudyStateFetch.response.ok, true, `updated study_state fetch failed: ${JSON.stringify(updatedStudyStateFetch.body)}`);
+    assert.deepEqual(JSON.parse(updatedStudyStateFetch.body?.state_json), updatedStudyState, 'updated study_state did not round-trip correctly');
+
     const secondEmail = `invite2-${Date.now()}@example.com`;
     const secondPassword = 'Invited-67890';
     const secondPayload = new FormData();
@@ -233,6 +304,17 @@ async function main() {
       headers: { Authorization: `Bearer ${secondToken}` },
     });
     assert.equal(forbiddenFetch.response.ok, false, 'second user should not be able to read another user progress record');
+
+    const forbiddenStudyStateFetch = await requestJson(`${baseUrl}/api/collections/study_state/records/${studyStateId}`, {
+      headers: { Authorization: `Bearer ${secondToken}` },
+    });
+    assert.equal(forbiddenStudyStateFetch.response.ok, false, 'second user should not be able to read another user study_state record');
+
+    const deleteStudyState = await requestJson(`${baseUrl}/api/collections/study_state/records/${studyStateId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${changedToken}` },
+    });
+    assert.equal(deleteStudyState.response.ok, true, `study_state delete failed: ${JSON.stringify(deleteStudyState.body)}`);
 
     console.log('PocketBase smoke test passed.');
   } finally {

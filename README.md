@@ -7,10 +7,11 @@ This repository now also contains the **PocketBase backend foundation** for the 
 - version-controlled PocketBase migrations
 - invite-only auth collection rules
 - per-user `card_progress` schema
+- custom in-app account/password flows for invited users
 - example Nginx and systemd deployment files
 - an environment template for first-run setup
 
-The custom auth UI and PocketBase-backed study syncing land in later stories. Story 001 in this repo is focused on the backend/deployment foundation only.
+The custom auth UI and PocketBase-backed study syncing now include account settings and change-password flows. Story 001 in this repo is focused on the backend/deployment foundation only.
 
 ## Repo layout
 
@@ -140,4 +141,4 @@ Restore process:
 
 This repo is planned for a small friends-and-family group, not public signup.
 
-Story 001 enforces that by locking down account creation at the collection-rule level. Admins create user accounts manually in the PocketBase dashboard. See [docs/invite-only-onboarding.md](docs/invite-only-onboarding.md) for the exact steps.
+Story 001 enforces that by locking down account creation at the collection-rule level. Admins create user accounts manually in the PocketBase dashboard. Invited users sign in through the custom app and can change their password from the account screen. See [docs/invite-only-onboarding.md](docs/invite-only-onboarding.md) for the exact steps.

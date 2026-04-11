@@ -1,43 +1,66 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import Stats from './Stats.svelte';
+  import AccountSettings from './AccountSettings.svelte';
   import VoiceSettings from './VoiceSettings.svelte';
   import WordList from './WordList.svelte';
-  import { loadSeedWords } from '../core/wordlist';
-  import { browserStorage } from '../core/storage-adapter';
-  import { normalizeCardState } from '../core/srs';
+  import { loadSeedWords, type Word } from '../core/wordlist';
   import type { CardState } from '../core/srs';
   import type { AppStats } from '../core/app-stats';
+  import type { AuthSession } from '../core/pocketbase-auth';
+  import {
+    clearLegacyStudyStorage,
+    loadAuthenticatedStudySnapshot,
+  } from '../core/pocketbase-study';
+  import { summarizeStudyProgress } from '../core/progress-summary';
 
-  const STATES_KEY = 'qfc2_states';
-  const STATS_KEY = 'qfc2_stats';
-
+  export let authSession: AuthSession | null = null;
   export let userEmail: string | null = null;
   export let signOutBusy = false;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    close: undefined;
+    logout: undefined;
+    sessionchange: AuthSession;
+  }>();
 
-  let tab: 'stats' | 'voice' | 'words' = 'stats';
-  let words: any[] = [];
+  let tab: 'stats' | 'account' | 'voice' | 'words' = 'stats';
+  let words: Word[] = [];
   let states: Record<string, CardState> = {};
   let appStats: AppStats = { studied: 0, easy: 0, streak: 0, lastStudyDate: undefined };
   let loading = true;
+  let loadError = '';
 
-  function normalizeStates(input: Record<string, CardState> | null | undefined) {
-    const out: Record<string, CardState> = {};
-    for (const [id, state] of Object.entries(input || {})) {
-      out[id] = normalizeCardState({ id, ...state });
+  async function retryLoad() {
+    loading = true;
+    loadError = '';
+    try {
+      if (!authSession) {
+        throw new Error('Missing PocketBase session.');
+      }
+
+      words = await loadSeedWords();
+      const snapshot = await loadAuthenticatedStudySnapshot(authSession, words);
+      states = snapshot.states;
+
+      const summary = summarizeStudyProgress(words, states, new Date());
+      appStats = {
+        ...snapshot.appStats,
+        studied: summary.seenWords,
+        easy: summary.easyCount,
+      };
+
+      await clearLegacyStudyStorage();
+    } catch (error) {
+      console.warn(error);
+      loadError = 'Could not load your PocketBase settings data.';
+    } finally {
+      loading = false;
     }
-    return out;
   }
 
-  onMount(async () => {
-    words = await loadSeedWords();
-    const savedStates = await browserStorage.getItem<Record<string, CardState>>(STATES_KEY);
-    states = normalizeStates(savedStates);
-    const savedStats = await browserStorage.getItem<AppStats>(STATS_KEY);
-    if (savedStats) appStats = savedStats;
-    loading = false;
+  onMount(() => {
+    void retryLoad();
   });
 
   function close() {
@@ -46,6 +69,10 @@
 
   function logout() {
     dispatch('logout');
+  }
+
+  function handleSessionChange(event: CustomEvent<AuthSession>) {
+    dispatch('sessionchange', event.detail);
   }
 </script>
 
@@ -69,6 +96,7 @@
 
   <nav class="settings-tabs" aria-label="Settings sections">
     <button type="button" class="settings-tab" class:active={tab === 'stats'} aria-pressed={tab === 'stats'} on:click={() => tab = 'stats'}>Stats</button>
+    <button type="button" class="settings-tab" class:active={tab === 'account'} aria-pressed={tab === 'account'} on:click={() => tab = 'account'}>Account</button>
     <button type="button" class="settings-tab" class:active={tab === 'voice'} aria-pressed={tab === 'voice'} on:click={() => tab = 'voice'}>Audio</button>
     <button type="button" class="settings-tab" class:active={tab === 'words'} aria-pressed={tab === 'words'} on:click={() => tab = 'words'}>Words</button>
   </nav>
@@ -76,9 +104,20 @@
   <div class="settings-content">
     {#if loading}
       <div class="settings-loading">Loading…</div>
+    {:else if loadError && words.length === 0}
+      <div class="settings-error" role="alert">
+        <p>{loadError}</p>
+        <button type="button" class="settings-retry-btn" on:click={retryLoad}>Retry</button>
+      </div>
     {:else}
+      {#if loadError}
+        <div class="settings-error compact" role="alert">{loadError}</div>
+      {/if}
+
       {#if tab === 'stats'}
         <Stats {words} {states} appStats={appStats} />
+      {:else if tab === 'account'}
+        <AccountSettings {authSession} {userEmail} on:sessionchange={handleSessionChange} />
       {:else if tab === 'voice'}
         <VoiceSettings />
       {:else}
@@ -163,7 +202,7 @@
 
   .settings-tabs {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.75rem;
     padding-inline: var(--session-gutter);
     margin-top: 1rem;
@@ -207,6 +246,41 @@
     font-size: 0.95rem;
   }
 
+  .settings-error {
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: rgba(255, 240, 240, 0.96);
+    color: #ad4f4f;
+    border: 0.5px solid rgba(208, 121, 121, 0.18);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+  }
+
+  .settings-error p {
+    margin: 0;
+  }
+
+  .settings-retry-btn {
+    min-height: 44px;
+    margin-top: 0.9rem;
+    padding: 0.7rem 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+    color: var(--on-primary);
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 16px 26px rgba(0, 109, 75, 0.16);
+  }
+
+  .settings-error.compact {
+    margin-bottom: 0.85rem;
+  }
+
   @media (max-width: 720px) {
     .settings-shell {
       padding: 0.95rem 0 1rem;
@@ -220,6 +294,10 @@
 
     .signout-btn {
       width: 100%;
+    }
+
+    .settings-tabs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .settings-tab {

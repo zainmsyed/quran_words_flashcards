@@ -5,9 +5,9 @@
   import AuthGate from './ui/AuthGate.svelte';
   import AuthUnavailable from './ui/AuthUnavailable.svelte';
   import {
+    initializeAuth,
     type AuthSession,
     type PocketBaseAuthError,
-    initializeAuth,
     signInWithPassword,
     signOut,
   } from './core/pocketbase-auth';
@@ -84,6 +84,10 @@
       authBusy = false;
     }
   }
+
+  async function handleSessionChange(event: CustomEvent<AuthSession>) {
+    session = event.detail;
+  }
 </script>
 
 <main class="app-shell">
@@ -103,15 +107,17 @@
     </section>
   {:else if currentPage === 'study'}
     <section class="screen active study-screen">
-      <StudySession on:openSettings={() => (currentPage = 'settings')} />
+      <StudySession authSession={session} on:openSettings={() => (currentPage = 'settings')} />
     </section>
   {:else}
     <section class="screen active settings-screen">
       <Settings
+        authSession={session}
         userEmail={session?.user.email || null}
         signOutBusy={authBusy}
         on:close={() => (currentPage = 'study')}
         on:logout={handleSignOut}
+        on:sessionchange={handleSessionChange}
       />
     </section>
   {/if}

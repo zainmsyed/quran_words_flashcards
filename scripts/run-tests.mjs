@@ -223,6 +223,47 @@ test('pocketbase auth helpers normalize urls and parse sessions safely', async (
       email: 'friend@example.com',
     },
   });
+
+});
+
+test('study persistence helpers normalize saved session and stored state blobs', async () => {
+  const { normalizeSavedSession } = await importTs('src/core/session.ts');
+  const { decodeStoredStudyState } = await importTs('src/core/pocketbase-study.ts');
+
+  assert.deepEqual(normalizeSavedSession({
+    queue: [
+      { id: 'w1', mode: 'ar2en' },
+      { id: ' ', mode: 'en2ar' },
+      { id: 'w2', mode: 'invalid' },
+    ],
+    index: 4,
+    createdAt: '2026-04-09T12:00:00.000Z',
+  }, () => 0.1), {
+    queue: [
+      { id: 'w1', mode: 'ar2en' },
+      { id: 'w2', mode: 'ar2en' },
+    ],
+    index: 2,
+    createdAt: '2026-04-09T12:00:00.000Z',
+  });
+
+  const decoded = decodeStoredStudyState(JSON.stringify({
+    stats: { studied: 4, easy: 2, streak: 3, lastStudyDate: '2026-04-09' },
+    session: {
+      queue: [{ id: 'w3', mode: 'en2ar' }],
+      index: 1,
+      createdAt: '2026-04-09T12:00:00.000Z',
+    },
+  }));
+
+  assert.deepEqual(decoded, {
+    stats: { studied: 4, easy: 2, streak: 3, lastStudyDate: '2026-04-09' },
+    session: {
+      queue: [{ id: 'w3', mode: 'en2ar' }],
+      index: 1,
+      createdAt: '2026-04-09T12:00:00.000Z',
+    },
+  });
 });
 
 test('pocketbase bootstrap helpers resolve binary paths and asset names', async () => {

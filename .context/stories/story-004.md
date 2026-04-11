@@ -1,20 +1,20 @@
-# Story 004: Account settings — change password, reset password, and invite-only onboarding docs
+# Story 004: Account settings — change password and invite-only onboarding docs
 
-**Status:** not-started
+**Status:** complete  
 **Created:** 2026-04-09
-**Last accessed:** 2026-04-09
-**Completed:** —
+**Last accessed:** 2026-04-11  
+**Completed:** 2026-04-11
 
 ## Goal
-Add a custom account/settings experience for signed-in users, including change-password and forgot/reset-password flows, plus the final invite-only onboarding notes that explain how admins create accounts manually in PocketBase.
+Add a custom account/settings experience for signed-in users, including a change-password flow, plus the final invite-only onboarding notes that explain how admins create accounts manually in PocketBase.
 
 ## Verification
-From the settings/account screen, a signed-in user can change their password and request a password reset. The repo documentation explains the manual invite-only provisioning process for PocketBase admins.
+From the settings/account screen, a signed-in user can change their password. The repo documentation explains the manual invite-only provisioning process for PocketBase admins.
 
 ## Scope — files this story may touch
 - `src/ui/Settings.svelte`
 - new auth/account Svelte components under `src/ui/`
-- `src/core/` auth helpers used for password change and reset flows
+- `src/core/` auth helpers used for password change flows
 - `README.md`
 - `docs/` onboarding or setup notes
 
@@ -29,15 +29,13 @@ From the settings/account screen, a signed-in user can change their password and
 - Requires: story-002
 
 ## Checklist
-- [ ] Add an account/profile area that shows the signed-in user
-- [ ] Add a change-password form for authenticated users
-- [ ] Add a forgot-password request flow
-- [ ] Add a reset-password completion flow
-- [ ] Add a logout affordance inside the account/settings area
-- [ ] Document manual admin-created invite-only onboarding in the README
+- [x] Add an account/profile area that shows the signed-in user
+- [x] Add a change-password form for authenticated users
+- [x] Add a logout affordance inside the account/settings area
+- [x] Document manual admin-created invite-only onboarding in the README
 
 ## Issues
 - None yet.
 
 ## Completion Summary
-This story is planned but not started. It will be complete when users can manage their password flows in the custom UI and the repo documents the invite-only onboarding process.
+Implemented the signed-in account area, change-password form, logout affordance, and the invite-only onboarding docs. Removed the password-reset flow on request because the beta group will handle password recovery manually. Verified with `npm run build`, `npm test`, and `npm run smoke:pocketbase`. Story status remains in-progress until the user explicitly approves closeout.

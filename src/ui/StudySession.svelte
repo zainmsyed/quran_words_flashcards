@@ -1,16 +1,28 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import Card from './components/Card.svelte';
-  import { loadSeedWords, Word } from '../core/wordlist';
-  import { browserStorage } from '../core/storage-adapter';
-  import { initialCardState, applyRatingToCard, normalizeCardState, CardState } from '../core/srs';
-  import { initialAppStats, normalizeAppStats, recordStudy, AppStats } from '../core/app-stats';
-  import { buildSessionPlan, isSameLocalDay, retrySessionItem, type SavedSession, type SessionItem } from '../core/session';
+  import { loadSeedWords, type Word } from '../core/wordlist';
+  import { applyRatingToCard, initialCardState, normalizeCardState, type CardState } from '../core/srs';
+  import { initialAppStats, recordStudy, type AppStats } from '../core/app-stats';
+  import {
+    buildSessionPlan,
+    isSameLocalDay,
+    normalizeSavedSession,
+    retrySessionItem,
+    type SavedSession,
+    type SessionItem,
+  } from '../core/session';
   import { summarizeStudyProgress } from '../core/progress-summary';
+  import type { AuthSession } from '../core/pocketbase-auth';
+  import {
+    clearLegacyStudyStorage,
+    loadAuthenticatedStudySnapshot,
+    savePocketBaseCardState,
+    savePocketBaseStudyState,
+  } from '../core/pocketbase-study';
 
-  const STATES_KEY = 'qfc2_states';
-  const STATS_KEY = 'qfc2_stats';
-  const SESSION_KEY = 'qfc2_session';
+  export let authSession: AuthSession | null = null;
+
   const NEW_PER_SESSION = 10;
   const REVIEW_PER_SESSION = 5;
 
@@ -23,6 +35,7 @@
   let states: Record<string, CardState> = {};
   let appStats: AppStats = initialAppStats();
   let loading = true;
+  let loadError = '';
   let sessionNewCount = 0;
   let sessionReviewCount = 0;
   let currentCardNumber = 0;
@@ -40,10 +53,6 @@
     return out;
   }
 
-  function normalizeStats(input: AppStats | null | undefined) {
-    return normalizeAppStats(input || undefined);
-  }
-
   function makeWordMap(list: Word[]) {
     return new Map(list.map((word) => [word.id, word] as const));
   }
@@ -52,18 +61,6 @@
     words.forEach((word) => {
       if (!states[word.id]) states[word.id] = initialCardState(word.id);
     });
-  }
-
-  async function persistSession(index = currentIndex, queue = sessionItems) {
-    await browserStorage.setItem(SESSION_KEY, {
-      queue,
-      index,
-      createdAt: new Date().toISOString(),
-    });
-  }
-
-  async function persistStats() {
-    await browserStorage.setItem(STATS_KEY, appStats);
   }
 
   async function buildSession(savedSession?: SavedSession) {
@@ -79,51 +76,93 @@
     deck = sessionItems.map((si) => wordMap.get(si.id)).filter(Boolean) as Word[];
   }
 
-  onMount(async () => {
-    words = await loadSeedWords();
+  function currentSessionSnapshot(createdAt = new Date().toISOString()): SavedSession {
+    return {
+      queue: sessionItems.map((item) => ({ ...item })),
+      index: currentIndex,
+      createdAt,
+    };
+  }
 
-    const savedStates = await browserStorage.getItem<Record<string, CardState>>(STATES_KEY);
-    states = normalizeStates(savedStates);
+  async function persistStudySnapshot(nextStats: AppStats, nextSession: SavedSession | null) {
+    if (!authSession) {
+      throw new Error('Missing PocketBase session.');
+    }
+
+    await savePocketBaseStudyState(authSession, nextStats, nextSession);
+  }
+
+  async function persistStudySnapshotWithRetry(nextStats: AppStats, nextSession: SavedSession | null): Promise<boolean> {
+    try {
+      await persistStudySnapshot(nextStats, nextSession);
+      return true;
+    } catch (firstError) {
+      try {
+        await persistStudySnapshot(nextStats, nextSession);
+        return true;
+      } catch (retryError) {
+        console.warn(firstError);
+        console.warn(retryError);
+        return false;
+      }
+    }
+  }
+
+  async function initializeSession() {
+    if (!authSession) {
+      throw new Error('Missing PocketBase session.');
+    }
+
+    words = await loadSeedWords();
+    const snapshot = await loadAuthenticatedStudySnapshot(authSession, words);
+    states = normalizeStates(snapshot.states);
     ensureCardStates();
 
-    const savedStats = await browserStorage.getItem<AppStats>(STATS_KEY);
-    appStats = normalizeStats(savedStats);
+    const summary = summarizeStudyProgress(words, states, new Date());
+    const syncedStats = {
+      ...snapshot.appStats,
+      studied: summary.seenWords,
+      easy: summary.easyCount,
+    };
 
-    // Keep persisted summary fields aligned with the actual card states.
-    try {
-      const progress = summarizeStudyProgress(words, states, new Date());
-      const syncedStats = {
-        ...appStats,
-        studied: progress.seenWords,
-        easy: progress.easyCount,
-      };
-      if (appStats.studied !== syncedStats.studied || appStats.easy !== syncedStats.easy) {
-        appStats = syncedStats;
-        await persistStats();
+    const savedSession = normalizeSavedSession(snapshot.session);
+    const effectiveSession = savedSession && isSameLocalDay(savedSession.createdAt) ? savedSession : null;
+    const statsChanged = syncedStats.studied !== snapshot.appStats.studied || syncedStats.easy !== snapshot.appStats.easy;
+
+    appStats = syncedStats;
+    await buildSession(effectiveSession || undefined);
+
+    if (!effectiveSession || statsChanged) {
+      const sessionToPersist = effectiveSession ?? currentSessionSnapshot();
+      const persisted = await persistStudySnapshotWithRetry(syncedStats, sessionToPersist);
+      if (!persisted) {
+        loadError = 'Could not save your PocketBase session.';
       }
-    } catch (e) {
-      // ignore
     }
 
-    const savedSession = await browserStorage.getItem<SavedSession>(SESSION_KEY);
+    await clearLegacyStudyStorage();
+  }
 
-    if (savedSession && !isSameLocalDay(savedSession.createdAt)) {
-      await browserStorage.removeItem(SESSION_KEY);
-      await buildSession(undefined);
-    } else {
-      await buildSession(savedSession || undefined);
+  async function retryLoad() {
+    loading = true;
+    loadError = '';
+    try {
+      await initializeSession();
+    } catch (error) {
+      console.warn(error);
+      loadError = 'Could not load your PocketBase study data.';
+    } finally {
+      loading = false;
     }
+  }
 
-    loading = false;
+  onMount(() => {
+    void retryLoad();
   });
 
   function getStateFor(id: string) {
     if (!states[id]) states[id] = initialCardState(id);
     return states[id];
-  }
-
-  async function saveStates() {
-    await browserStorage.setItem(STATES_KEY, states);
   }
 
   async function handleRate(rating: 'hard' | 'got' | 'easy') {
@@ -133,17 +172,33 @@
     if (!word) return;
 
     const currentItem = sessionItems[currentIndex];
+    const prev = getStateFor(word.id);
+    const updated = applyRatingToCard(prev, rating);
+    const nextStats = recordStudy(appStats, rating, new Date(), prev.interval === 0);
+    const nextSessionItems = [...sessionItems];
+
+    if (rating === 'hard' && currentItem) {
+      nextSessionItems.push(retrySessionItem(currentItem));
+    }
+
+    const nextSession = {
+      queue: nextSessionItems,
+      index: currentIndex + 1,
+      createdAt: new Date().toISOString(),
+    } satisfies SavedSession;
 
     ratingBusy = true;
     try {
-      const prev = getStateFor(word.id);
-      const updated = applyRatingToCard(prev, rating);
+      await savePocketBaseCardState(authSession!, updated);
+      const persisted = await persistStudySnapshotWithRetry(nextStats, nextSession);
+      if (!persisted) {
+        await retryLoad();
+        return;
+      }
+
       states[word.id] = updated;
-      // only increment "studied" for genuinely new cards (interval === 0)
-      const isNew = prev.interval === 0;
-      appStats = recordStudy(appStats, rating, new Date(), isNew);
-      await saveStates();
-      await persistStats();
+      appStats = nextStats;
+      loadError = '';
 
       if (rating === 'hard' && currentItem) {
         sessionItems.push(retrySessionItem(currentItem));
@@ -151,24 +206,51 @@
       }
 
       currentIndex += 1;
-      await persistSession();
+    } catch (error) {
+      console.warn(error);
+      loadError = 'Could not save your PocketBase progress.';
     } finally {
       ratingBusy = false;
     }
   }
 
   async function reviewCompletedSession() {
-    if (sessionItems.length === 0) return;
-    currentIndex = 0;
-    await persistSession();
+    if (sessionItems.length === 0 || !authSession) return;
+
+    const nextSession = {
+      queue: sessionItems,
+      index: 0,
+      createdAt: new Date().toISOString(),
+    } satisfies SavedSession;
+
+    try {
+      const persisted = await persistStudySnapshotWithRetry(appStats, nextSession);
+      if (!persisted) {
+        await retryLoad();
+        return;
+      }
+      currentIndex = 0;
+      loadError = '';
+    } catch (error) {
+      console.warn(error);
+      loadError = 'Could not save your PocketBase session.';
+    }
   }
 
   async function startFreshSession() {
     loading = true;
+    loadError = '';
     try {
-      await browserStorage.removeItem(SESSION_KEY);
       ensureCardStates();
       await buildSession(undefined);
+      const persisted = await persistStudySnapshotWithRetry(appStats, currentSessionSnapshot());
+      if (!persisted) {
+        await retryLoad();
+        return;
+      }
+    } catch (error) {
+      console.warn(error);
+      loadError = 'Could not start a new PocketBase session.';
     } finally {
       loading = false;
     }
@@ -205,6 +287,14 @@
   <div class="loading-screen">
     <p>Loading session…</p>
   </div>
+{:else if loadError && deck.length === 0 && sessionItems.length === 0}
+  <div class="loading-screen">
+    <div class="load-error-card" role="alert">
+      <p class="load-error-title">Could not load your PocketBase study data</p>
+      <p class="load-error-copy">{loadError}</p>
+      <button type="button" class="retry-load-btn" on:click={retryLoad}>Retry</button>
+    </div>
+  </div>
 {:else}
   <div class="device-shell">
     <header class="session-header">
@@ -217,6 +307,9 @@
 
     <div class="session-main">
       <div class="card-stage">
+        {#if loadError && deck.length > 0}
+          <div class="session-alert" role="alert">{loadError}</div>
+        {/if}
         {#if deck.length > 0}
           <div class="progress-scene">
             <div class="progress-card" aria-label={`Session progress ${currentCardNumber} of ${deck.length}`}>
@@ -300,6 +393,61 @@
     font-size: 14px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
+  }
+
+  .load-error-card {
+    width: min(100%, 30rem);
+    padding: 1.5rem 1.25rem;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(249, 252, 250, 0.97));
+    border: 0.5px solid rgba(173, 179, 181, 0.15);
+    box-shadow: 0 24px 48px rgba(0, 109, 75, 0.08);
+    text-align: center;
+  }
+
+  .load-error-title {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .load-error-copy {
+    margin: 0.75rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .retry-load-btn {
+    min-height: 50px;
+    margin-top: 1.1rem;
+    padding: 0.8rem 1.15rem;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+    color: var(--on-primary);
+    font-size: 0.88rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 16px 26px rgba(0, 109, 75, 0.16);
+  }
+
+  .session-alert {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: 18px;
+    background: rgba(255, 240, 240, 0.96);
+    color: #ad4f4f;
+    border: 0.5px solid rgba(208, 121, 121, 0.18);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    font-weight: 700;
   }
 
   .device-shell {

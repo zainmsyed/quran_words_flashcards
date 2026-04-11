@@ -33,6 +33,7 @@ async function fileExists(filePath) {
   }
 }
 
+
 function parseEnvText(content) {
   const env = {};
   for (const rawLine of content.split(/\r?\n/)) {

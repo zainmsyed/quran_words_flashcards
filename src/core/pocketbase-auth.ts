@@ -226,3 +226,31 @@ export async function signInWithPassword(email: string, password: string): Promi
 export async function signOut(): Promise<void> {
   await clearStoredSession();
 }
+
+export async function changePassword(
+  session: AuthSession,
+  currentPassword: string,
+  nextPassword: string,
+): Promise<AuthSession> {
+  const oldPassword = currentPassword.trim();
+  const password = nextPassword.trim();
+
+  if (!oldPassword || !password) {
+    throw new PocketBaseAuthError('invalid-credentials', 'Enter your current password and a new password.');
+  }
+
+  await requestJson('/api/collections/users/records/' + session.user.id, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+    },
+    body: JSON.stringify({
+      oldPassword,
+      password,
+      passwordConfirm: password,
+    }),
+  });
+
+  return signInWithPassword(session.user.email, password);
+}
+

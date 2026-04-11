@@ -70,6 +70,7 @@ PB_ADMIN_PASSWORD=change-this-before-first-run
 
 These values are read by `pb_migrations/003_create_superuser.js` on first startup.
 
+
 ## 5. Install the systemd unit
 
 Copy the example service file from the repo:
@@ -129,7 +130,7 @@ From the repo root, after PocketBase is installed and `.env` is configured, run:
 npm run smoke:pocketbase
 ```
 
-The script starts PocketBase against a temporary data directory, waits for `/api/health`, confirms the `users` and `card_progress` collections exist, creates invited users, writes progress, and verifies record ownership rules.
+The script starts PocketBase against a temporary data directory, waits for `/api/health`, confirms the `users`, `card_progress`, and `study_state` collections exist, creates invited users, exercises progress and study-state writes, and verifies record ownership plus the password-change flow.
 
 If your PocketBase binary is not at `./pocketbase`, point the script at it with `PB_BIN=/path/to/pocketbase npm run smoke:pocketbase`.
 
@@ -154,6 +155,8 @@ Admin dashboard:
 Frontend app:
 
 - `https://your-domain.example/`
+
+From the app, invited users can change their password in the account tab.
 
 ## 10. SSL
 

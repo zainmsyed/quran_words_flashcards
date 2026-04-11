@@ -49,6 +49,34 @@ export function retrySessionItem(item: SessionItem): SessionItem {
   return { id: item.id, mode: item.mode };
 }
 
+export function normalizeSavedSession(
+  input?: SavedSession | null,
+  random: () => number = Math.random,
+): SavedSession | null {
+  if (!input || !Array.isArray(input.queue)) return null;
+
+  const queue = input.queue
+    .filter((item): item is SessionItem => Boolean(item && typeof item.id === 'string' && item.id.trim()))
+    .map((item) => ({
+      id: item.id.trim(),
+      mode: item.mode === 'ar2en' || item.mode === 'en2ar' ? item.mode : pickSessionMode(random),
+    }));
+
+  if (queue.length === 0) return null;
+
+  const index = typeof input.index === 'number' && Number.isFinite(input.index)
+    ? Math.min(Math.max(Math.floor(input.index), 0), queue.length)
+    : 0;
+
+  const createdAt = typeof input.createdAt === 'string' && input.createdAt.trim() ? input.createdAt.trim() : undefined;
+
+  return {
+    queue,
+    index,
+    createdAt,
+  };
+}
+
 function normalizeLimits(limits?: SessionLimits): Required<SessionLimits> {
   return {
     newPerSession: limits?.newPerSession ?? DEFAULT_NEW_PER_SESSION,
@@ -77,15 +105,17 @@ export function buildSessionPlan(
   const random = options?.random ?? Math.random;
   const wordMap = toWordMap(words);
 
-  if (savedSession && Array.isArray(savedSession.queue) && savedSession.index != null) {
-    const queue = savedSession.queue
+  const normalizedSavedSession = normalizeSavedSession(savedSession, random);
+
+  if (normalizedSavedSession && normalizedSavedSession.index != null) {
+    const queue = normalizedSavedSession.queue
       .filter((item) => wordMap.has(item.id))
       .map((item) => ({
         id: item.id,
         mode: item.mode ?? pickSessionMode(random),
       }));
 
-    const currentIndex = Math.min(Math.max(savedSession.index ?? 0, 0), queue.length);
+    const currentIndex = Math.min(Math.max(normalizedSavedSession.index ?? 0, 0), queue.length);
     const newCount = queue.filter((item) => (states[item.id]?.interval ?? 0) === 0).length;
 
     return {
