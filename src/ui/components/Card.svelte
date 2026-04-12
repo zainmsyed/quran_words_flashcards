@@ -83,7 +83,6 @@
       {/if}
       {#if mode === 'ar2en'}
         <div class="card-core front-core">
-          <div class="card-mode-label">arabic → english</div>
           <div class="center-zone">
             <div class="arabic-text">{word.arabic}</div>
           </div>
@@ -97,7 +96,6 @@
         </div>
       {:else}
         <div class="card-core front-core">
-          <div class="card-mode-label">english → arabic</div>
           <div class="center-zone">
             <div class="english-text">{word.english}</div>
           </div>
@@ -121,12 +119,10 @@
       {/if}
       {#if mode === 'ar2en'}
         <div class="card-core back-core">
-          <div class="card-mode-label">meaning</div>
           <div class="english-text">{word.english}</div>
         </div>
       {:else}
         <div class="card-core back-core">
-          <div class="card-mode-label">arabic</div>
           <div class="arabic-text">{word.arabic}</div>
           {#if word.transliteration}
             <div class="transliteration">{word.transliteration}</div>
@@ -154,10 +150,7 @@
     -webkit-transform-style: preserve-3d;
     transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 6px;
-    overflow: hidden;
     cursor: pointer;
-    background: var(--card);
-    border: 0.5px solid var(--border);
     box-shadow: var(--shadow-primary);
   }
 
