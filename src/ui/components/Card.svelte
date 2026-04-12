@@ -153,9 +153,17 @@
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
     transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 24px;
+    border-radius: 6px;
+    overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 12px 24px rgba(23, 78, 58, 0.06);
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .flashcard:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
   }
 
   .flashcard.flipped {
@@ -167,39 +175,56 @@
     inset: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    border-radius: 24px;
-    border: 1px solid rgba(214, 237, 229, 0.95);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(250, 252, 251, 0.99));
+    border-radius: 6px;
+    background: var(--card);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.35rem 1.15rem;
+    padding: clamp(1.15rem, 3vw, 1.5rem);
     text-align: center;
-    box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.62),
-      0 12px 24px rgba(17, 63, 48, 0.04);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
     pointer-events: none;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--text);
   }
 
   .audio-btn {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 46px;
-    height: 46px;
-    border-radius: 999px;
-    border: 0;
+    top: 1rem;
+    right: 1rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
     display: grid;
     place-items: center;
     padding: 0;
-    background: rgba(213, 247, 236, 0.98);
-    color: #12805b;
+    background: var(--card);
+    color: var(--primary);
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.06);
+    box-shadow: var(--shadow-primary);
+    transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s, transform 0.15s;
   }
 
-  .audio-btn[disabled] { opacity: 0.45; cursor: default; }
+  .audio-btn:hover {
+    background: var(--primary-container);
+    border-color: rgba(214, 40, 40, 0.18);
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  .audio-btn:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+
+  .audio-btn[aria-pressed='true'] {
+    background: var(--primary);
+    color: var(--on-primary);
+    border-color: var(--primary);
+  }
+
+  .audio-btn[disabled] { opacity: 0.45; cursor: default; transform: none; }
 
   .audio-icon {
     width: 22px;
@@ -215,14 +240,10 @@
 
   .card-face.front {
     z-index: 2;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(251, 253, 252, 0.99));
   }
 
   .card-face.back {
     transform: rotateY(180deg);
-    background:
-      linear-gradient(180deg, rgba(250, 253, 251, 0.99), rgba(244, 249, 247, 0.99));
   }
 
   .flashcard:not(.flipped) .card-face.front,
@@ -249,12 +270,13 @@
   }
 
   .card-mode-label {
-    font-size: 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
     line-height: 1;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: #c8ddd6;
-    font-weight: 900;
+    color: var(--text-tertiary);
+    font-weight: 800;
   }
 
   .center-zone {
@@ -264,17 +286,17 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.7rem;
     min-height: 0;
     /* allow absolute-positioning of hints/transliteration without affecting Arabic centering */
     position: relative;
   }
 
   .arabic-text {
-    font-family: 'Amiri', serif;
+    font-family: 'Noto Naskh Arabic', serif;
     font-size: clamp(52px, 10vw, 96px);
     line-height: 1.08;
-    color: #153f34;
+    color: var(--text);
     direction: rtl;
     display: flex;
     align-items: center;
@@ -284,20 +306,21 @@
   }
 
   .english-text {
+    font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(30px, 8vw, 48px);
-    line-height: 1.15;
-    font-weight: 900;
-    color: #3b8b71;
-    font-family: 'Manrope', sans-serif;
-    font-style: italic;
+    line-height: 1.08;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.04em;
   }
 
   .transliteration {
-    font-size: 18px;
-    color: #8fb39f;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--text-secondary);
     font-style: italic;
-    line-height: 1.2;
-    font-weight: 800;
+    line-height: 1.3;
+    font-weight: 500;
   }
 
   /* place transliteration below centered Arabic without overlapping */
@@ -316,11 +339,12 @@
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 14px;
-    letter-spacing: 0.22em;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #93bfb1;
-    font-weight: 900;
+    color: var(--text-tertiary);
+    font-weight: 700;
     padding-top: 0.2rem;
   }
 
@@ -337,6 +361,27 @@
     .flashcard {
       width: 100%;
       min-height: 60vh;
+    }
+
+    .card-face {
+      padding: 1rem;
+    }
+
+    .audio-btn {
+      top: 0.85rem;
+      right: 0.85rem;
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    .audio-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .audio-icon.stop {
+      width: 16px;
+      height: 16px;
     }
 
     .arabic-text {
