@@ -262,16 +262,6 @@
     justify-content: center;
   }
 
-  .card-mode-label {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.78rem;
-    line-height: 1;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-    font-weight: 800;
-  }
-
   .center-zone {
     flex: 1;
     width: 100%;

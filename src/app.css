@@ -273,35 +273,43 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
 
 /* Progress / session */
 .progress-wrap {
-  padding: 0.9rem 1rem;
-  border-radius: var(--radius-lg);
-  background: rgba(255,255,255,0.8);
-  border: 0.5px solid rgba(173, 179, 181, 0.14);
+  padding: 1rem;
+  border-radius: 6px;
+  background: var(--card);
+  border: 0.5px solid var(--border);
   box-shadow: var(--shadow-primary);
 }
 
 .progress-label {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  font-weight: 600;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: var(--text-secondary);
   margin-bottom: 8px;
   gap: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.progress-label strong {
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--primary);
 }
 
 .progress-bar {
-  height: 6px;
-  background: rgba(173, 179, 181, 0.2);
-  border-radius: 999px;
+  height: 8px;
+  background: rgba(17, 17, 17, 0.08);
+  border-radius: 6px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--primary), var(--primary-dim));
-  border-radius: 999px;
-  transition: width 0.4s ease;
+  border-radius: 6px;
+  transition: width 0.35s ease;
 }
 
 .session-toolbar {
@@ -315,6 +323,7 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
 .session-toolbar .action-btn {
   min-height: 56px;
   width: 100%;
+  border-radius: 6px;
 }
 
 .session-chip {
@@ -322,12 +331,11 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
   align-items: center;
   justify-content: center;
   padding: 0.9rem 1rem;
-  border-radius: 999px;
-  border: 0.5px solid rgba(173, 179, 181, 0.14);
+  border: 0.5px solid var(--border);
   background: var(--card);
   color: var(--text);
   font-size: 16px;
-  font-weight: 900;
+  font-weight: 800;
   text-align: center;
   box-shadow: var(--shadow-primary);
 }

@@ -530,11 +530,11 @@
 
   .progress-card {
     width: 100%;
-    padding: 1.35rem 1.15rem;
-    border-radius: 24px;
-    border: 1px solid rgba(214, 237, 229, 0.95);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(251, 253, 252, 0.99));
-    box-shadow: 0 12px 24px rgba(23, 78, 58, 0.06);
+    padding: 1rem;
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-primary);
   }
 
   .progress-label {
@@ -543,40 +543,43 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    font-size: 11px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.72rem;
     line-height: 1.2;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #98b7ae;
-    font-weight: 900;
+    color: var(--text-tertiary);
+    font-weight: 800;
   }
 
   .progress-label strong {
-    color: #1d8f69;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--primary);
     font-size: 0.95rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
 
   .progress-bar {
-    height: 12px;
-    background: rgba(173, 179, 181, 0.18);
-    border-radius: 999px;
+    height: 8px;
+    background: rgba(17, 17, 17, 0.08);
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: inset 0 0 0 1px rgba(173, 179, 181, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.04);
   }
 
   .progress-fill {
-    background: linear-gradient(90deg, #2cb883, #84e0b6);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.36);
+    background: linear-gradient(90deg, var(--primary), var(--primary-dim));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
 
   .progress-meta {
     margin-top: 0.55rem;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.18em;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #95afaa;
+    color: var(--text-secondary);
   }
 
   .card-stage {
@@ -595,48 +598,62 @@
     grid-column: 2;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.55rem;
+    gap: 0.75rem;
     width: 100%;
     min-width: 0;
-    margin: 1.6rem auto 0;
+    margin: 1.5rem auto 0;
     padding: 0 0.1rem;
   }
 
   .rating-btn {
     appearance: none;
-    border: 0;
-    background: transparent;
-    box-shadow: none;
-    padding: 0;
-    min-height: 0;
+    border: 0.5px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-primary);
+    padding: 0.95rem 0.85rem;
+    min-height: 5.25rem;
     display: grid;
     justify-items: center;
+    align-content: center;
     gap: 0.45rem;
-    color: var(--primary);
+    border-radius: 6px;
+    color: var(--text);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-size: 12px;
-    font-weight: 900;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 800;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s, opacity 0.15s;
   }
 
   .rating-btn:hover {
+    background: var(--primary-container);
+    border-color: rgba(214, 40, 40, 0.18);
     opacity: 1;
-    transform: none;
+    transform: translateY(-1px);
+  }
+
+  .rating-btn:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
   }
 
   .rating-btn[disabled] {
     opacity: 0.55;
     pointer-events: none;
+    transform: none;
   }
 
   .rating-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 999px;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 6px;
     display: grid;
     place-items: center;
-    background: rgba(255, 255, 255, 0.88);
-    box-shadow: inset 0 0 0 1px rgba(194, 229, 216, 0.7), 0 10px 18px rgba(32, 94, 74, 0.07);
+    background: var(--primary-container);
+    color: var(--primary);
+    box-shadow: none;
+    border: 0.5px solid rgba(214, 40, 40, 0.12);
   }
 
   .rating-icon svg {
@@ -645,51 +662,51 @@
   }
 
   .rating-btn.hard {
-    color: #ea8d8d;
+    color: var(--danger-bg);
   }
 
   .rating-btn.hard .rating-icon {
-    color: #ea8d8d;
-    background: rgba(255, 243, 243, 0.98);
-    box-shadow: inset 0 0 0 1px rgba(245, 199, 199, 0.72), 0 10px 18px rgba(202, 110, 110, 0.05);
+    background: var(--danger-bg);
+    color: var(--on-primary);
+    border-color: var(--danger-bg);
   }
 
   .rating-btn.got {
-    color: #55a98a;
+    color: var(--text);
   }
 
   .rating-btn.got .rating-icon {
-    color: #1f9b71;
-    background: rgba(220, 248, 237, 0.98);
-    box-shadow: inset 0 0 0 1px rgba(164, 229, 205, 0.85), 0 10px 18px rgba(32, 146, 104, 0.08);
+    background: var(--info-bg);
+    color: var(--info-text);
+    border-color: rgba(214, 40, 40, 0.08);
   }
 
   .rating-btn.easy {
-    color: #84c999;
+    color: var(--success-bg);
   }
 
   .rating-btn.easy .rating-icon {
-    color: #74c58d;
-    background: rgba(235, 252, 240, 0.98);
-    box-shadow: inset 0 0 0 1px rgba(190, 236, 207, 0.88), 0 10px 18px rgba(69, 154, 97, 0.08);
+    background: var(--success-bg);
+    color: var(--on-primary);
+    border-color: var(--success-bg);
   }
 
   .rating-label {
     line-height: 1;
-    font-size: 12px;
+    font-size: 0.72rem;
     font-weight: 800;
   }
 
   .session-complete {
     width: 100%;
-    max-width: 232px;
+    max-width: 28rem;
     margin: 0 auto;
-    padding: 2rem 1.2rem 1.6rem;
+    padding: 1.5rem 1.2rem;
     text-align: center;
-    border-radius: 22px;
-    border: 1px solid rgba(194, 229, 216, 0.54);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 252, 249, 0.98));
-    box-shadow: 0 12px 30px rgba(18, 120, 82, 0.08);
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-primary);
   }
 
   .complete-mark {
@@ -698,26 +715,27 @@
     margin: 0 auto 0.9rem;
     display: grid;
     place-items: center;
-    border-radius: 999px;
-    background: rgba(213, 247, 236, 0.98);
-    color: #17885f;
+    border-radius: 6px;
+    background: var(--primary-container);
+    color: var(--primary);
     font-size: 1.2rem;
     font-weight: 800;
   }
 
   .session-complete h2 {
-    font-family: 'Manrope', sans-serif;
-    font-size: 1.4rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.35rem;
     line-height: 1;
-    color: #23453c;
+    color: var(--text);
     margin-bottom: 0.55rem;
   }
 
   .session-complete p {
-    color: #6f8e85;
+    color: var(--text-secondary);
     font-size: 0.95rem;
     line-height: 1.65;
     margin-bottom: 1.1rem;
+    font-family: 'Work Sans', sans-serif;
   }
 
   .session-actions {
@@ -728,21 +746,45 @@
   .review-again {
     width: 100%;
     border: 0;
-    border-radius: 999px;
+    border-radius: 6px;
     padding: 0.9rem 1rem;
-    font-size: 13px;
+    font-size: 0.8rem;
     font-weight: 800;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    background: linear-gradient(135deg, #d7f2e6, #c8ecdd);
-    color: #12805b;
-    box-shadow: 0 10px 18px rgba(18, 120, 82, 0.08);
+    background: var(--primary);
+    color: var(--on-primary);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .review-again:hover {
+    background: var(--primary-dim);
+    opacity: 1;
+    transform: translateY(-1px);
   }
 
   .review-again.secondary {
-    background: rgba(255, 255, 255, 0.94);
-    color: #4f7b6d;
-    box-shadow: inset 0 0 0 1px rgba(194, 229, 216, 0.78), 0 10px 18px rgba(18, 120, 82, 0.04);
+    background: var(--card);
+    color: var(--primary);
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .review-again.secondary:hover {
+    background: var(--primary-container);
+    border-color: rgba(214, 40, 40, 0.18);
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 720px) {
+    .rating-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rating-btn.easy {
+      grid-column: 1 / -1;
+    }
   }
 
   @media (max-width: 520px) {
@@ -764,11 +806,16 @@
     }
 
     .progress-card {
-      padding: 1.1rem 1rem 1.05rem;
+      padding: 1rem 0.95rem 0.95rem;
     }
 
     .progress-bar {
-      height: 10px;
+      height: 8px;
+    }
+
+    .rating-btn {
+      min-height: 4.9rem;
+      padding: 0.85rem 0.75rem;
     }
   }
 </style>
