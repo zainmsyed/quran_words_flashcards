@@ -41,16 +41,18 @@ Start a study session and verify that a card displays with:
 - **Agent note:** Likely regression source found and adjusted: removed `overflow: hidden` from the rotating `.flashcard` container (the most likely 3D clipping culprit introduced during the restyle). Mechanical verification passed (`npm run build`) and the user has confirmed the fix in-browser; the issue is closed by user confirmation.
 - **Solution:** Removed the card container clipping that could flatten/interfere with the 3D flip and restored 3D backface behavior. Browser-side flip behavior and audio/TTS were verified by the user and the issue was closed 2026-04-12.
 
-- Implementation is complete in the current `ui-ux-updates` branch worktree. The card uses the Bauhaus typography and geometry: Space Grotesk for the mode labels / English text, Work Sans for secondary hints and transliteration, Noto Naskh Arabic for Arabic text, and 6px-radius card/audio controls.
+- Implementation is complete in the current `ui-ux-updates` branch worktree (most recent commits include the flip-regression fix and a user-requested simplification of the card content).
+  - Flip-regression fix (removed overflow clipping) applied and verified by the user prior to content simplification.
+  - Card content simplified per user request: removed mode labels and other non-essential text; the card now shows only the Arabic word, the English meaning, the transliteration (where present), and the flip hint ("tap card to flip"). Audio/TTS controls and their Arabic-side visibility are preserved.
 - Build verification passed (`npm run build`) after the change.
 - What I can verify mechanically:
-  - The code compiles cleanly after the fix.
-  - The flip container no longer uses the extra clipping that was likely flattening the 3D card.
-- What was verified by the user in-browser:
-  - The card flip now shows the intended back face (no mirrored front)
-  - Audio/TTS button and rating actions functioned correctly during a sample session
-  - Audio and transliteration remain visible only on the Arabic-facing side
+  - The code compiles cleanly after the changes.
+  - The flashcard container no longer has `overflow: hidden` on the rotating element.
+  - The Card.svelte markup has been simplified as requested (mode labels removed; transliteration, Arabic, English meaning, and flip hint retained).
+- What still requires user/browser confirmation:
+  - Visually inspect a live study session on your browser (phone and desktop if you like) and confirm the simplified card renders as expected and that flipping shows the intended back face.
+  - Confirm audio/TTS playback and rating actions continue to function as before, and that transliteration remains visible only on the Arabic-facing side.
 
 ## Completion Summary
-Story 007 implementation is done from a code standpoint, and I also applied a likely fix for the flip regression by removing the `overflow: hidden` clipping from the rotating flashcard container. The build is green after that adjustment. However, I cannot prove the flip visually from this environment, so the issue remains pending until you confirm the browser behavior. Once you verify that the back face is now rendered correctly during an actual study session, Vazir can handle the final closeout.
+Implementation work for Story 007 is complete from a code standpoint: the card has been restyled to the Bauhaus language, the flip-regression clipping was removed, and the card content was simplified to only the essential elements (Arabic, English meaning, transliteration, and the flip hint) per your instruction. The project builds successfully. The single remaining verification step is a manual in-browser check to confirm the simplified card's visual and interactive behavior; once you confirm that in your browser, Vazir can perform the final closeout.
 
