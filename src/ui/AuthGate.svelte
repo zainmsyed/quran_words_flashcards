@@ -21,8 +21,14 @@
 
 <section class="auth-shell">
   <div class="auth-card auth-panel">
+    <div class="brand auth-brand" aria-label="alif">
+      <div class="brand-mark" aria-hidden="true">ا</div>
+      <div class="brand-copy">
+        <p>Quranic Arabic</p>
+        <h1>alif</h1>
+      </div>
+    </div>
     <div class="auth-badge">PocketBase sign in</div>
-    <h1>Quranic Flashcards</h1>
     <p class="auth-copy">Sign in with your invited account to open the study app.</p>
 
     <form class="auth-form" on:submit|preventDefault={submit}>
@@ -60,10 +66,17 @@
   .auth-card {
     width: min(100%, 32rem);
     padding: clamp(1.4rem, 4vw, 2rem);
-    border-radius: 28px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(249, 252, 250, 0.97));
-    border: 0.5px solid rgba(173, 179, 181, 0.15);
-    box-shadow: 0 24px 48px rgba(0, 109, 75, 0.08);
+    border-radius: 6px;
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 0.8rem;
   }
 
   .auth-badge {
@@ -72,8 +85,8 @@
     justify-content: center;
     margin-bottom: 0.8rem;
     padding: 0.45rem 0.85rem;
-    border-radius: 999px;
-    background: rgba(213, 247, 236, 0.98);
+    border-radius: 6px;
+    background: var(--primary-container);
     color: var(--primary);
     font-size: 0.72rem;
     font-weight: 900;
@@ -83,7 +96,7 @@
 
   h1 {
     margin: 0;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(2rem, 5vw, 2.6rem);
     line-height: 0.95;
     letter-spacing: -0.05em;
@@ -119,22 +132,22 @@
     width: 100%;
     min-height: 56px;
     padding: 0.95rem 1rem;
-    border-radius: 18px;
-    border: 0.5px solid rgba(173, 179, 181, 0.2);
-    background: rgba(255, 255, 255, 0.94);
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
+    background: var(--card);
     color: var(--text);
     font: inherit;
     box-shadow: inset 0 1px 2px rgba(12, 20, 18, 0.03);
   }
 
   .field input:focus {
-    outline: 2px solid rgba(0, 109, 75, 0.16);
-    border-color: rgba(0, 109, 75, 0.22);
+    outline: 2px solid rgba(214, 40, 40, 0.16);
+    border-color: rgba(214, 40, 40, 0.22);
   }
 
   .auth-feedback {
     padding: 0.85rem 0.95rem;
-    border-radius: 18px;
+    border-radius: 6px;
     font-size: 0.92rem;
     line-height: 1.5;
     font-weight: 700;
@@ -150,14 +163,20 @@
     min-height: 58px;
     margin-top: 0.25rem;
     border: 0;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+    border-radius: 6px;
+    background: var(--primary);
     color: var(--on-primary);
     font-size: 0.98rem;
     font-weight: 900;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    box-shadow: 0 16px 26px rgba(0, 109, 75, 0.16);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .submit-btn:hover {
+    background: var(--primary-dim);
+    opacity: 1;
+    transform: none;
   }
 
 </style>

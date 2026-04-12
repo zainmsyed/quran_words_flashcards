@@ -77,12 +77,20 @@
 </script>
 
 <section class="settings-panel settings-shell">
-  <header class="settings-head">
+  <header class="app-topbar settings-head">
     <button class="nav-btn" type="button" on:click={close} aria-label="Return to study">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </button>
+
+    <div class="brand" aria-label="alif">
+      <div class="brand-mark" aria-hidden="true">ا</div>
+      <div class="brand-copy">
+        <p>Quranic Arabic</p>
+        <h1>alif</h1>
+      </div>
+    </div>
 
     <div class="settings-copy">
       <div class="settings-eyebrow">Signed in</div>
@@ -133,32 +141,44 @@
     padding: 1rem 0 1.1rem;
     display: flex;
     flex-direction: column;
-    border-radius: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 253, 251, 0.96));
-    border: 1px solid rgba(255, 255, 255, 0.72);
-    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+    border-radius: 6px;
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
     overflow: hidden;
   }
 
   .settings-head {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.85rem;
     padding-inline: var(--session-gutter);
   }
 
+  .settings-head .brand {
+    flex: 1 1 auto;
+  }
+
   .nav-btn {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
     flex: 0 0 auto;
     display: grid;
     place-items: center;
     padding: 0;
-    border: 0;
-    border-radius: 999px;
-    background: rgba(213, 247, 236, 0.98);
-    color: #12805b;
-    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.06);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--primary);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .nav-btn:hover {
+    background: var(--primary-container);
+    border-color: rgba(214, 40, 40, 0.18);
+    opacity: 1;
+    transform: none;
   }
 
   .nav-btn svg {
@@ -188,16 +208,23 @@
   }
 
   .signout-btn {
-    min-height: 46px;
+    min-height: 50px;
     padding: 0.8rem 1rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--primary);
+    border-radius: 6px;
+    background: var(--primary);
+    color: var(--on-primary);
+    border: 0;
     font-size: 0.78rem;
     font-weight: 900;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.06);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .signout-btn:hover {
+    background: var(--primary-dim);
+    opacity: 1;
+    transform: none;
   }
 
   .settings-tabs {
@@ -213,23 +240,23 @@
     width: 100%;
     min-height: 54px;
     padding: 0.9rem 1rem;
-    border-radius: 999px;
-    border: 0.5px solid rgba(173, 179, 181, 0.14);
-    background: rgba(255, 255, 255, 0.88);
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
+    background: var(--card);
     color: var(--text);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Work Sans', sans-serif;
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    box-shadow: 0 10px 20px rgba(0, 109, 75, 0.05);
+    box-shadow: var(--shadow-primary);
   }
 
   .settings-tab.active {
-    background: var(--primary-container);
-    color: var(--primary);
-    border-color: rgba(0, 109, 75, 0.12);
-    box-shadow: 0 12px 24px rgba(0, 109, 75, 0.08);
+    background: var(--primary);
+    color: var(--on-primary);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-primary);
   }
 
   .settings-content {
@@ -248,7 +275,7 @@
 
   .settings-error {
     padding: 0.95rem 1rem;
-    border-radius: 18px;
+    border-radius: 6px;
     background: rgba(255, 240, 240, 0.96);
     color: #ad4f4f;
     border: 0.5px solid rgba(208, 121, 121, 0.18);
@@ -267,14 +294,20 @@
     margin-top: 0.9rem;
     padding: 0.7rem 1rem;
     border: 0;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+    border-radius: 6px;
+    background: var(--primary);
     color: var(--on-primary);
     font-size: 0.82rem;
     font-weight: 900;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    box-shadow: 0 16px 26px rgba(0, 109, 75, 0.16);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .settings-retry-btn:hover {
+    background: var(--primary-dim);
+    opacity: 1;
+    transform: none;
   }
 
   .settings-error.compact {
@@ -284,7 +317,7 @@
   @media (max-width: 720px) {
     .settings-shell {
       padding: 0.95rem 0 1rem;
-      border-radius: 20px;
+      border-radius: 6px;
     }
 
     .settings-head {
@@ -292,8 +325,19 @@
       flex-wrap: wrap;
     }
 
+    .settings-head .brand {
+      min-width: 100%;
+      order: 2;
+    }
+
+    .settings-copy {
+      min-width: 100%;
+      order: 3;
+    }
+
     .signout-btn {
       width: 100%;
+      order: 4;
     }
 
     .settings-tabs {

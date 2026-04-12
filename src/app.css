@@ -97,12 +97,10 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.95rem 1rem;
-  border-radius: var(--radius-xl);
-  background: rgba(248, 249, 250, 0.86);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 0.5px solid rgba(173, 179, 181, 0.18);
+  padding: 1rem 1.1rem;
+  border-radius: 6px;
+  background: var(--card);
+  border: 0.5px solid var(--border);
   box-shadow: var(--shadow-primary);
 }
 
@@ -110,17 +108,26 @@ main {
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  min-width: 0;
+}
+
+.brand-copy {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
 }
 
 .brand-mark {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 3rem;
+  height: 3rem;
   display: grid;
   place-items: center;
-  border-radius: 999px;
-  background: var(--primary-container);
-  color: var(--primary);
-  font-size: 1.05rem;
+  border-radius: 6px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 1.7rem;
+  line-height: 1;
   box-shadow: var(--shadow-primary);
 }
 
@@ -133,7 +140,7 @@ main {
 }
 
 .brand-copy p {
-  margin-bottom: 0.18rem;
+  margin-bottom: 0;
   color: var(--text-tertiary);
 }
 
@@ -145,10 +152,11 @@ main {
 }
 
 .brand-copy h1 {
-  font-size: 1.15rem;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
   font-weight: 800;
-  color: var(--primary);
+  color: var(--text);
   line-height: 1;
+  text-transform: lowercase;
 }
 
 .eyebrow {
@@ -239,7 +247,7 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
 .action-btn.active {
   background: var(--primary-container);
   color: var(--primary);
-  border-color: rgba(0, 109, 75, 0.1);
+  border-color: rgba(214, 40, 40, 0.12);
 }
 
 .action-btn.tertiary {
@@ -423,7 +431,7 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
 }
 
 .settings-nav .action-btn { justify-content: flex-start; text-align: left; }
-.settings-nav .action-btn.active { background: var(--primary-container); color: var(--primary); border-color: rgba(0,109,75,0.1); }
+.settings-nav .action-btn.active { background: var(--primary-container); color: var(--primary); border-color: rgba(214, 40, 40, 0.12); }
 .settings-main { min-width: 0; width: 100%; }
 
 @media (max-width: 720px) {

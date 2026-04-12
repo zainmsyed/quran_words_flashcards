@@ -297,7 +297,15 @@
   </div>
 {:else}
   <div class="device-shell">
-    <header class="session-header">
+    <header class="app-topbar session-header">
+      <div class="brand" aria-label="alif">
+        <div class="brand-mark" aria-hidden="true">ا</div>
+        <div class="brand-copy">
+          <p>Quranic Arabic</p>
+          <h1>alif</h1>
+        </div>
+      </div>
+
       <button class="nav-btn" type="button" on:click={openSettings} aria-label="Open settings">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round" />
@@ -458,30 +466,35 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    border-radius: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 253, 251, 0.96));
-    border: 1px solid rgba(255, 255, 255, 0.72);
-    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+    border-radius: 6px;
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
     overflow: hidden;
   }
 
   .session-header {
     display: flex;
     align-items: center;
-    gap: 0.7rem;
+    justify-content: space-between;
+    gap: 1rem;
     width: 100%;
     padding-inline: var(--session-gutter);
     color: var(--primary);
   }
 
+  .session-header .brand {
+    flex: 1 1 auto;
+  }
+
   .nav-btn {
-    width: 52px;
-    height: 52px;
-    border: 0;
-    border-radius: 999px;
-    background: rgba(213, 247, 236, 0.98);
-    color: #12805b;
-    box-shadow: 0 8px 20px rgba(18, 120, 82, 0.06);
+    width: 50px;
+    height: 50px;
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--primary);
+    box-shadow: var(--shadow-primary);
     padding: 0;
     display: grid;
     place-items: center;
@@ -489,6 +502,8 @@
   }
 
   .nav-btn:hover {
+    background: var(--primary-container);
+    border-color: rgba(214, 40, 40, 0.18);
     opacity: 1;
     transform: none;
   }
@@ -735,7 +750,7 @@
       --session-gutter: 0.95rem;
       min-height: calc(100vh - 1rem);
       padding: 0.95rem 0 1rem;
-      border-radius: 20px;
+      border-radius: 6px;
     }
 
     .nav-btn {

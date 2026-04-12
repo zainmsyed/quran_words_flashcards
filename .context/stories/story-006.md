@@ -1,8 +1,8 @@
 # Story 006: App shell & topbar/brand — rectangular brand-mark and topbar restyle
 
-**Status:** not-started
+**Status:** in-progress  
 **Created:** 2026-04-12
-**Last accessed:** 2026-04-12
+**Last accessed:** 2026-04-12  
 **Completed:**
 
 ## Goal

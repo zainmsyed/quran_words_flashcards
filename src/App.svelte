@@ -136,10 +136,10 @@
     margin: auto;
     display: grid;
     place-items: center;
-    border-radius: 28px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(249, 252, 250, 0.97));
-    border: 0.5px solid rgba(173, 179, 181, 0.15);
-    box-shadow: 0 24px 48px rgba(0, 109, 75, 0.08);
+    border-radius: 6px;
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
   }
 
   .app-loading-card p {
