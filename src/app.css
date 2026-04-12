@@ -1,43 +1,44 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --surface: #f8f9fa;
-  --surface-container-low: #f1f4f5;
-  --surface-container-lowest: #ffffff;
-  --surface-bright: #fcfdfd;
+  --surface: #F8F8F6;
+  --surface-container-low: #FFFFFF;
+  --surface-container-lowest: #FFFFFF;
+  --surface-bright: #FFFFFF;
 
   --bg: var(--surface);
   --bg-secondary: var(--surface-container-low);
   --card: var(--surface-container-lowest);
 
-  --primary: #006d4b;
-  --primary-dim: #005f41;
-  --primary-container: #cfe9d9;
-  --on-primary: #ffffff;
+  --primary: #D62828;
+  --primary-dim: #9E1A1A;
+  --primary-container: #FFEDEC;
+  --on-primary: #FFFFFF;
+  --accent: #FFD166;
 
-  --text: #2d3335;
+  --text: #111111;
   --text-secondary: #5a6062;
   --text-tertiary: #8b9294;
 
   --outline-variant: #adb3b5;
-  --border: rgba(173, 179, 181, 0.15);
-  --border-md: rgba(0, 109, 75, 0.16);
+  --border: #E6E6E6;
+  --border-md: rgba(0, 0, 0, 0.06);
 
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 1.75rem;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 6px;
 
-  --info-bg: #e6f5ef;
-  --info-text: #0d6b4a;
-  --warn-bg: #eef4e7;
-  --warn-text: #58763a;
-  --success-bg: #ddf3e7;
-  --success-text: #1f7b4c;
-  --danger-bg: #eef1ef;
-  --danger-text: #5f746b;
+  --info-bg: #FFD166;
+  --info-text: #111111;
+  --warn-bg: #D62828;
+  --warn-text: #FFFFFF;
+  --success-bg: #1E7A4A;
+  --success-text: #FFFFFF;
+  --danger-bg: #9E1A1A;
+  --danger-text: #FFFFFF;
 
   --card-height: 380px;
-  --shadow-primary: 0 10px 30px rgba(0, 109, 75, 0.06);
+  --shadow-primary: 0 6px 16px rgba(17, 17, 17, 0.06);
 }
 
 @media (max-width: 520px) {
@@ -47,10 +48,8 @@
 html, body, #app { width: 100%; height: 100%; overflow-x: hidden; }
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  background:
-    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.08) 1px, transparent 0) 0 0 / 16px 16px,
-    linear-gradient(180deg, #121414 0%, #0d0f0f 100%);
+  font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   display: flex;
@@ -142,7 +141,7 @@ main {
 .study-lede h2,
 .settings-lede h2,
 .session-done h3 {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .brand-copy h1 {
@@ -172,7 +171,7 @@ main {
 }
 
 .topbar h1 {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.25rem;
   font-weight: 800;
   color: var(--text);
@@ -204,12 +203,12 @@ main {
 /* Buttons */
 button {
   padding: 0.8rem 1rem;
-  border-radius: 999px;
+  border-radius: 6px;
   border: 0.5px solid var(--border-md);
   background: var(--card);
   color: var(--text);
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Work Sans', sans-serif;
   transition: opacity 0.15s, transform 0.15s, background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
 button:hover { opacity: 0.92; transform: translateY(-1px); }
@@ -330,7 +329,7 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
 
 /* Arabic typography */
 .arabic, .arabic-text, .arabic-word, .verse, .arabic-ex, .word-row .ar, .ar {
-  font-family: 'Amiri', 'Noto Naskh Arabic', 'Scheherazade', serif;
+  font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-feature-settings: "rlig" 1, "liga" 1;
@@ -355,7 +354,7 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
   border: 0.5px solid rgba(173, 179, 181, 0.14);
 }
 
-.stat-num { font-size: 28px; font-weight: 800; color: var(--primary); font-family: 'Manrope', sans-serif; }
+.stat-num { font-size: 28px; font-weight: 800; color: var(--primary); font-family: 'Space Grotesk', sans-serif; }
 .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
 .section-label {
@@ -380,7 +379,7 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
   gap: 8px;
 }
 .word-row .ar {
-  font-family: 'Amiri', serif;
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: 20px;
   direction: rtl;
   min-width: 60px;
