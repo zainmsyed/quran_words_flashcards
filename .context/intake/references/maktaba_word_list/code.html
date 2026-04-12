@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#ff766b",
+                    "error": "#c12048",
+                    "on-primary-fixed-variant": "#600006",
+                    "surface-tint": "#c61a20",
+                    "inverse-on-surface": "#9f9d97",
+                    "on-tertiary-fixed-variant": "#645000",
+                    "error-container": "#f74b6d",
+                    "secondary-dim": "#1c50c0",
+                    "error-dim": "#a70138",
+                    "surface-container-low": "#fcf9f1",
+                    "surface-dim": "#e5e2d9",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#fdd014",
+                    "on-secondary-fixed-variant": "#0b48b8",
+                    "on-secondary-fixed": "#002d7f",
+                    "tertiary-fixed": "#fdd014",
+                    "background": "#fdffda",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#65645f",
+                    "tertiary-fixed-dim": "#eec200",
+                    "secondary-fixed": "#c3d0ff",
+                    "on-tertiary-container": "#594700",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#fdffda",
+                    "tertiary-dim": "#6b5600",
+                    "inverse-surface": "#0e0e0b",
+                    "surface-variant": "#ebe8df",
+                    "outline": "#82807b",
+                    "surface-container-highest": "#ebe8df",
+                    "tertiary": "#796200",
+                    "surface-bright": "#fdffda",
+                    "on-tertiary-fixed": "#433500",
+                    "surface-container": "#f6f3eb",
+                    "surface-container-high": "#f0eee5",
+                    "primary": "#c61a20",
+                    "on-primary-fixed": "#000000",
+                    "secondary-container": "#c3d0ff",
+                    "primary-container": "#ff766b",
+                    "on-secondary-container": "#003fa8",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#b0c2ff",
+                    "on-surface": "#383833",
+                    "on-background": "#383833",
+                    "outline-variant": "#bbb9b3",
+                    "on-primary-container": "#4f0004",
+                    "inverse-primary": "#ff544c",
+                    "primary-fixed-dim": "#ff5a51",
+                    "on-error-container": "#510017",
+                    "on-tertiary": "#ffffff",
+                    "primary-dim": "#b30515",
+                    "secondary": "#2e5dcd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0rem",
+                    "lg": "0rem",
+                    "xl": "0rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Work Sans"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #FDFFDA;
+            font-family: 'Work Sans', sans-serif;
+        }
+        .neo-bauhaus-border {
+            border: 4px solid #c61a20;
+        }
+        .neo-bauhaus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 0;
+        }
+        .arabic-text {
+            font-family: serif; /* Fallback for high-contrast Arabic serif */
+            direction: rtl;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- TopAppBar Navigation -->
+<header class="bg-[#FDFFDA] dark:bg-[#1A1A1A] text-[#C61A20] dark:text-[#FF766B] font-space-grotesk font-bold uppercase tracking-tighter rounded-none border-b-4 border-[#C61A20] flex justify-between items-center w-full px-6 py-4 sticky top-0 z-50 shadow-none flat architecture">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-3xl cursor-pointer">menu</span>
+<h1 class="text-3xl font-black text-[#C61A20] dark:text-[#FF766B] uppercase tracking-tighter">MAKTABA</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8">
+<a class="text-black dark:text-white font-bold hover:bg-[#2E5DCD] hover:text-white transition-colors duration-100 px-2 py-1" href="#">STUDY</a>
+<a class="text-black dark:text-white font-bold hover:bg-[#2E5DCD] hover:text-white transition-colors duration-100 px-2 py-1" href="#">STATS</a>
+<a class="text-[#C61A20] font-bold hover:bg-[#2E5DCD] hover:text-white transition-colors duration-100 px-2 py-1" href="#">WORDS</a>
+<a class="text-black dark:text-white font-bold hover:bg-[#2E5DCD] hover:text-white transition-colors duration-100 px-2 py-1" href="#">PROFILE</a>
+</nav>
+<div class="w-10 h-10 bg-secondary flex items-center justify-center text-white font-bold">U</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 py-12 mb-24">
+<!-- Search & Filter Section -->
+<div class="mb-12 flex flex-col md:flex-row gap-0 items-stretch">
+<div class="flex-grow flex items-center bg-white border-4 border-primary p-4">
+<span class="material-symbols-outlined text-primary mr-4" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 font-headline font-bold uppercase placeholder-primary/50 text-xl tracking-widest" placeholder="SEARCH DICTIONARY..." type="text"/>
+</div>
+<button class="bg-secondary text-white font-headline font-bold uppercase px-8 py-4 border-t-4 md:border-t-0 md:border-l-4 border-primary hover:bg-primary transition-colors duration-100">
+                FILTER
+            </button>
+</div>
+<!-- Word List Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-l-4 border-t-4 border-primary">
+<!-- Word Card 1: Mastered -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-primary text-white font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest">MASTERED</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">الكتاب</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">AL-KITAAB</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">The Book</p>
+</div>
+</div>
+<!-- Word Card 2: Learning -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-secondary text-white font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest">LEARNING</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">المدرسة</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">AL-MADRASA</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">The School</p>
+</div>
+</div>
+<!-- Word Card 3: New -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-tertiary-container text-on-tertiary-container font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest border-2 border-primary">NEW</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">قلم</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">QALAM</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">Pen</p>
+</div>
+</div>
+<!-- Word Card 4: Learning -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-secondary text-white font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest">LEARNING</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">شمس</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">SHAMS</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">Sun</p>
+</div>
+</div>
+<!-- Word Card 5: Mastered -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-primary text-white font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest">MASTERED</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">قمر</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">QAMAR</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">Moon</p>
+</div>
+</div>
+<!-- Word Card 6: New -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-tertiary-container text-on-tertiary-container font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest border-2 border-primary">NEW</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">بحر</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">BAHR</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">Sea</p>
+</div>
+</div>
+<!-- Word Card 7: Learning -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-secondary text-white font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest">LEARNING</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">سماء</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">SAMA'</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">Sky</p>
+</div>
+</div>
+<!-- Word Card 8: Mastered -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-primary text-white font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest">MASTERED</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">نار</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">NAAR</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">Fire</p>
+</div>
+</div>
+<!-- Word Card 9: New -->
+<div class="border-r-4 border-b-4 border-primary p-6 bg-white hover:bg-surface-container-low transition-colors duration-75">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-tertiary-container text-on-tertiary-container font-headline font-bold uppercase text-xs px-3 py-1 tracking-widest border-2 border-primary">NEW</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+<div class="mb-4">
+<h2 class="arabic-text text-5xl font-bold text-primary mb-2" dir="rtl">ماء</h2>
+<p class="font-headline font-bold text-xl uppercase tracking-tighter">MAA'</p>
+</div>
+<div class="mt-8 pt-6 border-t-2 border-primary/10">
+<p class="text-sm font-body font-medium uppercase tracking-widest text-on-surface-variant mb-1">Meaning</p>
+<p class="text-2xl font-headline font-bold uppercase">Water</p>
+</div>
+</div>
+</div>
+<!-- Pagination / Bauhaus Ornament -->
+<div class="mt-16 flex justify-between items-end">
+<div class="flex gap-4">
+<button class="w-16 h-16 bg-primary text-white flex items-center justify-center font-black text-2xl border-4 border-primary hover:bg-white hover:text-primary transition-colors">1</button>
+<button class="w-16 h-16 bg-white text-primary flex items-center justify-center font-black text-2xl border-4 border-primary hover:bg-primary hover:text-white transition-colors">2</button>
+<button class="w-16 h-16 bg-white text-primary flex items-center justify-center font-black text-2xl border-4 border-primary hover:bg-primary hover:text-white transition-colors">3</button>
+</div>
+<!-- Bauhaus Geometric Ornament -->
+<div class="hidden lg:flex gap-0">
+<div class="w-24 h-24 bg-primary"></div>
+<div class="w-24 h-24 bg-secondary"></div>
+<div class="w-24 h-24 bg-tertiary-container border-4 border-primary"></div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-20 bg-[#FDFFDA] dark:bg-[#1A1A1A] border-t-4 border-[#C61A20] shadow-none flat surface">
+<div class="flex flex-col items-center justify-center h-full w-full px-2 text-black dark:text-white font-space-grotesk font-bold uppercase text-[10px] tracking-widest hover:bg-[#2E5DCD] hover:text-white">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book">menu_book</span>
+<span>STUDY</span>
+</div>
+<div class="flex flex-col items-center justify-center h-full w-full px-2 text-black dark:text-white font-space-grotesk font-bold uppercase text-[10px] tracking-widest hover:bg-[#2E5DCD] hover:text-white">
+<span class="material-symbols-outlined mb-1" data-icon="leaderboard">leaderboard</span>
+<span>STATS</span>
+</div>
+<div class="bg-[#C61A20] text-white flex flex-col items-center justify-center h-full w-full px-2 font-space-grotesk font-bold uppercase text-[10px] tracking-widest">
+<span class="material-symbols-outlined mb-1" data-icon="search">search</span>
+<span>WORDS</span>
+</div>
+<div class="flex flex-col items-center justify-center h-full w-full px-2 text-black dark:text-white font-space-grotesk font-bold uppercase text-[10px] tracking-widest hover:bg-[#2E5DCD] hover:text-white">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span>PROFILE</span>
+</div>
+</nav>
+<!-- FAB (Suppressed on List Page per instructions, but kept as reference for system capability) -->
+</body></html>

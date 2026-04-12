@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#ff766b",
+                        "error": "#c12048",
+                        "on-primary-fixed-variant": "#600006",
+                        "surface-tint": "#c61a20",
+                        "inverse-on-surface": "#9f9d97",
+                        "on-tertiary-fixed-variant": "#645000",
+                        "error-container": "#f74b6d",
+                        "secondary-dim": "#1c50c0",
+                        "error-dim": "#a70138",
+                        "surface-container-low": "#fcf9f1",
+                        "surface-dim": "#e5e2d9",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#fdd014",
+                        "on-secondary-fixed-variant": "#0b48b8",
+                        "on-secondary-fixed": "#002d7f",
+                        "tertiary-fixed": "#fdd014",
+                        "background": "#fdffda",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#65645f",
+                        "tertiary-fixed-dim": "#eec200",
+                        "secondary-fixed": "#c3d0ff",
+                        "on-tertiary-container": "#594700",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fdffda",
+                        "tertiary-dim": "#6b5600",
+                        "inverse-surface": "#0e0e0b",
+                        "surface-variant": "#ebe8df",
+                        "outline": "#82807b",
+                        "surface-container-highest": "#ebe8df",
+                        "tertiary": "#796200",
+                        "surface-bright": "#fdffda",
+                        "on-tertiary-fixed": "#433500",
+                        "surface-container": "#f6f3eb",
+                        "surface-container-high": "#f0eee5",
+                        "primary": "#c61a20",
+                        "on-primary-fixed": "#000000",
+                        "secondary-container": "#c3d0ff",
+                        "primary-container": "#ff766b",
+                        "on-secondary-container": "#003fa8",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#b0c2ff",
+                        "on-surface": "#383833",
+                        "on-background": "#383833",
+                        "outline-variant": "#bbb9b3",
+                        "on-primary-container": "#4f0004",
+                        "inverse-primary": "#ff544c",
+                        "primary-fixed-dim": "#ff5a51",
+                        "on-error-container": "#510017",
+                        "on-tertiary": "#ffffff",
+                        "primary-dim": "#b30515",
+                        "secondary": "#2e5dcd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0rem",
+                        "lg": "0rem",
+                        "xl": "0rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Work Sans"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #FDFFDA;
+            font-family: 'Work Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .bauhaus-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(12, 1fr);
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface">
+<main class="bauhaus-grid min-h-screen">
+<!-- TOP GEOMETRIC GRAPHIC SECTION -->
+<section class="col-start-1 col-span-12 row-start-1 row-span-4 lg:col-span-6 lg:row-span-12 relative overflow-hidden bg-surface-variant border-b-4 lg:border-b-0 lg:border-r-4 border-on-surface">
+<!-- Neo-Bauhaus Abstract Pattern -->
+<div class="absolute inset-0 z-0">
+<div class="absolute top-0 left-0 w-full h-full bg-[#FDFFDA]"></div>
+<!-- Large Red Block -->
+<div class="absolute top-10 left-10 w-48 h-48 bg-primary"></div>
+<!-- Blue Rectangle -->
+<div class="absolute top-40 right-[-20px] w-64 h-32 bg-secondary transform rotate-12"></div>
+<!-- Yellow Circle -->
+<div class="absolute bottom-20 left-20 w-40 h-40 bg-tertiary-container rounded-full"></div>
+<!-- Black Lines -->
+<div class="absolute top-0 left-1/2 w-1 h-full bg-on-surface opacity-20"></div>
+<div class="absolute top-1/3 left-0 w-full h-1 bg-on-surface opacity-20"></div>
+</div>
+<!-- Hero Text Overlay -->
+<div class="relative z-10 flex flex-col justify-center h-full p-12">
+<h1 class="font-headline font-black text-7xl lg:text-9xl text-on-surface uppercase tracking-tighter leading-none mb-4">
+                    MAK<br/>TABA
+                </h1>
+<p class="font-label text-xl font-bold uppercase tracking-widest text-primary">Digital Archive System</p>
+</div>
+<!-- Bauhaus Ornament -->
+<div class="absolute bottom-0 right-0 w-32 h-32 bg-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-surface text-6xl" data-icon="architecture">architecture</span>
+</div>
+</section>
+<!-- LOGIN FORM SECTION -->
+<section class="col-start-1 col-span-12 row-start-5 row-span-8 lg:col-start-7 lg:col-span-6 lg:row-start-1 lg:row-span-12 bg-surface p-8 lg:p-24 flex flex-col justify-center">
+<div class="max-w-md w-full mx-auto lg:mx-0">
+<!-- Tab Headers -->
+<div class="flex mb-12 border-4 border-on-surface">
+<button class="flex-1 py-4 font-headline font-bold uppercase tracking-widest text-surface bg-on-surface transition-colors">
+                        Login
+                    </button>
+<button class="flex-1 py-4 font-headline font-bold uppercase tracking-widest text-on-surface bg-transparent hover:bg-surface-container-high transition-colors">
+                        Signup
+                    </button>
+</div>
+<div class="space-y-8">
+<header>
+<h2 class="font-headline font-black text-4xl uppercase tracking-tight text-on-surface mb-2">Welcome Back</h2>
+<div class="w-16 h-2 bg-secondary"></div>
+</header>
+<form class="space-y-6">
+<!-- Email Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label font-bold uppercase text-xs tracking-widest text-on-surface-variant">Access Identity / Email</label>
+<input class="w-full bg-surface-container-low border-4 border-on-surface p-4 font-body text-lg focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-outline-variant transition-all" placeholder="USER@MAKTABA.EDU" type="email"/>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<label class="font-label font-bold uppercase text-xs tracking-widest text-on-surface-variant">Security Cipher / Password</label>
+<a class="font-label text-[10px] font-bold uppercase underline text-secondary" href="#">Forgotten?</a>
+</div>
+<input class="w-full bg-surface-container-low border-4 border-on-surface p-4 font-body text-lg focus:outline-none focus:border-secondary focus:ring-0 placeholder:text-outline-variant transition-all" placeholder="••••••••" type="password"/>
+</div>
+<!-- Submit Button -->
+<div class="pt-4">
+<button class="w-full bg-on-surface text-surface py-5 font-headline font-black text-xl uppercase tracking-widest hover:bg-primary transition-colors flex items-center justify-center gap-4 group" type="submit">
+                                Authenticate
+                                <span class="material-symbols-outlined group-hover:translate-x-2 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</form>
+<!-- Alternative Login -->
+<div class="grid grid-cols-2 gap-4">
+<button class="border-4 border-on-surface py-3 flex items-center justify-center gap-2 font-label font-bold uppercase text-xs tracking-tighter hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="globe">globe</span>
+                            Google ID
+                        </button>
+<button class="border-4 border-on-surface py-3 flex items-center justify-center gap-2 font-label font-bold uppercase text-xs tracking-tighter hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="terminal">terminal</span>
+                            Github Auth
+                        </button>
+</div>
+</div>
+<footer class="mt-16 flex items-center gap-4">
+<div class="h-12 w-12 bg-tertiary-container flex items-center justify-center border-2 border-on-surface">
+<span class="material-symbols-outlined text-on-surface" data-icon="info" data-weight="fill" style="font-variation-settings: 'FILL' 1;">info</span>
+</div>
+<p class="font-body text-xs leading-tight text-on-surface-variant">
+                        Maktaba is a protected knowledge environment. <br/>
+                        Authorized access only. System version 2.4.0-B
+                    </p>
+</footer>
+</div>
+</section>
+</main>
+<!-- Bauhaus Floating Elements for Desktop -->
+<div class="hidden lg:block fixed bottom-12 left-12 z-50 pointer-events-none">
+<div class="flex gap-1">
+<div class="w-4 h-4 bg-primary"></div>
+<div class="w-4 h-4 bg-secondary"></div>
+<div class="w-4 h-4 bg-tertiary-container"></div>
+<div class="w-4 h-4 bg-on-surface"></div>
+</div>
+</div>
+</body></html>

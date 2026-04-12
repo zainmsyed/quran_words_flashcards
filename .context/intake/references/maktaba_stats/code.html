@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#ff766b",
+                    "error": "#c12048",
+                    "on-primary-fixed-variant": "#600006",
+                    "surface-tint": "#c61a20",
+                    "inverse-on-surface": "#9f9d97",
+                    "on-tertiary-fixed-variant": "#645000",
+                    "error-container": "#f74b6d",
+                    "secondary-dim": "#1c50c0",
+                    "error-dim": "#a70138",
+                    "surface-container-low": "#fcf9f1",
+                    "surface-dim": "#e5e2d9",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#fdd014",
+                    "on-secondary-fixed-variant": "#0b48b8",
+                    "on-secondary-fixed": "#002d7f",
+                    "tertiary-fixed": "#fdd014",
+                    "background": "#fdffda",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#65645f",
+                    "tertiary-fixed-dim": "#eec200",
+                    "secondary-fixed": "#c3d0ff",
+                    "on-tertiary-container": "#594700",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#fdffda",
+                    "tertiary-dim": "#6b5600",
+                    "inverse-surface": "#0e0e0b",
+                    "surface-variant": "#ebe8df",
+                    "outline": "#82807b",
+                    "surface-container-highest": "#ebe8df",
+                    "tertiary": "#796200",
+                    "surface-bright": "#fdffda",
+                    "on-tertiary-fixed": "#433500",
+                    "surface-container": "#f6f3eb",
+                    "surface-container-high": "#f0eee5",
+                    "primary": "#c61a20",
+                    "on-primary-fixed": "#000000",
+                    "secondary-container": "#c3d0ff",
+                    "primary-container": "#ff766b",
+                    "on-secondary-container": "#003fa8",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#b0c2ff",
+                    "on-surface": "#383833",
+                    "on-background": "#383833",
+                    "outline-variant": "#bbb9b3",
+                    "on-primary-container": "#4f0004",
+                    "inverse-primary": "#ff544c",
+                    "primary-fixed-dim": "#ff5a51",
+                    "on-error-container": "#510017",
+                    "on-tertiary": "#ffffff",
+                    "primary-dim": "#b30515",
+                    "secondary": "#2e5dcd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": [
+                            "Space Grotesk"
+                    ],
+                    "body": [
+                            "Work Sans"
+                    ],
+                    "label": [
+                            "Space Grotesk"
+                    ]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Work Sans', sans-serif; }
+        h1, h2, h3, .headline { font-family: 'Space Grotesk', sans-serif; }
+        .grid-line-4 { border: 4px solid #383833; }
+        .grid-line-b-4 { border-bottom: 4px solid #383833; }
+        .grid-line-r-4 { border-right: 4px solid #383833; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- TopAppBar Shell -->
+<nav class="bg-[#FDFFDA] dark:bg-[#1A1A1A] text-[#C61A20] dark:text-[#FF766B] rounded-none border-b-4 border-[#C61A20] flex justify-between items-center w-full px-6 py-4 sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-3xl">menu</span>
+<span class="font-space-grotesk font-bold uppercase tracking-tighter text-3xl font-black text-[#C61A20] dark:text-[#FF766B] uppercase tracking-tighter">MAKTABA</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-8 font-space-grotesk font-bold uppercase text-sm">
+<a class="text-black dark:text-white hover:bg-[#2E5DCD] hover:text-white transition-colors duration-100" href="#">STUDY</a>
+<a class="text-[#C61A20] font-bold" href="#">STATS</a>
+<a class="text-black dark:text-white hover:bg-[#2E5DCD] hover:text-white transition-colors duration-100" href="#">WORDS</a>
+</div>
+<div class="w-10 h-10 bg-secondary flex items-center justify-center text-white font-bold">JD</div>
+</div>
+</nav>
+<main class="max-w-[1440px] mx-auto p-6 md:p-12 mb-24">
+<!-- Hero Header -->
+<header class="grid grid-cols-1 md:grid-cols-12 gap-0 border-4 border-on-background mb-12">
+<div class="md:col-span-8 p-8 md:p-12 border-b-4 md:border-b-0 md:border-r-4 border-on-background flex flex-col justify-center">
+<h1 class="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-4 text-primary">DASHBOARD</h1>
+<p class="text-xl md:text-2xl font-medium uppercase tracking-tight max-w-xl">Your linguistic mastery trajectory. Every character counts toward the total understanding.</p>
+</div>
+<div class="md:col-span-4 p-8 bg-tertiary-container flex flex-col justify-between items-start">
+<span class="material-symbols-outlined text-6xl text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<div class="mt-8">
+<span class="text-sm font-bold uppercase block tracking-widest text-on-tertiary-container mb-2">LAST UPDATED</span>
+<span class="text-3xl font-black font-headline">12 OCT 2023</span>
+</div>
+</div>
+</header>
+<!-- Bento Grid Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+<!-- Words Mastered -->
+<div class="md:col-span-2 border-4 border-on-background p-8 flex flex-col justify-between aspect-square md:aspect-auto">
+<div class="flex justify-between items-start mb-12">
+<h2 class="text-2xl font-black uppercase">WORDS MASTERED</h2>
+<span class="material-symbols-outlined text-primary text-4xl">menu_book</span>
+</div>
+<div>
+<div class="text-9xl font-black text-primary leading-none tracking-tighter">1,284</div>
+<div class="mt-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+<span class="font-bold text-lg">+42 THIS WEEK</span>
+</div>
+</div>
+</div>
+<!-- Current Streak -->
+<div class="bg-secondary p-8 border-4 border-on-background text-white flex flex-col justify-between aspect-square">
+<div class="flex justify-between items-start">
+<h2 class="text-xl font-black uppercase leading-tight">CURRENT<br/>STREAK</h2>
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div class="text-8xl font-black leading-none">18</div>
+<div class="font-bold uppercase tracking-widest text-sm">DAYS ACTIVE</div>
+</div>
+<!-- Accuracy -->
+<div class="border-4 border-on-background p-8 flex flex-col justify-between aspect-square">
+<div class="flex justify-between items-start">
+<h2 class="text-xl font-black uppercase leading-tight">ACCURACY<br/>RATE</h2>
+<span class="material-symbols-outlined text-4xl text-primary">target</span>
+</div>
+<div class="text-8xl font-black leading-none text-primary">94%</div>
+<div class="w-full bg-surface-container-highest h-4 mt-4 relative overflow-hidden">
+<div class="absolute top-0 left-0 bg-primary h-full" style="width: 94%"></div>
+</div>
+</div>
+</div>
+<!-- Performance Tracking & Recent Words -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Bar Chart Section -->
+<div class="md:col-span-8 border-4 border-on-background">
+<div class="p-6 border-b-4 border-on-background flex justify-between items-center bg-primary text-white">
+<h2 class="text-2xl font-black uppercase italic">Performance tracking</h2>
+<span class="text-xs font-bold uppercase tracking-widest">7 Day Overview</span>
+</div>
+<div class="p-8 grid grid-cols-7 items-end gap-4 h-64">
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="bg-secondary w-full h-[60%]"></div>
+<span class="text-xs font-bold font-headline">MON</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="bg-secondary w-full h-[45%]"></div>
+<span class="text-xs font-bold font-headline">TUE</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="bg-primary w-full h-[90%]"></div>
+<span class="text-xs font-bold font-headline">WED</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="bg-secondary w-full h-[70%]"></div>
+<span class="text-xs font-bold font-headline">THU</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="bg-secondary w-full h-[55%]"></div>
+<span class="text-xs font-bold font-headline">FRI</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="bg-secondary w-full h-[80%]"></div>
+<span class="text-xs font-bold font-headline">SAT</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="bg-secondary w-full h-[40%]"></div>
+<span class="text-xs font-bold font-headline">SUN</span>
+</div>
+</div>
+</div>
+<!-- Recent Progress List -->
+<div class="md:col-span-4 border-4 border-on-background bg-surface-container-low overflow-hidden">
+<div class="p-6 border-b-4 border-on-background bg-on-background text-white">
+<h2 class="text-2xl font-black uppercase">RECENT PROGRESS</h2>
+</div>
+<div class="divide-y-4 divide-on-background">
+<div class="p-4 flex justify-between items-center hover:bg-tertiary-container transition-colors group">
+<div>
+<div class="font-black font-headline text-lg uppercase">Maktub</div>
+<div class="text-xs uppercase font-medium opacity-70">Written / Predestined</div>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">check_circle</span>
+</div>
+<div class="p-4 flex justify-between items-center hover:bg-tertiary-container transition-colors group">
+<div>
+<div class="font-black font-headline text-lg uppercase">Adab</div>
+<div class="text-xs uppercase font-medium opacity-70">Literature / Etiquette</div>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">check_circle</span>
+</div>
+<div class="p-4 flex justify-between items-center hover:bg-tertiary-container transition-colors group">
+<div>
+<div class="font-black font-headline text-lg uppercase">Bayan</div>
+<div class="text-xs uppercase font-medium opacity-70">Eloquence / Clarity</div>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">check_circle</span>
+</div>
+<div class="p-4 flex justify-between items-center hover:bg-tertiary-container transition-colors group">
+<div>
+<div class="font-black font-headline text-lg uppercase">Hikmah</div>
+<div class="text-xs uppercase font-medium opacity-70">Wisdom / Philosophy</div>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:scale-125 transition-transform">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Geometric Accents -->
+<div class="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="h-32 bg-primary flex items-center justify-center">
+<div class="w-16 h-16 bg-white rounded-full"></div>
+</div>
+<div class="h-32 bg-secondary flex items-end">
+<div class="w-full h-1/2 bg-on-background"></div>
+</div>
+<div class="h-32 bg-tertiary-container relative overflow-hidden">
+<div class="absolute -right-8 -bottom-8 w-24 h-24 border-4 border-on-background rounded-full"></div>
+</div>
+<div class="h-32 border-4 border-on-background flex items-center justify-center">
+<span class="text-4xl font-black uppercase text-primary">MAKTABA</span>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-20 bg-[#FDFFDA] dark:bg-[#1A1A1A] text-[#C61A20] dark:text-[#FF766B] rounded-none border-t-4 border-[#C61A20] md:hidden">
+<a class="text-black dark:text-white flex flex-col items-center justify-center h-full w-full px-2 hover:bg-[#2E5DCD] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-space-grotesk font-bold uppercase text-[10px] tracking-widest mt-1">STUDY</span>
+</a>
+<a class="bg-[#C61A20] text-white flex flex-col items-center justify-center h-full w-full px-2" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-space-grotesk font-bold uppercase text-[10px] tracking-widest mt-1">STATS</span>
+</a>
+<a class="text-black dark:text-white flex flex-col items-center justify-center h-full w-full px-2 hover:bg-[#2E5DCD] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-space-grotesk font-bold uppercase text-[10px] tracking-widest mt-1">WORDS</span>
+</a>
+<a class="text-black dark:text-white flex flex-col items-center justify-center h-full w-full px-2 hover:bg-[#2E5DCD] hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-space-grotesk font-bold uppercase text-[10px] tracking-widest mt-1">PROFILE</span>
+</a>
+</nav>
+</body></html>

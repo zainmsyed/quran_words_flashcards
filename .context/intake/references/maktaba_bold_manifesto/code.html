@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#645000",
+                    "error-container": "#f74b6d",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#fdd014",
+                    "error-dim": "#a70138",
+                    "secondary-dim": "#1c50c0",
+                    "surface-container-low": "#fcf9f1",
+                    "surface-dim": "#e5e2d9",
+                    "on-primary-fixed-variant": "#600006",
+                    "surface-tint": "#c61a20",
+                    "error": "#c12048",
+                    "primary-fixed": "#ff766b",
+                    "inverse-on-surface": "#9f9d97",
+                    "tertiary-fixed-dim": "#eec200",
+                    "secondary-fixed": "#c3d0ff",
+                    "on-tertiary-container": "#594700",
+                    "background": "#fdffda",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#65645f",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#fdffda",
+                    "tertiary-dim": "#6b5600",
+                    "inverse-surface": "#0e0e0b",
+                    "surface-variant": "#ebe8df",
+                    "on-secondary-fixed-variant": "#0b48b8",
+                    "tertiary-fixed": "#fdd014",
+                    "on-secondary-fixed": "#002d7f",
+                    "surface-container": "#f6f3eb",
+                    "on-tertiary-fixed": "#433500",
+                    "secondary-container": "#c3d0ff",
+                    "primary": "#c61a20",
+                    "surface-container-high": "#f0eee5",
+                    "on-primary-fixed": "#000000",
+                    "surface-bright": "#fdffda",
+                    "outline": "#82807b",
+                    "surface-container-highest": "#ebe8df",
+                    "tertiary": "#796200",
+                    "on-error-container": "#510017",
+                    "primary-fixed-dim": "#ff5a51",
+                    "primary-dim": "#b30515",
+                    "secondary": "#2e5dcd",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#003fa8",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#b0c2ff",
+                    "primary-container": "#ff766b",
+                    "outline-variant": "#bbb9b3",
+                    "on-primary-container": "#4f0004",
+                    "inverse-primary": "#ff544c",
+                    "on-surface": "#383833",
+                    "on-background": "#383833"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0rem",
+                    "lg": "0rem",
+                    "xl": "0rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Work Sans"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .bauhaus-bg {
+            background-color: #fdffda;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(198, 26, 32, 0.05) 0%, rgba(198, 26, 32, 0.05) 20%, transparent 20.1%),
+                radial-gradient(circle at 90% 80%, rgba(46, 93, 205, 0.05) 0%, rgba(46, 93, 205, 0.05) 25%, transparent 25.1%),
+                radial-gradient(circle at 50% 50%, rgba(253, 208, 20, 0.05) 0%, rgba(253, 208, 20, 0.05) 30%, transparent 30.1%);
+            background-size: 400px 400px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .arabic-text {
+            font-family: serif; /* Fallback for high-contrast traditional feel */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body bauhaus-bg min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-6 h-20 bg-[#FDFFDA] dark:bg-stone-900 docked full-width top-0 border-b-4 border-[#C61A20] dark:border-red-600 z-50">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-black dark:text-white cursor-pointer" data-icon="menu">menu</span>
+<h1 class="font-['Space_Grotesk'] font-black uppercase tracking-tighter text-4xl text-[#C61A20] dark:text-red-500">MAKTABA</h1>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-black dark:text-white text-3xl cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center p-6 md:p-12 mb-24">
+<div class="relative w-full max-w-2xl">
+<!-- Decorative Background Element -->
+<div class="absolute -top-12 -left-12 w-24 h-24 bg-tertiary-container z-0"></div>
+<div class="absolute -bottom-8 -right-8 w-32 h-32 rounded-full bg-secondary opacity-20 z-0"></div>
+<!-- Main Flashcard Container -->
+<div class="relative bg-surface-container-lowest border-[4px] border-black z-10 overflow-hidden flex flex-col">
+<!-- Card Header/Category -->
+<div class="bg-primary text-white px-6 py-2 font-headline font-bold uppercase tracking-widest text-xs">
+                    Grammar • Particle
+                </div>
+<!-- Arabic Content Section -->
+<div class="flex flex-col items-center justify-center py-20 border-b-4 border-black bg-white">
+<span class="text-9xl font-bold arabic-text text-on-background mb-8 leading-none">مِنْ</span>
+<div class="flex flex-col items-center gap-2">
+<span class="font-headline font-bold text-2xl tracking-tighter uppercase text-secondary">min</span>
+<div class="h-1 w-12 bg-tertiary"></div>
+<span class="font-headline font-extrabold text-5xl tracking-tighter uppercase text-black">FROM / OF</span>
+</div>
+</div>
+<!-- Example Section -->
+<div class="grid grid-cols-1 md:grid-cols-[12px_1fr] bg-surface-container">
+<div class="bg-primary hidden md:block"></div>
+<div class="p-8">
+<h3 class="font-headline font-bold uppercase tracking-widest text-sm mb-4 text-primary">Qur'anic Example</h3>
+<div class="space-y-4">
+<p class="text-3xl text-right leading-relaxed arabic-text font-medium text-on-surface">
+                                مِنَ الْمُؤْمِنِينَ رِجَالٌ
+                            </p>
+<p class="font-body font-medium text-on-surface-variant italic border-l-4 border-secondary pl-4">
+                                "Among the believers are men..."
+                            </p>
+<div class="flex justify-between items-end pt-4 border-t border-outline-variant">
+<span class="font-headline font-bold uppercase text-[10px] tracking-widest text-outline">Surah Al-Ahzab 33:23</span>
+<span class="material-symbols-outlined text-secondary" data-icon="volume_up">volume_up</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Interaction Buttons -->
+<div class="grid grid-cols-3 gap-0 mt-8 border-4 border-black">
+<button class="bg-primary text-white py-6 font-headline font-black uppercase tracking-tighter text-xl hover:bg-primary-dim transition-colors active:scale-95">
+                    HARD
+                </button>
+<button class="bg-secondary text-white py-6 font-headline font-black uppercase tracking-tighter text-xl hover:bg-secondary-dim transition-colors border-l-4 border-r-4 border-black active:scale-95">
+                    GOT IT
+                </button>
+<button class="bg-tertiary-container text-on-tertiary-container py-6 font-headline font-black uppercase tracking-tighter text-xl hover:bg-tertiary transition-colors active:scale-95">
+                    EASY
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-stretch items-stretch h-24 bg-[#FDFFDA] dark:bg-stone-950 border-t-4 border-black dark:border-white">
+<!-- DECK -->
+<a class="flex flex-col items-center justify-center text-black dark:text-white p-4 w-full h-full hover:bg-[#2E5DCD] hover:text-white" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="layers">layers</span>
+<span class="font-['Space_Grotesk'] font-bold uppercase text-[10px] tracking-widest">DECK</span>
+</a>
+<!-- STUDY (ACTIVE) -->
+<a class="flex flex-col items-center justify-center bg-[#C61A20] text-white p-4 w-full h-full" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="school" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-['Space_Grotesk'] font-bold uppercase text-[10px] tracking-widest">STUDY</span>
+</a>
+<!-- STATS -->
+<a class="flex flex-col items-center justify-center text-black dark:text-white p-4 w-full h-full hover:bg-[#2E5DCD] hover:text-white" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="bar_chart">bar_chart</span>
+<span class="font-['Space_Grotesk'] font-bold uppercase text-[10px] tracking-widest">STATS</span>
+</a>
+<!-- PREFS -->
+<a class="flex flex-col items-center justify-center text-black dark:text-white p-4 w-full h-full hover:bg-[#2E5DCD] hover:text-white" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-['Space_Grotesk'] font-bold uppercase text-[10px] tracking-widest">PREFS</span>
+</a>
+</nav>
+</body></html>

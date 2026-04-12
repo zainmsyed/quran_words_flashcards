@@ -86,10 +86,10 @@
           <div class="card-mode-label">arabic → english</div>
           <div class="center-zone">
             <div class="arabic-text">{word.arabic}</div>
-            {#if word.transliteration}
-              <div class="transliteration">{word.transliteration}</div>
-            {/if}
           </div>
+          {#if word.transliteration}
+            <div class="transliteration">{word.transliteration}</div>
+          {/if}
           <div class="flip-hint">
             <span class="flip-symbol">↺</span>
             <span>tap card to flip</span>
@@ -300,17 +300,15 @@
     font-weight: 800;
   }
 
-  /* move the transliteration in the front face down without affecting the Arabic vertical centering */
-  .card-face.front .center-zone .transliteration {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 44px; /* tuned so it sits above the flip hint */
+  /* place transliteration below centered Arabic without overlapping */
+  .card-face.front .transliteration {
+    margin-top: 0.45rem;
+    text-align: center;
   }
 
   @media (max-width: 520px) {
-    .card-face.front .center-zone .transliteration {
-      bottom: 34px;
+    .card-face.front .transliteration {
+      margin-top: 0.35rem;
     }
   }
 

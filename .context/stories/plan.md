@@ -1,37 +1,33 @@
 # Project — Plan
 
 **Created:** 2026-03-29  
-**Last updated:** 2026-04-09
+**Last updated:** 2026-04-12
 
 ---
 
 ## What we're building
-A Quranic Flashcards Svelte + Vite + TypeScript SPA for a small invited group of friends and family. Keep the original flashcard study flow and word deck from the PRD, but add a PocketBase auth/persistence layer in-repo.
+A Quranic Flashcards Svelte + Vite + TypeScript SPA for a small invited group of friends and family. Keep the original flashcard study flow and word deck from the PRD, but add a Bauhaus-inspired visual refresh across the app while preserving existing auth and study behaviour.
 
-The app will use a custom Svelte login gate and account screens. PocketBase is the source of truth for authentication and per-user study progress. If PocketBase is unavailable, the app is unavailable.
+The app will use a custom Svelte login gate and account screens. PocketBase remains the source of truth for authentication and per-user study progress. Visual updates are limited to UI/UX, layout, typography, and color — no changes to study mechanics, SRS, or backend contracts in v1 of this visual refresh.
 
 ## What we're not building (v1 scope)
+- Changes to study mechanics or SRS behavior
 - Open self-registration or public signup
-- OAuth/social login
 - Migration/import of old localStorage study data
 - Offline/PWA mode that works without PocketBase
 - Native plugin wiring or broader stack changes
-- New study mechanics beyond the original PRD
 
 ## Features (v1 priorities)
-- Invite-only PocketBase auth with manual admin account creation
-- Custom Svelte auth UI: login gate, logout, account/profile view, change password, forgot/reset password
-- PocketBase-backed persistence for user study progress and stats
-- Repo-contained deployment assets: PocketBase migrations, access rules, Nginx, systemd, env templates, and README setup notes
-- Preserve the existing study flow, SRS behavior, card content, stats, and word list screens
+- Mobile-first Bauhaus-inspired visual refresh: typography, color palette, rectangular geometry, and responsive layouts
+- Preserve study flow, login, and persistence behavior
+- Add Google Fonts for Space Grotesk, Work Sans, and Noto Naskh Arabic
+- Replace color tokens and radii in src/app.css; restyle components and shared surfaces
 
 ## Implementation approach
 - Keep the Svelte + Vite + TypeScript frontend stack unchanged.
-- Add a small PocketBase client/auth layer under `src/core` and auth-related UI under `src/ui`.
-- Treat PocketBase as required runtime infrastructure; show a login gate or unavailable state until auth/server readiness is confirmed.
-- Define schema and access rules in version-controlled PocketBase migration files.
-- Document manual invite-only provisioning and password recovery in repo docs.
-- Do not rely on localStorage for persisted study data; start fresh on the PocketBase side.
+- Apply the visual update incrementally per-screen in small, testable stories.
+- Treat PocketBase and auth as required runtime infrastructure; do not change auth or study logic.
+- Preserve existing story files and history; append new stories for the UI refresh only.
 
 ## Story queue
 | Story | Title | Status | Blocks |
@@ -40,6 +36,14 @@ The app will use a custom Svelte login gate and account screens. PocketBase is t
 | story-002.md | Custom auth gate — login, logout, and app access control | not-started | story-003.md, story-004.md |
 | story-003.md | Per-user progress sync — replace localStorage with PocketBase | not-started | story-004.md |
 | story-004.md | Account settings — change password, reset password, and invite-only onboarding docs | not-started | — |
+| story-005.md | Theme & fonts — add Google Fonts and update CSS tokens | not-started | — |
+| story-006.md | App shell & topbar/brand — rectangular brand-mark and topbar restyle | not-started | story-005.md |
+| story-007.md | Card component restyle — typography, colors, rectangular controls | not-started | story-005.md, story-006.md |
+| story-008.md | StudySession & session chrome — toolbar, progress, responsiveness | not-started | story-007.md |
+| story-009.md | WordList & Stats restyle — list rows, stat cards, badges | not-started | story-005.md |
+| story-010.md | Settings & VoiceSettings restyle — panels and nav | not-started | story-005.md |
+| story-011.md | QA / responsive polish — cross-screen fixes and accessibility | not-started | story-005.md, story-006.md, story-007.md, story-008.md, story-009.md, story-010.md |
 
 ## Replanning log
 - 2026-04-09: Replanned v1 to layer PocketBase auth onto the original study app. Confirmed invite-only manual onboarding for a small friends-and-family group, custom Svelte auth UI, change-password plus forgot/reset-password flows, PocketBase-backed persistence, repo-contained deployment files/instructions, and a fresh start with no localStorage migration.
+- 2026-04-12: Replanned visual update to a Bauhaus-inspired theme across all screens. Decisions: replace palette with a red/yellow/near‑black Bauhaus palette and add a success green (#1E7A4A); load Space Grotesk (headings), Work Sans (UI/body), and Noto Naskh Arabic (Arabic script); convert pill-shaped surfaces to rectangular 6px-radius geometry; brand-mark set to a rectangular red box with the Arabic letter "ا" and app name "alif" in Space Grotesk. Added story-005 through story-011 to implement fonts, tokens, topbar/brand, card restyle, session chrome, WordList/Stats, Settings/VoiceSettings, and QA/responsive polish. Preserved existing study/auth behavior and story history.
