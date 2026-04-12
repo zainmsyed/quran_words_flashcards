@@ -44,6 +44,9 @@
     if (entry.due) return 'Due';
     return 'Learning';
   }
+
+  $: sectionTitleText = selectedFilter === 'seen' ? 'Seen words' : (selectedFilter === 'mastered' ? 'Mastered words' : 'Due today');
+  $: sectionBadgeClass = selectedFilter === 'seen' ? 'badge-learning' : (selectedFilter === 'mastered' ? 'badge-mastered' : 'badge-due');
 </script>
 
 <section class="stats-scene">
@@ -86,13 +89,13 @@
     {#if selectedFilter !== 'none'}
       <div class="recent-list">
         <div class="section-title">
-          {selectedFilter === 'seen' ? `Seen words (${filteredEntries.length})` : (selectedFilter === 'mastered' ? `Mastered words (${filteredEntries.length})` : `Due today (${filteredEntries.length})`)}
+          <h3>{sectionTitleText} <span class={"section-count badge " + sectionBadgeClass}>{filteredEntries.length}</span></h3>
         </div>
         {#if filteredEntries.length === 0}
           <p class="empty">{selectedFilter === 'due' ? 'No due words today.' : `No ${selectedFilter} words yet.`}</p>
         {:else}
           {#each filteredEntries as entry}
-            <div class="recent-row">
+            <div class="word-row recent-row">
               <div class="recent-main">
                 <div class="ar">{entry.word.arabic}</div>
                 <div class="en">{entry.word.english}</div>
@@ -119,11 +122,11 @@
 
   .stats-card {
     width: 100%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(249,252,250,0.98));
-    border-radius: 24px;
-    border: 0.5px solid rgba(173, 179, 181, 0.15);
-    box-shadow: 0 16px 32px rgba(0, 109, 75, 0.07);
-    padding: 1.35rem 1.15rem;
+    background: var(--card);
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
+    padding: 1.25rem;
   }
 
   .panel-heading {
@@ -141,7 +144,7 @@
 
   .panel-heading h2 {
     margin: 0 0 0.35rem 0;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(1.45rem, 3vw, 2rem);
     line-height: 1;
     letter-spacing: -0.04em;
@@ -155,116 +158,47 @@
     line-height: 1.6;
   }
 
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 0.85rem;
-    margin-bottom: 1rem;
-  }
-
-  .stat-card {
-    appearance: none;
-    border: 0.5px solid rgba(173, 179, 181, 0.14);
-    border-radius: 24px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(242,246,244,0.98));
-    min-height: 128px;
-    padding: 1.1rem 0.9rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 0.18rem;
-    box-shadow: 0 12px 22px rgba(0, 109, 75, 0.05);
-  }
-
-  .stat-card.clickable {
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-  }
-
-  .stat-card.clickable:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 24px rgba(0, 109, 75, 0.08);
-  }
-
-  .stat-card[aria-pressed='true'] {
-    border-color: rgba(0, 109, 75, 0.18);
-    background: linear-gradient(180deg, rgba(213,247,236,0.98), rgba(238,250,245,0.98));
-    box-shadow: 0 14px 28px rgba(0, 109, 75, 0.09);
-  }
-
-  .stat-num {
-    font-family: 'Manrope', sans-serif;
-    font-size: clamp(2.1rem, 4.6vw, 3rem);
-    font-weight: 900;
-    line-height: 1;
-    color: var(--primary);
-  }
-
-  .stat-label {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-top: 0.2rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-
-  .stat-meta {
-    font-size: 0.8rem;
-    line-height: 1.35;
-    color: var(--text-tertiary);
-  }
-
   .recent-list {
     margin-top: 1rem;
   }
 
   .section-title {
-    font-family: 'Manrope', sans-serif;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title h3 {
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.95rem;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text);
-    margin-bottom: 0.75rem;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  .empty {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    padding: 0.5rem 0;
+  .section-count {
+    min-width: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
   }
 
   .recent-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.9rem;
-    padding: 1rem 1.05rem;
-    border-radius: 22px;
-    border: 0.5px solid rgba(173, 179, 181, 0.14);
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(248,251,249,0.98));
+    align-items: flex-start;
     margin-bottom: 0.75rem;
-    box-shadow: 0 10px 18px rgba(0, 109, 75, 0.04);
+  }
+
+  .word-row.recent-row .ar {
+    text-align: left;
   }
 
   .recent-main {
     min-width: 0;
-  }
-
-  .ar {
-    font-family: 'Amiri', serif;
-    direction: rtl;
-    font-size: 1.55rem;
-    line-height: 1.1;
-    color: var(--primary);
-  }
-
-  .en {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    margin-top: 0.18rem;
   }
 
   .recent-meta {
@@ -275,26 +209,16 @@
     white-space: nowrap;
   }
 
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.38rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 900;
-    background: var(--primary-container);
-    color: var(--primary);
-    letter-spacing: 0.02em;
-  }
-
-  .badge-mastered { background: var(--success-bg); color: var(--success-text); }
-  .badge-learning { background: var(--warn-bg); color: var(--warn-text); }
-  .badge-due { background: var(--danger-bg); color: var(--danger-text); }
-  .badge-new { background: var(--info-bg); color: var(--info-text); }
-
-  small {
+  .recent-meta small {
     color: var(--text-secondary);
     font-size: 0.8rem;
+  }
+
+  .empty {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    padding: 0.5rem 0;
   }
 
   @media (max-width: 720px) {

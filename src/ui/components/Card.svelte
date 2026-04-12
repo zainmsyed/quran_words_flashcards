@@ -196,6 +196,7 @@
     color: var(--primary);
     cursor: pointer;
     box-shadow: var(--shadow-primary);
+    z-index: 4;
     transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s, transform 0.15s;
   }
 

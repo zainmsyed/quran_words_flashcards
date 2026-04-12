@@ -473,20 +473,6 @@
     overflow: visible;
   }
 
-  .session-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    padding-inline: var(--session-gutter);
-    color: var(--primary);
-  }
-
-  .session-header .brand {
-    flex: 1 1 auto;
-  }
-
   .nav-btn {
     width: 50px;
     height: 50px;
@@ -796,7 +782,7 @@
     }
 
     .session-header {
-      padding: 0.15rem var(--session-gutter) 0.85rem;
+      padding: 0.9rem var(--session-gutter);
     }
 
     .nav-btn {

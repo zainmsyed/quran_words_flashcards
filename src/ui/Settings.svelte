@@ -76,14 +76,8 @@
   }
 </script>
 
-<section class="settings-panel settings-shell">
-  <header class="app-topbar settings-head">
-    <button class="nav-btn" type="button" on:click={close} aria-label="Return to study">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </button>
-
+<section class="settings-panel settings-shell" class:stats-bleed={tab === 'stats'}>
+  <header class="app-topbar session-header">
     <div class="brand" aria-label="alif">
       <div class="brand-mark" aria-hidden="true">ا</div>
       <div class="brand-copy">
@@ -92,17 +86,27 @@
       </div>
     </div>
 
-    <div class="settings-copy">
-      <div class="settings-eyebrow">Signed in</div>
-      <div class="settings-user">{userEmail || 'PocketBase user'}</div>
-    </div>
-
-    <button class="signout-btn" type="button" on:click={logout} disabled={signOutBusy}>
-      {signOutBusy ? 'Signing out…' : 'Sign out'}
+    <button class="nav-btn" type="button" on:click={close} aria-label="Return to study">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
     </button>
   </header>
 
-  <nav class="settings-tabs" aria-label="Settings sections">
+  <div class="settings-body">
+    <div class="account-box" role="region" aria-label="Account">
+      <div class="account-inner">
+        <div class="settings-copy">
+          <div class="settings-eyebrow">Signed in</div>
+          <div class="settings-user">{userEmail || 'PocketBase user'}</div>
+        </div>
+        <button class="signout-btn" type="button" on:click={logout} disabled={signOutBusy}>
+          {signOutBusy ? 'Signing out…' : 'Sign out'}
+        </button>
+      </div>
+    </div>
+
+    <nav class="settings-tabs" aria-label="Settings sections">
     <button type="button" class="settings-tab" class:active={tab === 'stats'} aria-pressed={tab === 'stats'} on:click={() => tab = 'stats'}>Stats</button>
     <button type="button" class="settings-tab" class:active={tab === 'account'} aria-pressed={tab === 'account'} on:click={() => tab = 'account'}>Account</button>
     <button type="button" class="settings-tab" class:active={tab === 'voice'} aria-pressed={tab === 'voice'} on:click={() => tab = 'voice'}>Audio</button>
@@ -133,31 +137,63 @@
       {/if}
     {/if}
   </div>
+</div>
 </section>
 
 <style>
   .settings-shell {
     --session-gutter: clamp(1.25rem, 3.5vw, 2.5rem);
-    padding: 1rem 0 1.1rem;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    border-radius: 6px;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  /* The body contains the carded content (tabs + content) */
+  .settings-body {
     background: var(--card);
+    border-radius: 6px;
     border: 0.5px solid var(--border);
     box-shadow: var(--shadow-primary);
+    padding: 1rem 0 1.1rem;
     overflow: hidden;
   }
 
-  .settings-head {
+  /* Reuse the session header styling so Stats header matches the study screen */
+  .session-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.85rem;
+    gap: 1rem;
+    width: 100%;
+    padding-top: calc(1rem + env(safe-area-inset-top));
     padding-inline: var(--session-gutter);
+    padding-bottom: 1rem;
+    color: var(--primary);
   }
 
-  .settings-head .brand {
-    flex: 1 1 auto;
+  /* Account box shown below the header on the Stats tab */
+  .account-box {
+    background: var(--card);
+    border-top: 0.5px solid var(--border);
+    box-shadow: none;
+  }
+
+  .account-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem var(--session-gutter);
+  }
+
+  .account-inner .settings-copy { flex: 1 1 auto; }
+
+  @media (max-width: 720px) {
+    .account-inner { flex-direction: column; align-items: flex-start; gap: 0.35rem; }
   }
 
   .nav-btn {
@@ -315,29 +351,12 @@
   }
 
   @media (max-width: 720px) {
-    .settings-shell {
-      padding: 0.95rem 0 1rem;
-      border-radius: 6px;
-    }
-
-    .settings-head {
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-
-    .settings-head .brand {
-      min-width: 100%;
-      order: 2;
-    }
-
     .settings-copy {
       min-width: 100%;
-      order: 3;
     }
 
     .signout-btn {
       width: 100%;
-      order: 4;
     }
 
     .settings-tabs {

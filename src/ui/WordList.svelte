@@ -48,7 +48,7 @@
     {:else}
       <div class="rows">
         {#each mastered as entry}
-          <div class="row">
+          <div class="word-row">
             <div class="row-copy">
               <div class="ar">{entry.word.arabic}</div>
               <div class="en">{entry.word.english}</div>
@@ -74,7 +74,7 @@
     {:else}
       <div class="rows">
         {#each learning as entry}
-          <div class="row">
+          <div class="word-row">
             <div class="row-copy">
               <div class="ar">{entry.word.arabic}</div>
               <div class="en">{entry.word.english}</div>
@@ -100,7 +100,7 @@
     {:else}
       <div class="rows">
         {#each newWords as entry}
-          <div class="row">
+          <div class="word-row">
             <div class="row-copy">
               <div class="ar">{entry.word.arabic}</div>
               <div class="en">{entry.word.english}</div>
@@ -115,15 +115,15 @@
 
 <style>
   .settings-card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(249,252,250,0.98));
-    border-radius: 24px;
-    border: 0.5px solid rgba(173, 179, 181, 0.15);
-    box-shadow: 0 16px 32px rgba(0, 109, 75, 0.07);
-    padding: 1.4rem;
+    background: var(--card);
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
+    padding: 1.25rem;
   }
 
   .panel-heading {
-    margin-bottom: 1.15rem;
+    margin-bottom: 1.1rem;
   }
 
   .eyebrow {
@@ -137,7 +137,7 @@
 
   .panel-heading h2 {
     margin: 0 0 0.35rem 0;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(1.45rem, 3vw, 2rem);
     line-height: 1;
     letter-spacing: -0.04em;
@@ -165,9 +165,12 @@
 
   .group-header h3 {
     margin: 0;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.05rem;
     color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .group-header p {
@@ -188,60 +191,16 @@
     gap: 0.75rem;
   }
 
-  .row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.9rem;
-    padding: 1rem 1.05rem;
-    border-radius: 22px;
-    border: 0.5px solid rgba(173, 179, 181, 0.14);
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(248,251,249,0.98));
-    box-shadow: 0 10px 18px rgba(0, 109, 75, 0.04);
-  }
-
   .row-copy {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .ar {
-    font-family: 'Amiri', serif;
-    direction: rtl;
-    font-size: 1.55rem;
-    line-height: 1.1;
-    color: var(--primary);
-  }
-
-  .en {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    margin-top: 0.18rem;
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.38rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 900;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-  }
-
-  .badge-mastered {
-    background: var(--success-bg);
-    color: var(--success-text);
-  }
-
-  .badge-learning {
-    background: var(--warn-bg);
-    color: var(--warn-text);
-  }
-
-  .badge-new {
-    background: var(--info-bg);
-    color: var(--info-text);
+  /* Left-align Arabic within the word-row for this panel */
+  .word-row .ar {
+    text-align: left;
   }
 
   .empty {
@@ -257,7 +216,7 @@
       align-items: flex-start;
     }
 
-    .row {
+    .word-row {
       flex-direction: column;
       align-items: flex-start;
     }
