@@ -461,16 +461,16 @@
   .device-shell {
     --session-gutter: clamp(1.25rem, 3.5vw, 2.5rem);
     width: 100%;
-    min-height: calc(100vh - 1.5rem);
-    padding: 1rem 0 1.1rem;
+    min-height: 100%;
+    padding: 0;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    border-radius: 6px;
-    background: var(--card);
-    border: 0.5px solid var(--border);
-    box-shadow: var(--shadow-primary);
-    overflow: hidden;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    overflow: visible;
   }
 
   .session-header {
@@ -516,6 +516,7 @@
   .session-main {
     flex: 1;
     width: 100%;
+    min-height: 0;
     display: grid;
     grid-template-columns: var(--session-gutter) minmax(0, 1fr) var(--session-gutter);
     align-content: start;
@@ -586,6 +587,7 @@
     grid-column: 2;
     width: 100%;
     min-width: 0;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -601,7 +603,7 @@
     gap: 0.75rem;
     width: 100%;
     min-width: 0;
-    margin: 1.5rem auto 0;
+    margin: 1.2rem auto 0;
     padding: 0 0.1rem;
   }
 
@@ -779,20 +781,22 @@
 
   @media (max-width: 720px) {
     .rating-row {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .rating-btn.easy {
-      grid-column: 1 / -1;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
     }
   }
 
   @media (max-width: 520px) {
     .device-shell {
       --session-gutter: 0.95rem;
-      min-height: calc(100vh - 1rem);
-      padding: 0.95rem 0 1rem;
-      border-radius: 6px;
+      height: 100dvh;
+      min-height: 100dvh;
+      padding: 0;
+      border-radius: 0;
+    }
+
+    .session-header {
+      padding: 0.15rem var(--session-gutter) 0.85rem;
     }
 
     .nav-btn {
@@ -814,8 +818,20 @@
     }
 
     .rating-btn {
-      min-height: 4.9rem;
-      padding: 0.85rem 0.75rem;
+      min-height: 4.35rem;
+      padding: 0.68rem 0.55rem;
+      letter-spacing: 0.1em;
+      font-size: 0.68rem;
+    }
+
+    .rating-icon {
+      width: 2.45rem;
+      height: 2.45rem;
+    }
+
+    .rating-icon svg {
+      width: 18px;
+      height: 18px;
     }
   }
 </style>

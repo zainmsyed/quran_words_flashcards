@@ -130,6 +130,13 @@
     align-items: stretch;
   }
 
+  .study-screen {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    width: 100%;
+  }
+
   .app-loading-card {
     width: min(100%, 28rem);
     min-height: 14rem;

@@ -1,8 +1,8 @@
 # Story 009: WordList & Stats restyle — list rows, stat cards, badges
 
-**Status:** not-started
+**Status:** in-progress  
 **Created:** 2026-04-12
-**Last accessed:** 2026-04-12
+**Last accessed:** 2026-04-12  
 **Completed:**
 
 ## Goal

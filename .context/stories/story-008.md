@@ -1,9 +1,9 @@
 # Story 008: StudySession & session chrome — toolbar, progress, responsiveness
 
-**Status:** in-progress  
+**Status:** complete  
 **Created:** 2026-04-12
 **Last accessed:** 2026-04-12  
-**Completed:**
+**Completed:** 2026-04-12
 
 ## Goal
 Restyle the StudySession chrome: toolbar, session-chip, progress bar, and rating controls so they match the Bauhaus aesthetic and behave responsively on mobile viewports.
@@ -30,7 +30,7 @@ Open a study session on a phone-width viewport and confirm:
 - [x] Adjust StudySession.svelte markup/classes only where necessary for visual alignment (do not change behavior).
 - [x] Ensure session toolbar collapses to two columns under 720px and that touch targets remain ≥44px.
 - [x] Update progress bar colors and animation to use the primary gradient and verify it updates during a live session.
-- [ ] Manual test on mobile viewport: run a session, change ratings, and ensure controls remain functional.
+- [x] Manual test on mobile viewport: run a session, change ratings, and ensure controls remain functional.
 
 ## Issues
 - Implementation is complete in the current `ui-ux-updates` branch worktree (study session chrome, progress card, rating controls, and shared session tokens updated).

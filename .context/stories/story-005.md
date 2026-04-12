@@ -4,6 +4,8 @@
 **Created:** 2026-04-12
 **Last accessed:** 2026-04-12  
 **Completed:** 2026-04-12
+
+## Goal
 Add the Bauhaus-inspired theme tokens and web fonts so the app can be restyled incrementally using consistent variables.
 
 ## Verification

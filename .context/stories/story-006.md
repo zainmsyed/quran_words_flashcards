@@ -4,6 +4,8 @@
 **Created:** 2026-04-12
 **Last accessed:** 2026-04-12  
 **Completed:** 2026-04-12
+
+## Goal
 Implement the Bauhaus brand and restyle the app shell topbar: a rectangular 6px-radius brand mark (primary red) with the Arabic glyph "ا" as the logo glyph and the app name "alif" (lowercase) in Space Grotesk to the right. Update topbar layout, spacing, and button visuals to match the new tokens.
 
 ## Verification

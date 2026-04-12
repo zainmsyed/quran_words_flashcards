@@ -33,20 +33,20 @@ svelte.config.js — Svelte preprocess config for TypeScript
 tsconfig.json — tsconfig.json configuration file
 vite.config.ts — Vite config with Svelte plugin and dev server port
 
-scripts/run-tests.mjs — (undescribed)
-src/core/progress-summary.ts — (undescribed)
-src/core/session.ts — (undescribed)
-pb_migrations/001_create_users_auth.js — (undescribed)
-pb_migrations/002_create_card_progress.js — (undescribed)
-pb_migrations/003_create_superuser.js — (undescribed)
-scripts/pocketbase-smoke-test.mjs — (undescribed)
-src/core/pocketbase-auth.ts — (undescribed)
-src/ui/AuthGate.svelte — (undescribed)
-src/ui/AuthUnavailable.svelte — (undescribed)
-scripts/dev-with-pocketbase.mjs — (undescribed)
-pb_data/types.d.ts — (undescribed)
-scripts/pocketbase-bootstrap.mjs — (undescribed)
-pb_migrations/004_create_study_state.js — (undescribed)
-src/core/pocketbase-study.ts — (undescribed)
-src/ui/AccountSettings.svelte — (undescribed)
-src/ui/ChangePasswordForm.svelte — (undescribed)
+scripts/run-tests.mjs — Repository test runner that executes the Node-based checks and build gates.
+src/core/progress-summary.ts — Computes study-progress summaries and counts from card state.
+src/core/session.ts — Builds, normalizes, and retries PocketBase-backed study sessions.
+pb_migrations/001_create_users_auth.js — Locks down the PocketBase users auth collection for invite-only onboarding.
+pb_migrations/002_create_card_progress.js — Creates the per-user card_progress collection and access rules.
+pb_migrations/003_create_superuser.js — Bootstraps the initial PocketBase admin/superuser.
+scripts/pocketbase-smoke-test.mjs — Runs the PocketBase smoke test covering auth and persisted study data.
+src/core/pocketbase-auth.ts — PocketBase auth/session client with bootstrap, sign-in, sign-out, and availability checks.
+src/ui/AuthGate.svelte — Login gate UI for invited PocketBase users.
+src/ui/AuthUnavailable.svelte — Retry/unavailable state shown when PocketBase cannot be reached.
+scripts/dev-with-pocketbase.mjs — Starts Vite and PocketBase together for local development.
+pb_data/types.d.ts — Generated PocketBase TypeScript type definitions.
+scripts/pocketbase-bootstrap.mjs — Downloads, boots, and migrates PocketBase for local/dev use.
+pb_migrations/004_create_study_state.js — Creates the PocketBase study_state collection for saved sessions and stats.
+src/core/pocketbase-study.ts — PocketBase-backed study snapshot and card-state persistence helpers.
+src/ui/AccountSettings.svelte — Authenticated account settings shell for profile and password actions.
+src/ui/ChangePasswordForm.svelte — Password-change form used inside account settings.

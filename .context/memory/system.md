@@ -8,6 +8,8 @@
 - Never mark a story complete or update story status to completed unless the user has given explicit permission in the current conversation.
 
 ## Learned Rules
-- No learned rules promoted during consolidation (no complaints present)
+- Promoted rules from recent complaint clusters and reopened-issue follow-up.
 - When adding a secondary panel to a card screen, reuse the card’s wrapper and spacing tokens so both edges stay aligned.
 - When using CSS 3D transforms for interactive elements (e.g., card flips), do not apply overflow: hidden on the rotating container; apply clipping to non-transformed child faces or an outer wrapper so preserve-3d and backface-visibility render correctly. <!-- source: story-007 -->
+- When a flashcard shows answer-revealing content, keep pronunciation/transliteration controls on the Arabic-facing side only so the answer does not leak through the UI. <!-- source: story-003 -->
+- When a PocketBase-backed screen may load before its collections exist, return empty/default state on reads and surface a clear migration error on writes instead of crashing. <!-- source: story-003 -->

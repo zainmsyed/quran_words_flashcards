@@ -1,9 +1,11 @@
 # Story 007: Card component restyle - typography, colors, rectangular controls
 
-**Status:** in-progress  
+**Status:** complete  
 **Created:** 2026-04-12
 **Last accessed:** 2026-04-12  
-**Completed:**
+**Completed:** 2026-04-12
+
+## Goal
 Restyle the main study Card component to the Bauhaus visual language while preserving all current behaviour (flip, audio/TTS, rating controls, and SRS logic).
 
 ## Verification
