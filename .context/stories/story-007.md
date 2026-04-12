@@ -1,11 +1,9 @@
 # Story 007: Card component restyle - typography, colors, rectangular controls
 
-**Status:** in-progress
+**Status:** in-progress  
 **Created:** 2026-04-12
-**Last accessed:** 2026-04-12
+**Last accessed:** 2026-04-12  
 **Completed:**
-
-## Goal
 Restyle the main study Card component to the Bauhaus visual language while preserving all current behaviour (flip, audio/TTS, rating controls, and SRS logic).
 
 ## Verification
@@ -31,7 +29,7 @@ Start a study session and verify that a card displays with:
 - [x] Restyle the card surface to use the new color tokens and 6px radius and update internal spacing to match Bauhaus-inspired layout.
 - [x] Replace pill-shaped action controls with rectangular buttons (6px radius) and apply primary/secondary/tertiary styles according to new tokens.
 - [x] Ensure audio/TTS control and transliteration are only visible on the Arabic-facing side (preserve previous bug fixes).
-- [ ] Run a manual session and exercise flip, TTS playback, and rating actions to confirm no behavioral regressions.
+- [x] Run a manual session and exercise flip, TTS playback, and rating actions to confirm no behavioral regressions.
 
 ## Issues
 

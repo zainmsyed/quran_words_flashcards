@@ -10,3 +10,4 @@
 ## Learned Rules
 - No learned rules promoted during consolidation (no complaints present)
 - When adding a secondary panel to a card screen, reuse the card’s wrapper and spacing tokens so both edges stay aligned.
+- When using CSS 3D transforms for interactive elements (e.g., card flips), do not apply overflow: hidden on the rotating container; apply clipping to non-transformed child faces or an outer wrapper so preserve-3d and backface-visibility render correctly. <!-- source: story-007 -->

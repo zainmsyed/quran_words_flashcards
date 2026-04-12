@@ -1,6 +1,6 @@
 # Review Summary
 
-**Last updated:** 2026-04-12T18:09:25Z
+**Last updated:** 2026-04-12T18:49:40Z
 
 ## Findings
 - Add automated coverage before changing persistence formats or session state machines. | count: 1 | status: tracked | sources: review-20260409-222457.md
@@ -12,3 +12,4 @@
 - Persist a newly generated session queue before the user can refresh or switch devices if same-day resume depends on it. | count: 1 | status: tracked | sources: review-20260411-062422.md | stories: story-003
 - Remove imports immediately when the only consumer of a feature is deleted, so dead code does not linger after scope changes. | count: 1 | status: tracked | sources: review-20260411-073533.md | stories: story-004
 - When adding a secondary panel to a card screen, reuse the card’s wrapper and spacing tokens so both edges stay aligned. | count: 1 | status: promoted | sources: remembered.md
+- When using CSS 3D transforms for interactive elements (e.g., card flips), do not apply overflow: hidden on the rotating container; apply clipping to non-transformed child faces or an outer wrapper so preserve-3d and backface-visibility render correctly. | count: 1 | status: promoted | sources: remembered.md | stories: story-007

@@ -1,8 +1,8 @@
 # Story 008: StudySession & session chrome — toolbar, progress, responsiveness
 
-**Status:** not-started
+**Status:** in-progress  
 **Created:** 2026-04-12
-**Last accessed:** 2026-04-12
+**Last accessed:** 2026-04-12  
 **Completed:**
 
 ## Goal
