@@ -1,8 +1,9 @@
 # Review Summary
 
-**Last updated:** 2026-04-13T20:08:26Z
+**Last updated:** 2026-04-13T20:47:39Z
 
 ## Findings
+- — (not proposed as a cross-project rule; this is repo-specific cleanup) | count: 1 | status: tracked | sources: review-20260413-204423.md
 - Add automated coverage before changing persistence formats or session state machines. | count: 1 | status: tracked | sources: review-20260409-222457.md
 - Don't persist a mode enum if every producer hardcodes the same value. | count: 1 | status: tracked | sources: review-20260409-222457.md
 - Keep unique-item counters separate from total-event counters when a dashboard needs both. | count: 1 | status: tracked | sources: review-20260409-222457.md
@@ -11,3 +12,7 @@
 - When adding a secondary panel to a card screen, reuse the card’s wrapper and spacing tokens so both edges stay aligned. | count: 1 | status: promoted | sources: remembered.md
 - When live browser QA is still listed as a blocker, do not mark the manual-test checklist item complete. | count: 1 | status: tracked | sources: review-20260412-233704.md | stories: story-009
 - When using CSS 3D transforms for interactive elements (e.g., card flips), do not apply overflow: hidden on the rotating container; apply clipping to non-transformed child faces or an outer wrapper so preserve-3d and backface-visibility render correctly. | count: 1 | status: promoted | sources: remembered.md | stories: story-007
+- Yes — add a pre-commit check to prevent committing files larger than a configured threshold (e.g., 250 KB). | count: 1 | status: tracked | sources: review-20260413-204423.md
+- Yes — brand SVGs used as favicons or UX brand marks must use outlined glyph paths (no <text> nodes). | count: 1 | status: tracked | sources: review-20260413-204423.md
+- Yes — critical visual flows (card flips, header alignment) should have at least one automated smoke or e2e test. | count: 1 | status: tracked | sources: review-20260413-204423.md
+- Yes — require committed image assets to be optimized/minified and add CI checks for large/unoptimized images. | count: 1 | status: tracked | sources: review-20260413-204423.md

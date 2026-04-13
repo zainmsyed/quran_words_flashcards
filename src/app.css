@@ -194,16 +194,7 @@ main {
   font-weight: 700; /* use the heaviest loaded Arabic weight for a bolder glyph */
 }
 
-.brand-mark .brand-glyph {
-  display: inline-block;
-  line-height: 1;
-  font-weight: 700;
-  transform: translateY(6%); /* nudge down to visually center the glyph */
-}
-
-.auth-brand .brand-glyph {
-  transform: translateY(8%); /* slightly larger nudge for the bigger auth logo */
-}
+/* legacy .brand-glyph rules removed — brand mark uses an outlined SVG or img now */
 
 /* Use the SVG logo inside .brand-mark; ensure it fills the container */
 .brand-mark img {
