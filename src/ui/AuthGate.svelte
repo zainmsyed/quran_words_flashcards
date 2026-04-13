@@ -23,7 +23,7 @@
 
   <div class="auth-card auth-panel">
     <div class="brand auth-brand" aria-label="alif">
-      <div class="brand-mark" aria-hidden="true"><span class="brand-glyph">ا</span></div>
+      <div class="brand-mark" aria-hidden="true"><img src="/images/favicon.svg" alt="" aria-hidden="true"/></div>
       <div class="brand-copy">
         <h1>ALIF</h1>
       </div>

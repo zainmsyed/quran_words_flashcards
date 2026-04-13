@@ -79,7 +79,7 @@
 <section class="settings-panel settings-shell" class:stats-bleed={tab === 'stats'}>
   <header class="app-topbar session-header">
     <div class="brand" aria-label="alif">
-      <div class="brand-mark" aria-hidden="true"><span class="brand-glyph">ا</span></div>
+      <div class="brand-mark" aria-hidden="true"><img src="/images/favicon.svg" alt="" aria-hidden="true"/></div>
       <div class="brand-copy">
         <h1>ALIF</h1>
       </div>
