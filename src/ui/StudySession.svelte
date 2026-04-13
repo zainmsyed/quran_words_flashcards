@@ -298,18 +298,20 @@
 {:else}
   <div class="device-shell">
     <header class="app-topbar session-header">
-      <div class="brand" aria-label="alif">
-        <div class="brand-mark" aria-hidden="true"><img src="/images/favicon.svg" alt="" aria-hidden="true"/></div>
-        <div class="brand-copy">
-          <h1>ALIF</h1>
+        <div class="session-header-inner">
+        <div class="brand" aria-label="alif">
+          <div class="brand-mark" aria-hidden="true"><img src="/images/favicon.svg" alt="" aria-hidden="true"/></div>
+          <div class="brand-copy">
+            <h1>ALIF</h1>
+          </div>
         </div>
-      </div>
 
-      <button class="nav-btn" type="button" on:click={openSettings} aria-label="Open settings">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
+        <button class="nav-btn" type="button" on:click={openSettings} aria-label="Open settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
     </header>
 
     <div class="session-main">

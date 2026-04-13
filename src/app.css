@@ -119,9 +119,22 @@ main {
   max-width: calc(100vw - 1.5rem);
   margin-inline: auto;
   padding-top: calc(1rem + env(safe-area-inset-top));
-  padding-inline: var(--session-gutter);
+  /* remove inline padding here so inner container can handle consistent guttering */
+  padding-inline: 0;
   padding-bottom: 1rem;
   color: var(--primary);
+}
+
+/* Inner wrapper used to align header content with settings/session layout */
+.session-header-inner {
+  width: 100%;
+  max-width: calc(100vw - 1.5rem);
+  margin-inline: auto;
+  padding-inline: var(--session-gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .session-header .brand { flex: 1 1 auto; }

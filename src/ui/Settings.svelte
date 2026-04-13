@@ -78,18 +78,20 @@
 
 <section class="settings-panel settings-shell" class:stats-bleed={tab === 'stats'}>
   <header class="app-topbar session-header">
-    <div class="brand" aria-label="alif">
-      <div class="brand-mark" aria-hidden="true"><img src="/images/favicon.svg" alt="" aria-hidden="true"/></div>
-      <div class="brand-copy">
-        <h1>ALIF</h1>
+    <div class="session-header-inner">
+      <div class="brand" aria-label="alif">
+        <div class="brand-mark" aria-hidden="true"><img src="/images/favicon.svg" alt="" aria-hidden="true"/></div>
+        <div class="brand-copy">
+          <h1>ALIF</h1>
+        </div>
       </div>
-    </div>
 
-    <button class="nav-btn" type="button" on:click={close} aria-label="Return to study">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </button>
+      <button class="nav-btn" type="button" on:click={close} aria-label="Return to study">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
   </header>
 
   <div class="settings-body">
