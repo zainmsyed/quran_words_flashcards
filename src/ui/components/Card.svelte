@@ -148,6 +148,9 @@
     min-height: 60vh;
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
+    transform-origin: center center;
+    will-change: transform;
+    transform: translateZ(0);
     transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 6px;
     cursor: pointer;
@@ -160,7 +163,7 @@
   }
 
   .flashcard.flipped {
-    transform: rotateY(180deg);
+    transform: translateZ(0) rotateY(180deg);
   }
 
   .card-face {
@@ -339,6 +342,18 @@
     height: 1rem;
     font-size: 12px;
     line-height: 1;
+  }
+
+  @media (min-width: 721px) {
+    .flashcard-scene {
+      height: var(--card-height);
+      overflow: hidden;
+    }
+
+    .flashcard {
+      height: 100%;
+      min-height: 0;
+    }
   }
 
   @media (max-width: 520px) {

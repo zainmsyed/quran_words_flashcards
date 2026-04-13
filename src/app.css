@@ -41,6 +41,12 @@
   --shadow-primary: 0 6px 16px rgba(17, 17, 17, 0.06);
 }
 
+@media (min-width: 721px) {
+  :root {
+    --card-height: clamp(460px, 58vh, 640px);
+  }
+}
+
 @media (max-width: 520px) {
   :root { --card-height: 320px; }
 }
