@@ -120,37 +120,37 @@
     width: 100%;
     min-height: 54px;
     padding: 0.9rem 1rem;
-    border-radius: 18px;
-    border: 0.5px solid rgba(173, 179, 181, 0.2);
-    background: rgba(255, 255, 255, 0.94);
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border);
+    background: var(--card);
     color: var(--text);
     font: inherit;
     box-shadow: inset 0 1px 2px rgba(12, 20, 18, 0.03);
   }
 
   .field input:focus {
-    outline: 2px solid rgba(0, 109, 75, 0.16);
-    border-color: rgba(0, 109, 75, 0.22);
+    outline: 2px solid var(--primary);
+    border-color: var(--primary);
   }
 
   .feedback {
     padding: 0.85rem 0.95rem;
-    border-radius: 18px;
+    border-radius: var(--radius-md);
     font-size: 0.92rem;
     line-height: 1.5;
     font-weight: 700;
   }
 
   .feedback.error {
-    background: rgba(255, 240, 240, 0.96);
-    color: #ad4f4f;
-    border: 0.5px solid rgba(208, 121, 121, 0.18);
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    border-color: transparent;
   }
 
   .feedback.success {
-    background: rgba(235, 252, 240, 0.98);
-    color: #167054;
-    border: 0.5px solid rgba(164, 229, 205, 0.8);
+    background: var(--success-bg);
+    color: var(--success-text);
+    border-color: transparent;
   }
 
   .submit-btn {

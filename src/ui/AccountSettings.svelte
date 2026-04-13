@@ -68,10 +68,10 @@
 
 <style>
   .settings-card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(249,252,250,0.98));
-    border-radius: 24px;
-    border: 0.5px solid rgba(173, 179, 181, 0.15);
-    box-shadow: 0 16px 32px rgba(0, 109, 75, 0.07);
+    background: var(--card);
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
     padding: 1.4rem;
   }
 
@@ -106,10 +106,10 @@
 
   .profile-card {
     padding: 1rem 1.05rem;
-    border-radius: 22px;
-    border: 0.5px solid rgba(173, 179, 181, 0.14);
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(248,251,249,0.98));
-    box-shadow: 0 10px 18px rgba(0, 109, 75, 0.04);
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border);
+    background: var(--bg-secondary);
+    box-shadow: var(--shadow-primary);
     margin-bottom: 1rem;
   }
 
