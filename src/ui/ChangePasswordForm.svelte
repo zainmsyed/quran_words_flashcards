@@ -57,7 +57,7 @@
       <div class="feedback success" role="status">{success}</div>
     {/if}
 
-    <button class="submit-btn" type="submit" disabled={busy}>
+    <button class="action-btn primary submit-btn" type="submit" disabled={busy}>
       {busy ? 'Updating…' : 'Update password'}
     </button>
   </form>
@@ -157,13 +157,10 @@
     min-height: 54px;
     margin-top: 0.05rem;
     border: 0;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
-    color: var(--on-primary);
     font-size: 0.92rem;
     font-weight: 900;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    box-shadow: 0 16px 26px rgba(0, 109, 75, 0.16);
+    box-shadow: var(--shadow-primary);
   }
 </style>

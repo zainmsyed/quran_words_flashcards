@@ -1,8 +1,8 @@
 # Story 010: Settings & VoiceSettings restyle — panels and nav
 
-**Status:** not-started
+**Status:** in-progress  
 **Created:** 2026-04-12
-**Last accessed:** 2026-04-12
+**Last accessed:** 2026-04-13  
 **Completed:**
 
 ## Goal

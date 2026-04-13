@@ -5,6 +5,8 @@ import * as childProcess from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import {
+  compareStoriesByCompletionDesc,
+  compareStoriesByRecencyDesc,
   findActiveStory,
   listStories,
   nonTerminalStories,
@@ -426,6 +428,38 @@ function storyPickerLabel(story: StoryFrontmatter): string {
   return `${fileName} — ${story.status}${accessed}`;
 }
 
+function storyPickerStatusRank(status: string): number {
+  switch (status) {
+    case "in-progress":
+      return 0;
+    case "not-started":
+      return 1;
+    case "complete":
+      return 2;
+    case "retired":
+      return 3;
+    default:
+      return 4;
+  }
+}
+
+function compareStoriesForStoryPicker(left: StoryFrontmatter, right: StoryFrontmatter): number {
+  const rankDiff = storyPickerStatusRank(left.status) - storyPickerStatusRank(right.status);
+  if (rankDiff !== 0) return rankDiff;
+
+  switch (left.status) {
+    case "in-progress":
+      return compareStoriesByRecencyDesc(left, right);
+    case "not-started":
+      return right.number - left.number;
+    case "complete":
+    case "retired":
+      return compareStoriesByCompletionDesc(left, right);
+    default:
+      return compareStoriesByRecencyDesc(left, right);
+  }
+}
+
 export function storyPickerChoices(cwd: string): Array<{ label: string; file: string; kind: "plan" | "story" }> {
   const choices: Array<{ label: string; file: string; kind: "plan" | "story" }> = [];
 
@@ -437,7 +471,7 @@ export function storyPickerChoices(cwd: string): Array<{ label: string; file: st
     });
   }
 
-  for (const story of listStories(cwd).sort((a, b) => a.number - b.number)) {
+  for (const story of listStories(cwd).sort(compareStoriesForStoryPicker)) {
     choices.push({
       label: storyPickerLabel(story),
       file: story.file,

@@ -100,17 +100,17 @@
           <div class="settings-eyebrow">Signed in</div>
           <div class="settings-user">{userEmail || 'PocketBase user'}</div>
         </div>
-        <button class="signout-btn" type="button" on:click={logout} disabled={signOutBusy}>
+        <button class="action-btn primary signout-btn" type="button" on:click={logout} disabled={signOutBusy}>
           {signOutBusy ? 'Signing out…' : 'Sign out'}
         </button>
       </div>
     </div>
 
     <nav class="settings-tabs" aria-label="Settings sections">
-    <button type="button" class="settings-tab" class:active={tab === 'stats'} aria-pressed={tab === 'stats'} on:click={() => tab = 'stats'}>Stats</button>
-    <button type="button" class="settings-tab" class:active={tab === 'account'} aria-pressed={tab === 'account'} on:click={() => tab = 'account'}>Account</button>
-    <button type="button" class="settings-tab" class:active={tab === 'voice'} aria-pressed={tab === 'voice'} on:click={() => tab = 'voice'}>Audio</button>
-    <button type="button" class="settings-tab" class:active={tab === 'words'} aria-pressed={tab === 'words'} on:click={() => tab = 'words'}>Words</button>
+    <button type="button" class="settings-tab action-btn" class:active={tab === 'stats'} aria-pressed={tab === 'stats'} on:click={() => tab = 'stats'}>Stats</button>
+    <button type="button" class="settings-tab action-btn" class:active={tab === 'account'} aria-pressed={tab === 'account'} on:click={() => tab = 'account'}>Account</button>
+    <button type="button" class="settings-tab action-btn" class:active={tab === 'voice'} aria-pressed={tab === 'voice'} on:click={() => tab = 'voice'}>Audio</button>
+    <button type="button" class="settings-tab action-btn" class:active={tab === 'words'} aria-pressed={tab === 'words'} on:click={() => tab = 'words'}>Words</button>
   </nav>
 
   <div class="settings-content">
@@ -119,7 +119,7 @@
     {:else if loadError && words.length === 0}
       <div class="settings-error" role="alert">
         <p>{loadError}</p>
-        <button type="button" class="settings-retry-btn" on:click={retryLoad}>Retry</button>
+        <button type="button" class="action-btn primary settings-retry-btn" on:click={retryLoad}>Retry</button>
       </div>
     {:else}
       {#if loadError}

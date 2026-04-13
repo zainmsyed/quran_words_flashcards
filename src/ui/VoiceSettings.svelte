@@ -63,7 +63,7 @@
   }
 </script>
 
-<section class="settings-card voice-settings">
+<section class="panel voice-settings">
   <div class="panel-heading">
     <div class="eyebrow">Audio / Voice</div>
     <h2>Pronunciation</h2>
@@ -117,22 +117,20 @@
 </section>
 
 <style>
-  .settings-card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(249,252,250,0.98));
-    border-radius: 24px;
-    border: 0.5px solid rgba(173, 179, 181, 0.15);
-    box-shadow: 0 16px 32px rgba(0, 109, 75, 0.07);
-    padding: 1.4rem;
+  /* Reuse global panel tokens for Bauhaus alignment */
+  .panel.voice-settings {
+    /* panel padding already provided by .panel; override if needed */
+    padding: 1.15rem;
   }
 
   .panel-heading {
-    margin-bottom: 1.15rem;
+    margin-bottom: 0.9rem;
   }
 
   .eyebrow {
     font-size: 11px;
     font-weight: 900;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
     color: var(--primary);
     margin-bottom: 0.35rem;
@@ -140,10 +138,9 @@
 
   .panel-heading h2 {
     margin: 0 0 0.35rem 0;
-    font-family: 'Manrope', sans-serif;
-    font-size: clamp(1.45rem, 3vw, 2rem);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
     line-height: 1;
-    letter-spacing: -0.04em;
     color: var(--text);
   }
 
@@ -155,12 +152,12 @@
   }
 
   .voice-note {
-    padding: 1rem 1.05rem;
-    border-radius: 20px;
-    background: rgba(241, 244, 245, 0.8);
-    border: 0.5px solid rgba(173, 179, 181, 0.14);
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.5;
   }
 
   .voice-note.error {
@@ -183,10 +180,10 @@
 
   .save-feedback {
     margin: 0 0 1rem 0;
-    padding: 0.9rem 1rem;
-    border-radius: 18px;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
     font-size: 0.92rem;
-    line-height: 1.5;
+    line-height: 1.4;
     font-weight: 700;
     background: var(--success-bg);
     color: var(--success-text);
@@ -199,24 +196,23 @@
 
   .voice-list {
     display: grid;
-    gap: 0.8rem;
+    gap: 0.65rem;
   }
 
   .voice-item {
     display: flex;
     align-items: center;
     gap: 0.9rem;
-    padding: 1rem 1.05rem;
-    border-radius: 22px;
-    border: 0.5px solid rgba(173, 179, 181, 0.14);
-    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(248,251,249,0.98));
-    box-shadow: 0 10px 18px rgba(0, 109, 75, 0.04);
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-primary);
     cursor: pointer;
   }
 
   .voice-item:hover {
-    border-color: rgba(0, 109, 75, 0.16);
-    box-shadow: 0 10px 20px rgba(0, 109, 75, 0.06);
+    border-color: rgba(17, 17, 17, 0.06);
   }
 
   .voice-item input {
@@ -227,7 +223,7 @@
 
   .voice-item strong {
     display: block;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1rem;
     color: var(--text);
     line-height: 1.2;
@@ -239,5 +235,9 @@
     font-size: 0.92rem;
     line-height: 1.4;
     margin-top: 0.15rem;
+  }
+
+  @media (max-width: 720px) {
+    .voice-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
   }
 </style>
