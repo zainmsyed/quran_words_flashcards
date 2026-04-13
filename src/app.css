@@ -113,7 +113,10 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  /* Constrain the header to match the settings panel width and center it */
   width: 100%;
+  max-width: calc(100vw - 1.5rem);
+  margin-inline: auto;
   padding-top: calc(1rem + env(safe-area-inset-top));
   padding-inline: var(--session-gutter);
   padding-bottom: 1rem;
