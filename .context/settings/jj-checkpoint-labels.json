@@ -1,5 +1,7 @@
 {
   "labels": {
+    "11071901": "umm i dont see any change on the log in screen the logo is still on top of the s",
+    "12475296": "clets keep it as is ill delete the extra files. the only thing is can we make th",
     "16640317": "yes please contiue. like please make the cards no chnage in size as well",
     "28780045": "i restarted the server with npm run dev:full  and it still not working it si jus",
     "77417648": "all 3 buttons are not in the same plane in mobile view. i have to scroll down to",
@@ -322,6 +324,34 @@
     "06da0d71": "i think thats fien for now.\n\non the log in screen can we remove the pocketbae si",
     "aec9e6ef": "for the logo can we make the alif much thincer and center it vertically. right n",
     "4414891a": "make the glyph as bold as you can please",
-    "b5d6cd78": "i thnink lets make the \"alif\" text \"ALIF\" across the application"
+    "b5d6cd78": "i thnink lets make the \"alif\" text \"ALIF\" across the application",
+    "a9da4f49": "commit and push these changes so far",
+    "f5d3e80f": "lets put the logo next to the alif script and keep it centerd",
+    "5faac1c9": "ok this is a little more involved and we can save it for later can we create a m",
+    "cf1be24b": "no I want to use the exact font and logo next to each other like this. make the ",
+    "341ad656": "no I want to use the exact font and logo next to each other like this. make the ",
+    "8fabc397": "no I want to use the exact font and logo next to each other like this. make the ",
+    "fbfb24f3": "i think bring the rows much closer to gether they are very far apart\n\n/tmp/pi-cl",
+    "9bbd4500": "bring the rows closer",
+    "1fa60f74": "much better now literly use the script and logo spacig and font weight in from t",
+    "28950c71": "now we need some space between them the logo and letters are literlly on top of ",
+    "209028e2": "in the reference folder there is there is a design that we can use and replace t",
+    "11d1627d": "in the reference folder there is there is a design that we can use and replace t",
+    "99d558e0": "in the reference folder there is there is a design that we can use and replace t",
+    "7466d027": "no no no. i want you to use the screenshot i attached as the basis and follow it",
+    "f23d5f47": "i put the svg in the reference forlder for you. again jsut use the shapes and la",
+    "e40442a5": "i put the svg in the reference forlder for you. again jsut use the shapes and la",
+    "b32a696a": "i put the svg in the reference forlder for you. again jsut use the shapes and la",
+    "45d9f066": "it still looks the same. \n\nas i said please mimic the svg exactly except the bei",
+    "0bc95d52": "it still needs a lot of fine tuning were almost there but its very jagged\n\n/tmp/",
+    "235150f9": "cant you jsut copy the shapes from the svg? why are you creating it with css? it",
+    "a77ed374": "cant you jsut copy the shapes from the svg? why are you creating it with css? it",
+    "3ae1ab15": "can you just use the png or svg as the background? and just cut it off as the vi",
+    "aa845794": "what are you thoughts on this and we probably need to compress the image too if ",
+    "ae9b0d93": "use what will give us the smallest file so the site doesnt take forever to load.",
+    "70ab6d4f": "what is the color pallette of this app. can you give me the codes and how they a",
+    "ba7aee18": "i added a new image file we can use instead. its already a compressed webp.\n\n/ho",
+    "d16197c3": "umm lets just go back to how it was",
+    "08f50d97": "b"
   }
 }

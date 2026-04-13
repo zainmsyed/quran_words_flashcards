@@ -50,3 +50,5 @@ pb_migrations/004_create_study_state.js — Creates the PocketBase study_state c
 src/core/pocketbase-study.ts — PocketBase-backed study snapshot and card-state persistence helpers.
 src/ui/AccountSettings.svelte — Authenticated account settings shell for profile and password actions.
 src/ui/ChangePasswordForm.svelte — Password-change form used inside account settings.
+
+src/ui/auth-background-svg.ts — (undescribed)

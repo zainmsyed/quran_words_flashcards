@@ -20,6 +20,7 @@
 </script>
 
 <section class="auth-shell">
+
   <div class="auth-card auth-panel">
     <div class="brand auth-brand" aria-label="alif">
       <div class="brand-mark" aria-hidden="true"><span class="brand-glyph">ا</span></div>
@@ -48,20 +49,29 @@
         {busy ? 'Signing in…' : 'Sign in'}
       </button>
     </form>
-
   </div>
 </section>
 
 <style>
   .auth-shell {
+    position: relative;
     width: 100%;
     min-height: 100%;
     display: grid;
     place-items: center;
     padding: 1rem 0;
+    overflow: hidden;
+
+    /* background: compressed WebP for smallest delivery and cropping behavior */
+    background-image: url('/images/auth-background.webp');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
   }
 
   .auth-card {
+    position: relative;
+    z-index: 1;
     width: min(100%, 32rem);
     padding: clamp(1.4rem, 4vw, 2rem);
     border-radius: 6px;
@@ -72,12 +82,13 @@
 
   .auth-brand {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 0.45rem;
+    gap: 0.85rem;
     margin-bottom: 0.8rem;
     text-align: center;
+    width: 100%;
   }
 
   .auth-brand .brand-mark {
@@ -174,5 +185,6 @@
     opacity: 1;
     transform: none;
   }
+
 
 </style>
