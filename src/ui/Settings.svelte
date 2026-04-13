@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
+  import AppTopbar from './components/AppTopbar.svelte';
   import Stats from './Stats.svelte';
   import AccountSettings from './AccountSettings.svelte';
   import VoiceSettings from './VoiceSettings.svelte';
@@ -76,23 +77,8 @@
   }
 </script>
 
-<section class="settings-panel settings-shell" class:stats-bleed={tab === 'stats'}>
-  <header class="app-topbar session-header">
-    <div class="session-header-inner">
-      <div class="brand" aria-label="alif">
-        <div class="brand-mark" aria-hidden="true"><img src="/images/favicon.svg" alt="" aria-hidden="true"/></div>
-        <div class="brand-copy">
-          <h1>ALIF</h1>
-        </div>
-      </div>
-
-      <button class="nav-btn" type="button" on:click={close} aria-label="Return to study">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15.5 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-    </div>
-  </header>
+<section class="settings-shell" class:stats-bleed={tab === 'stats'}>
+  <AppTopbar buttonIcon="back" buttonLabel="Return to study" onAction={close} />
 
   <div class="settings-body">
     <div class="account-box" role="region" aria-label="Account">
@@ -144,6 +130,9 @@
 <style>
   .settings-shell {
     --session-gutter: clamp(1.25rem, 3.5vw, 2.5rem);
+    width: 100%;
+    min-height: 100%;
+    margin: 0 auto;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -164,19 +153,6 @@
     overflow: hidden;
   }
 
-  /* Reuse the session header styling so Stats header matches the study screen */
-  .session-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    padding-top: calc(1rem + env(safe-area-inset-top));
-    padding-inline: var(--session-gutter);
-    padding-bottom: 1rem;
-    color: var(--primary);
-  }
-
   /* Account box shown below the header on the Stats tab */
   .account-box {
     background: var(--card);
@@ -195,32 +171,6 @@
 
   @media (max-width: 720px) {
     .account-inner { flex-direction: column; align-items: flex-start; gap: 0.35rem; }
-  }
-
-  .nav-btn {
-    width: 50px;
-    height: 50px;
-    flex: 0 0 auto;
-    display: grid;
-    place-items: center;
-    padding: 0;
-    border: 0.5px solid var(--border);
-    border-radius: 6px;
-    background: var(--card);
-    color: var(--primary);
-    box-shadow: var(--shadow-primary);
-  }
-
-  .nav-btn:hover {
-    background: var(--primary-container);
-    border-color: rgba(214, 40, 40, 0.18);
-    opacity: 1;
-    transform: none;
-  }
-
-  .nav-btn svg {
-    width: 18px;
-    height: 18px;
   }
 
   .settings-copy {

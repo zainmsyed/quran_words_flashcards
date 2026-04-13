@@ -52,3 +52,4 @@ src/ui/AccountSettings.svelte — Authenticated account settings shell for profi
 src/ui/ChangePasswordForm.svelte — Password-change form used inside account settings.
 
 src/ui/auth-background-svg.ts — (undescribed)
+src/ui/components/AppTopbar.svelte — (undescribed)

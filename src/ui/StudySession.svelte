@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import Card from './components/Card.svelte';
+  import AppTopbar from './components/AppTopbar.svelte';
   import { loadSeedWords, type Word } from '../core/wordlist';
   import { applyRatingToCard, initialCardState, normalizeCardState, type CardState } from '../core/srs';
   import { initialAppStats, recordStudy, type AppStats } from '../core/app-stats';
@@ -297,22 +298,7 @@
   </div>
 {:else}
   <div class="device-shell">
-    <header class="app-topbar session-header">
-        <div class="session-header-inner">
-        <div class="brand" aria-label="alif">
-          <div class="brand-mark" aria-hidden="true"><img src="/images/favicon.svg" alt="" aria-hidden="true"/></div>
-          <div class="brand-copy">
-            <h1>ALIF</h1>
-          </div>
-        </div>
-
-        <button class="nav-btn" type="button" on:click={openSettings} aria-label="Open settings">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </button>
-      </div>
-    </header>
+    <AppTopbar buttonIcon="menu" buttonLabel="Open settings" onAction={openSettings} />
 
     <div class="session-main">
       <div class="card-stage">
@@ -472,32 +458,6 @@
     border: 0;
     box-shadow: none;
     overflow: visible;
-  }
-
-  .nav-btn {
-    width: 50px;
-    height: 50px;
-    border: 0.5px solid var(--border);
-    border-radius: 6px;
-    background: var(--card);
-    color: var(--primary);
-    box-shadow: var(--shadow-primary);
-    padding: 0;
-    display: grid;
-    place-items: center;
-    flex: 0 0 auto;
-  }
-
-  .nav-btn:hover {
-    background: var(--primary-container);
-    border-color: rgba(214, 40, 40, 0.18);
-    opacity: 1;
-    transform: none;
-  }
-
-  .nav-btn svg {
-    width: 24px;
-    height: 24px;
   }
 
   .session-main {
@@ -780,20 +740,6 @@
       min-height: 100dvh;
       padding: 0;
       border-radius: 0;
-    }
-
-    .session-header {
-      padding: 0.9rem var(--session-gutter);
-    }
-
-    .nav-btn {
-      width: 46px;
-      height: 46px;
-    }
-
-    .nav-btn svg {
-      width: 22px;
-      height: 22px;
     }
 
     .progress-card {
