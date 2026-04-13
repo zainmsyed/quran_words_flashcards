@@ -99,7 +99,8 @@ main {
   gap: 1rem;
   /* accommodate device safe-area (notch/status bar) */
   padding-top: calc(1rem + env(safe-area-inset-top));
-  padding-inline: 1.1rem;
+  /* Use contextual session gutter when available so headers align across screens */
+  padding-inline: var(--session-gutter, 1.1rem);
   padding-bottom: 1rem;
   border-radius: 6px;
   background: var(--card);
@@ -173,6 +174,7 @@ main {
   display: block;
   border-radius: inherit;
   object-fit: cover;
+  object-position: center center;
 }
 
 .brand-copy p,
