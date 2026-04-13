@@ -3,8 +3,6 @@
   <!-- Red square background (brand) -->
   <rect width="64" height="64" fill="#D62828" rx="6" />
 
-  <!-- Arabic glyph (Alef) centered using a translated group to nudge vertically -->
-  <g transform="translate(32,24)">
-    <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" font-family="Noto Naskh Arabic, 'Noto Naskh Arabic', serif" font-weight="700" font-size="34" fill="#FFFFFF">ا</text>
-  </g>
+  <!-- Outlined brand glyph (Alef) drawn from the exact font outline to avoid <text> rendering -->
+  <path d="M121 9Q116 112 111.0 190.0Q106 268 101.0 333.5Q96 399 90.0 461.0Q84 523 77 595Q74 620 88.5 639.0Q103 658 128.5 669.0Q154 680 184 680Q192 649 202.5 618.0Q213 587 225 557L190 531Q192 476 192.0 399.5Q192 323 190.5 227.0Q189 131 185 17Z" fill="#FFFFFF" transform="matrix(0.045 0 0 -0.045 25.2725 47.5025)"/>
 </svg>
