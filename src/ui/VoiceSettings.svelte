@@ -10,7 +10,7 @@
   let voices: VoiceItem[] = [];
   let loading = true;
   let supported = false;
-  let selected: string | null = null;
+  let selected: string = '';
   let saveMessage = '';
   let saveTone: 'success' | 'error' = 'success';
   let loadError = '';
@@ -32,7 +32,7 @@
   onMount(async () => {
     supported = isSupported();
     await refresh();
-    try { selected = await browserStorage.getItem<string>(STORAGE_VOICE_KEY); } catch (e) { selected = null; }
+    try { selected = (await browserStorage.getItem<string>(STORAGE_VOICE_KEY)) ?? ''; } catch (e) { selected = ''; }
   });
 
   async function save() {
@@ -95,7 +95,7 @@
       {:else}
         <div class="voice-list">
           <label class="voice-item">
-            <input type="radio" bind:group={selected} value={null}>
+            <input type="radio" bind:group={selected} value="">
             <div>
               <strong>Auto</strong>
               <span>Let the app pick the best voice</span>

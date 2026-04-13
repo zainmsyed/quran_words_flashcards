@@ -22,13 +22,11 @@
 <section class="auth-shell">
   <div class="auth-card auth-panel">
     <div class="brand auth-brand" aria-label="alif">
-      <div class="brand-mark" aria-hidden="true">ا</div>
+      <div class="brand-mark" aria-hidden="true"><span class="brand-glyph">ا</span></div>
       <div class="brand-copy">
-        <p>Quranic Arabic</p>
-        <h1>alif</h1>
+        <h1>ALIF</h1>
       </div>
     </div>
-    <div class="auth-badge">PocketBase sign in</div>
     <p class="auth-copy">Sign in with your invited account to open the study app.</p>
 
     <form class="auth-form" on:submit|preventDefault={submit}>
@@ -74,39 +72,37 @@
 
   .auth-brand {
     display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    margin-bottom: 0.8rem;
-  }
-
-  .auth-badge {
-    display: inline-flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.45rem;
     margin-bottom: 0.8rem;
-    padding: 0.45rem 0.85rem;
-    border-radius: 6px;
-    background: var(--primary-container);
-    color: var(--primary);
-    font-size: 0.72rem;
-    font-weight: 900;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .auth-brand .brand-mark {
+    width: 4.8rem;
+    height: 4.8rem;
+    display: grid;
+    place-items: center;
+    font-size: 2.6rem;
   }
 
   h1 {
     margin: 0;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(2rem, 5vw, 2.6rem);
-    line-height: 0.95;
-    letter-spacing: -0.05em;
+    font-size: clamp(2.8rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
     color: var(--text);
   }
 
   .auth-copy {
-    margin: 0.8rem 0 0;
+    margin: 0.6rem 0 0;
     color: var(--text-secondary);
     line-height: 1.65;
+    text-align: center;
   }
 
   .auth-form {

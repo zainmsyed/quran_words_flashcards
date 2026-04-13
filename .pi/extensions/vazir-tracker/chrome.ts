@@ -5,8 +5,6 @@ import * as childProcess from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import {
-  compareStoriesByCompletionDesc,
-  compareStoriesByRecencyDesc,
   findActiveStory,
   listStories,
   nonTerminalStories,
@@ -423,9 +421,20 @@ export function invalidateStoryProgressCache(cwd?: string): void {
 }
 
 function storyPickerLabel(story: StoryFrontmatter): string {
-  const fileName = path.basename(story.file);
+  const storyLabel = path.basename(story.file, ".md");
+  const title = storyPickerTitle(story);
   const accessed = story.lastAccessed ? ` · ${story.lastAccessed}` : "";
-  return `${fileName} — ${story.status}${accessed}`;
+  if (title) {
+    return `${storyLabel} — ${story.status} — ${title}${accessed}`;
+  }
+  return `${storyLabel} — ${story.status}${accessed}`;
+}
+
+function storyPickerTitle(story: StoryFrontmatter): string | null {
+  const content = readIfExists(story.file);
+  const match = content.match(/^#\s+Story\s+\d+:\s*(.+)$/m);
+  const title = match?.[1]?.trim() ?? "";
+  return title || null;
 }
 
 function storyPickerStatusRank(status: string): number {
@@ -446,18 +455,7 @@ function storyPickerStatusRank(status: string): number {
 function compareStoriesForStoryPicker(left: StoryFrontmatter, right: StoryFrontmatter): number {
   const rankDiff = storyPickerStatusRank(left.status) - storyPickerStatusRank(right.status);
   if (rankDiff !== 0) return rankDiff;
-
-  switch (left.status) {
-    case "in-progress":
-      return compareStoriesByRecencyDesc(left, right);
-    case "not-started":
-      return right.number - left.number;
-    case "complete":
-    case "retired":
-      return compareStoriesByCompletionDesc(left, right);
-    default:
-      return compareStoriesByRecencyDesc(left, right);
-  }
+  return left.number - right.number;
 }
 
 export function storyPickerChoices(cwd: string): Array<{ label: string; file: string; kind: "plan" | "story" }> {

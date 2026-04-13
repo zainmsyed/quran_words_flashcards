@@ -138,17 +138,29 @@ main {
 }
 
 .brand-mark {
-  width: 3rem;
-  height: 3rem;
+  width: 3.8rem;
+  height: 3.8rem;
   display: grid;
   place-items: center;
   border-radius: 6px;
   background: var(--primary);
   color: var(--on-primary);
   font-family: 'Noto Naskh Arabic', serif;
-  font-size: 1.7rem;
+  font-size: 2.2rem;
   line-height: 1;
   box-shadow: var(--shadow-primary);
+  font-weight: 700; /* use the heaviest loaded Arabic weight for a bolder glyph */
+}
+
+.brand-mark .brand-glyph {
+  display: inline-block;
+  line-height: 1;
+  font-weight: 700;
+  transform: translateY(6%); /* nudge down to visually center the glyph */
+}
+
+.auth-brand .brand-glyph {
+  transform: translateY(8%); /* slightly larger nudge for the bigger auth logo */
 }
 
 .brand-copy p,
@@ -172,11 +184,12 @@ main {
 }
 
 .brand-copy h1 {
-  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  font-size: clamp(1.6rem, 4vw, 3rem);
   font-weight: 800;
   color: var(--text);
   line-height: 1;
-  text-transform: lowercase;
+  text-transform: none;
+  letter-spacing: -0.02em;
 }
 
 .eyebrow {

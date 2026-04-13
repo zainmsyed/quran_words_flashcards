@@ -79,10 +79,9 @@
 <section class="settings-panel settings-shell" class:stats-bleed={tab === 'stats'}>
   <header class="app-topbar session-header">
     <div class="brand" aria-label="alif">
-      <div class="brand-mark" aria-hidden="true">ا</div>
+      <div class="brand-mark" aria-hidden="true"><span class="brand-glyph">ا</span></div>
       <div class="brand-copy">
-        <p>Quranic Arabic</p>
-        <h1>alif</h1>
+        <h1>ALIF</h1>
       </div>
     </div>
 
