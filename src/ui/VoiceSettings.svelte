@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getAvailableVoices, isSupported, speak } from '../core/tts-adapter';
+  import { getAvailableVoices, isSpeechSupported, speak } from '../core/tts-adapter';
   import { browserStorage } from '../core/storage-adapter';
 
   const STORAGE_VOICE_KEY = 'qfc2_tts_voice';
@@ -30,7 +30,7 @@
   }
 
   onMount(async () => {
-    supported = isSupported();
+    supported = isSpeechSupported();
     await refresh();
     try { selected = (await browserStorage.getItem<string>(STORAGE_VOICE_KEY)) ?? ''; } catch (e) { selected = ''; }
   });

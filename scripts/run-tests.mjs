@@ -226,6 +226,108 @@ test('pocketbase auth helpers normalize urls and parse sessions safely', async (
 
 });
 
+test('tts support helpers distinguish speech and bundled audio availability', async () => {
+  const originalWindow = globalThis.window;
+  const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, 'window');
+
+  Object.defineProperty(globalThis, 'window', {
+    value: {},
+    configurable: true,
+    writable: true,
+  });
+
+  try {
+    const { isSpeechSupported, canPronounceWord } = await importTs('src/core/tts-adapter.ts');
+
+    assert.equal(isSpeechSupported(), false);
+    assert.equal(canPronounceWord('w1'), true);
+    assert.equal(canPronounceWord('w42'), false);
+
+    Object.defineProperty(globalThis, 'window', {
+      value: {
+        speechSynthesis: { speak() {} },
+        SpeechSynthesisUtterance: function SpeechSynthesisUtterance() {},
+      },
+      configurable: true,
+      writable: true,
+    });
+
+    assert.equal(isSpeechSupported(), true);
+    assert.equal(canPronounceWord('w42'), true);
+  } finally {
+    if (!hadWindow) {
+      delete globalThis.window;
+    } else {
+      Object.defineProperty(globalThis, 'window', {
+        value: originalWindow,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+});
+
+test('pocketbase auth helpers tolerate storage persistence failures', async () => {
+  const originalFetch = globalThis.fetch;
+  const originalLocalStorage = globalThis.localStorage;
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: {
+      getItem() {
+        throw new Error('blocked read');
+      },
+      setItem() {
+        throw new Error('blocked write');
+      },
+      removeItem() {
+        throw new Error('blocked remove');
+      },
+    },
+    configurable: true,
+    writable: true,
+  });
+
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.endsWith('/api/collections/users/auth-with-password')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          token: 'token-789',
+          record: {
+            id: 'user-3',
+            email: 'persist@example.com',
+          },
+        }),
+      };
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  };
+
+  try {
+    const { signInWithPassword, signOut } = await importTs('src/core/pocketbase-auth.ts');
+
+    const session = await signInWithPassword('persist@example.com', 'password-123');
+    assert.equal(session.user.id, 'user-3');
+    assert.equal(session.user.email, 'persist@example.com');
+
+    await assert.doesNotReject(signOut());
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalLocalStorage === undefined) {
+      delete globalThis.localStorage;
+    } else {
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: originalLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+});
+
 test('study persistence helpers normalize saved session and stored state blobs', async () => {
   const { normalizeSavedSession } = await importTs('src/core/session.ts');
   const { decodeStoredStudyState } = await importTs('src/core/pocketbase-study.ts');

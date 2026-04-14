@@ -18,6 +18,19 @@ export type TtsOptions = {
 
 let activeAudio: HTMLAudioElement | null = null;
 
+const BUNDLED_AUDIO_WORD_IDS = new Set([
+  'w1',
+  'w2',
+  'w3',
+  'w4',
+  'w5',
+  'w6',
+  'w7',
+  'w8',
+  'w9',
+  'w10',
+]);
+
 function hasSpeechSupport(): boolean {
   if (typeof window === 'undefined') return false;
   const synth = (window as any).speechSynthesis;
@@ -161,6 +174,18 @@ export async function getAvailableVoices(): Promise<{name: string; lang: string;
   } catch (e) {
     return [];
   }
+}
+
+export function isSpeechSupported(): boolean {
+  return hasSpeechSupport();
+}
+
+export function hasBundledAudioForWordId(wordId: string): boolean {
+  return BUNDLED_AUDIO_WORD_IDS.has(wordId);
+}
+
+export function canPronounceWord(wordId: string): boolean {
+  return isSpeechSupported() || hasBundledAudioForWordId(wordId);
 }
 
 export function isSupported(): boolean {

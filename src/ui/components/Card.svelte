@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import type { Word } from '../../core/wordlist';
   import { browserStorage } from '../../core/storage-adapter';
-  import { speak, stop, isSupported } from '../../core/tts-adapter';
+  import { speak, stop, canPronounceWord } from '../../core/tts-adapter';
 
   export let word: Word;
   export let mode: 'ar2en' | 'en2ar' = 'ar2en';
@@ -14,8 +14,9 @@
   let ttsAvailable = false;
   let preferredVoice: string | null = null;
 
+  $: ttsAvailable = canPronounceWord(word?.id || '');
+
   onMount(async () => {
-    ttsAvailable = isSupported();
     try {
       preferredVoice = await browserStorage.getItem<string>(STORAGE_VOICE_KEY);
     } catch (err) {

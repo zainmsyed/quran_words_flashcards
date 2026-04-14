@@ -39,6 +39,7 @@
 
   --card-height: 380px;
   --shadow-primary: 0 6px 16px rgba(17, 17, 17, 0.06);
+  --topbar-padding-block: 1rem;
 }
 
 @media (min-width: 721px) {
@@ -98,23 +99,7 @@ main {
   overflow-x: hidden;
 }
 
-.app-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  /* accommodate device safe-area (notch/status bar) */
-  padding-top: calc(1rem + env(safe-area-inset-top));
-  /* Use contextual session gutter when available so headers align across screens */
-  padding-inline: var(--session-gutter, 1.1rem);
-  padding-bottom: 1rem;
-  border-radius: 6px;
-  background: var(--card);
-  border: 0.5px solid var(--border);
-  box-shadow: var(--shadow-primary);
-}
-
-/* Global session header used both by StudySession and Settings to match the topbar */
+.app-topbar,
 .session-header {
   display: flex;
   align-items: center;
@@ -123,9 +108,19 @@ main {
   width: 100%;
   max-width: calc(100vw - 1.5rem);
   margin-inline: auto;
-  padding-top: calc(1rem + env(safe-area-inset-top));
-  padding-inline: var(--session-gutter);
-  padding-bottom: 1rem;
+  /* Keep every top menu bar on the same spacing contract, including safe-area inset. */
+  padding-block-start: calc(var(--topbar-padding-block) + env(safe-area-inset-top));
+  padding-block-end: var(--topbar-padding-block);
+  /* Use contextual session gutter when available so headers align across screens */
+  padding-inline: var(--session-gutter, 1.1rem);
+  border-radius: 6px;
+  background: var(--card);
+  border: 0.5px solid var(--border);
+  box-shadow: var(--shadow-primary);
+}
+
+/* Global session header used both by StudySession and Settings to match the topbar */
+.session-header {
   color: var(--primary);
 }
 
@@ -577,8 +572,8 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
 .settings-main { min-width: 0; width: 100%; }
 
 @media (max-width: 720px) {
+  :root { --topbar-padding-block: 0.9rem; }
   body { padding: 0; }
-  .app-topbar { padding: 0.9rem; }
   .study-lede h2,
   .settings-lede h2 { font-size: clamp(1.9rem, 10vw, 2.6rem); }
   .session-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -593,10 +588,6 @@ button:disabled { opacity: 0.5; cursor: default; transform: none; }
 }
 
 @media (max-width: 520px) {
-  .session-header {
-    padding: 0.9rem var(--session-gutter, 1.1rem);
-  }
-
   .nav-btn {
     width: 46px;
     height: 46px;

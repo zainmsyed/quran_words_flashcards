@@ -1,9 +1,9 @@
 # Story 011: Visual tweaks — minor component harmonization
 
-**Status:** in-progress  
+**Status:** complete  
 **Created:** 2026-04-13  
-**Last accessed:** 2026-04-13  
-**Completed:** —
+**Last accessed:** 2026-04-14  
+**Completed:** 2026-04-14
 
 ---
 
