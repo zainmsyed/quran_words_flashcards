@@ -1,9 +1,13 @@
 # Story 010: Settings & VoiceSettings restyle — panels and nav
 
 **Status:** complete  
-**Created:** 2026-04-12
+**Created:** 2026-04-12  
 **Last accessed:** 2026-04-13  
 **Completed:** 2026-04-13
+
+---
+
+## Goal
 Restyle Settings and VoiceSettings screens (navigation, panels, form controls, voice picker) to the Bauhaus visual language without altering existing account/sign-out/change-password behavior.
 
 ## Verification
@@ -22,6 +26,8 @@ Open Settings and VoiceSettings and confirm:
 
 ## Dependencies
 - story-005.md (fonts & tokens)
+
+---
 
 ## Checklist
 - [x] Restyle settings nav and panels to use the new tokens and 6px radii.
@@ -67,4 +73,3 @@ Suggested next steps
 
 Status recommendation
 - Implementation is code-complete for the scoped files (Settings + VoiceSettings + token usage). With manual QA passed, there are no functional blockers preventing final closeout. Remaining items are optional hardening and visual polish; do not mark the story done until Vazir confirms final closeout.
-

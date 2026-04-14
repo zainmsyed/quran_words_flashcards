@@ -51,4 +51,4 @@ src/core/pocketbase-study.ts — PocketBase-backed study snapshot and card-state
 src/ui/AccountSettings.svelte — Authenticated account settings shell for profile and password actions.
 src/ui/ChangePasswordForm.svelte — Password-change form used inside account settings.
 
-src/ui/components/AppTopbar.svelte — (undescribed)
+src/ui/components/AppTopbar.svelte — Shared branded topbar with the menu/back action used across study and settings screens.

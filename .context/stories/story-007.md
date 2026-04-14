@@ -1,9 +1,11 @@
 # Story 007: Card component restyle - typography, colors, rectangular controls
 
 **Status:** complete  
-**Created:** 2026-04-12
+**Created:** 2026-04-12  
 **Last accessed:** 2026-04-12  
 **Completed:** 2026-04-12
+
+---
 
 ## Goal
 Restyle the main study Card component to the Bauhaus visual language while preserving all current behaviour (flip, audio/TTS, rating controls, and SRS logic).
@@ -15,16 +17,18 @@ Start a study session and verify that a card displays with:
 - Card surface uses new card color and 6px corner radius
 - Action controls (audio, flip, rating) are rectangular 6px-radius controls and function exactly as before
 
-## Scope - files this story may touch
+## Scope — files this story may touch
 - src/ui/components/Card.svelte
 - src/app.css
 
-## Out of scope - do not touch
+## Out of scope — do not touch
 - Changes to card data, SRS state, scheduling logic, or PocketBase interactions
 
 ## Dependencies
 - story-005.md (fonts & tokens)
 - story-006.md (brand/topbar styles)
+
+---
 
 ## Checklist
 - [x] Update Card.svelte layout and classes to use Space Grotesk (headings) and Work Sans (body); ensure Arabic text uses Noto Naskh Arabic.
@@ -55,4 +59,3 @@ Start a study session and verify that a card displays with:
 
 ## Completion Summary
 Implementation work for Story 007 is complete from a code standpoint: the card has been restyled to the Bauhaus language, the flip-regression clipping was removed, and the card content was simplified to only the essential elements (Arabic, English meaning, transliteration, and the flip hint) per your instruction. The project builds successfully. The single remaining verification step is a manual in-browser check to confirm the simplified card's visual and interactive behavior; once you confirm that in your browser, Vazir can perform the final closeout.
-
