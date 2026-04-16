@@ -317,7 +317,6 @@
               <div class="progress-bar">
                 <div class="progress-fill" style={`width: ${progressPercent}%`}></div>
               </div>
-              <div class="progress-meta">{progressPercent}% complete</div>
               <div class="session-quota" aria-live="polite">
                 <div class="quota-badges" role="status" aria-live="polite">
                   <span class="badge badge-new" aria-label={sessionNewCount + ' new'}>
