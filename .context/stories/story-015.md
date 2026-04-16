@@ -38,48 +38,19 @@ In the app, confirm that a seeded word with bundled audio plays the static asset
 - [x] Verify the primary bundled playback path and the graceful browser-fallback path without changing the rest of the study session behavior.
   - Verification: Automated unit tests (run via npm test) cover manifest load and speak fallback cases; manual QA preview page (public/audio/sample_preview.html) is available for auditioning. Local test run reported all tests passing.
 
-## Issues / Remaining blockers (explanation and resolution guidance)
-The implementation covers the intended runtime coverage and fallback behavior, but a few verification and UX items remain as recommended follow-up before final closeout. These are not blockers for the core implementation, but should be resolved or acknowledged prior to marking the story complete:
+## Issues
+- The implementation covers the intended runtime coverage and fallback behavior, but a few verification and UX items remain as recommended follow-up before final closeout. These are not blockers for the core implementation, but should be resolved or acknowledged prior to marking the story complete:
+  - Cross-browser manual smoke testing is recommended because SpeechSynthesis and HTMLAudio behavior vary across browsers and platforms (notably iOS/Safari). Unit tests mock the JS-side logic, but integration differences may surface in real browsers (e.g., autoplay policies, voice availability, iOS audio decoding edge cases).
+  - UI loading feedback is optional UX polish: the manifest loader is asynchronous, and a small visual indicator (spinner/hint or disabled state tooltip) could clarify transient audio-button state changes while loadBundledAudioManifest runs.
+  - VoiceSettings messaging is optional: if you want explicit settings or messaging to reflect whether audio is served from bundled assets vs. browser voice, update src/ui/VoiceSettings.svelte to reflect availability and the chosen preferred voice.
+  - Long-term asset policy is a project-level decision: the repo currently includes the POC 300 MP3s for QA; Story-014/Review recommends moving assets to a release/CDN or Git LFS for long-term hygiene.
 
-1) Cross-browser manual smoke testing (recommended)
-- Why: SpeechSynthesis and HTMLAudio behavior vary across browsers and platforms (notably iOS/Safari). Our unit tests mock and assert the JS-side logic, but integration differences may surface in real browsers (e.g., autoplay policies, voice availability, iOS audio decoding edge cases).
-- Action: Run a quick smoke matrix on Chrome Desktop, Firefox Desktop, Safari Desktop, Chrome Android, and Safari iOS confirming:
-  - Bundled MP3 plays when present (no fallback to SpeechSynthesis).
-  - Simulated missing-file or playback failure falls back to SpeechSynthesis and does not break the card flow.
-- Resolution: Manual QA needed. This is recommended before story closeout but not a code blocker.
-
-2) UI loading feedback (optional UX polish)
-- Why: The manifest loader is asynchronous. While the default small set prevents a completely blank UI, there can be transient changes to the audio-button state when the manifest finishes loading. A small visual indicator (spinner/hint or disabled state tooltip) can clarify this to the user.
-- Action: Add a lightweight loading indicator or title/aria hint on the audio button while loadBundledAudioManifest runs, or keep the current conservative UX (default IDs shown) if the team prefers no extra UI.
-- Resolution: UX decision; not required to mark code complete.
-
-3) VoiceSettings messaging (optional)
-- Why: If you want explicit settings or messaging to reflect whether audio is served from bundled assets vs. browser voice, update src/ui/VoiceSettings.svelte to reflect availability and the chosen preferred voice. Not required for the fallback behavior itself.
-- Resolution: Optional follow-up.
-
-4) Long-term asset policy (context)
-- Why: The repo currently includes the POC 300 MP3s for QA; this was an intentional short-term choice. Story-014/Review recommends moving assets to a release/CDN or Git LFS for long-term hygiene.
-- Resolution: Operational decision; not required to finish runtime fallback work but should be resolved in project roadmap.
-
-## Completion Summary (what was implemented)
+## Completion Summary
 - Runtime manifest-driven bundled-audio discovery: src/core/tts-adapter.ts now fetches /audio/manifest.json, populates an internal Set and a Svelte store (bundledAudioIdsStore) to expose availability reactively.
 - Reactive UI: src/ui/components/Card.svelte subscribes to bundledAudioIdsStore and computes ttsAvailable reactively so audio controls enable/disable automatically when the manifest changes.
 - Fallback semantics: speak() attempts bundled audio via HTMLAudio, and falls back to Web Speech API only when playback fails or is unavailable. Tests were added to assert both success/avoidance of SpeechSynthesis and failure/fallback behavior.
 - Coverage & QA: scripts/check_audio_coverage.py checks seed→audio coverage; public/audio/sample_preview.html lists 300 items for manual audition. A GitHub Actions workflow runs the coverage check on pull requests.
 - Tests: Added unit/behavior tests in scripts/run-tests.mjs for manifest loading and speak fallback; local test run reports all tests passing.
 - Documentation: public/audio/README.md documents why the audio is in-repo and how to regenerate it (gTTS/GCP paths).
-
-## Readiness / Blocking status
-- Ready for code review and manual cross-browser QA.  
-- Not blocked by missing code changes: all checklist items in this story's scope are implemented and tested at the unit level.  
-- Remaining items to address prior to final closeout (non-blocking):
-  - Manual cross-browser smoke verification across major browsers/devices (recommended).  
-  - Optional UI loading hint and optional VoiceSettings messaging.  
-  - Long-term artifact policy decision (project-level, not required to complete this story).
-
-Do you want me to (pick one):
-- (A) Run the cross-browser smoke checklist and report results (I can run local checks for desktop browsers here; iOS device checks require a real device or CI provider).
-- (B) Add the small UI loading indicator now and push the change.
-- (C) Proceed to prepare the PR/merge checklist so you can review & merge once manual QA is done.
-
-Note: I have not changed the story status — please tell Vazir to mark the story complete when you're satisfied with the manual QA and any optional follow-ups.
+- Readiness / Blocking status: ready for code review and manual cross-browser QA; not blocked by missing code changes; remaining items are manual cross-browser smoke verification, optional UI loading hint, optional VoiceSettings messaging, and long-term artifact policy.
+- Follow-up options discussed: run the cross-browser smoke checklist and report results, add the small UI loading indicator, or proceed with PR/merge checklist once manual QA is done.

@@ -14,5 +14,8 @@
 - When a flashcard shows answer-revealing content, keep pronunciation/transliteration controls on the Arabic-facing side only so the answer does not leak through the UI. <!-- source: story-003 -->
 - When a PocketBase-backed screen may load before its collections exist, return empty/default state on reads and surface a clear migration error on writes instead of crashing. <!-- source: story-003 -->
 - When a mobile top bar looks clipped, restore the header’s own padding/safe-area inset instead of changing viewport-level spacing so the rest of the screen stays put. <!-- source: story-009 -->
-- When pronunciation controls depend on speech synthesis or bundled audio, show them only when the current word can actually be pronounced. <!-- source: story-004 -->
-- When localStorage is part of auth/session persistence, catch storage write/remove failures so sign-in and sign-out degrade gracefully.
+- When pronunciation controls depend on speech synthesis or bundled audio, show them only when the current word can actually be pronounced, and treat browser speech as fallback rather than the primary availability signal. <!-- source: story-015 -->
+- Use artifact storage or releases for generated binary assets. <!-- source: story-014 -->
+- Add tests for new logic and scripts before merging feature branches. <!-- source: story-014 -->
+- Prefer Svelte stores or explicit subscription APIs for cross-component runtime state changes so UI reactivity is reliable. <!-- source: story-014 -->
+- When localStorage is part of auth/session persistence, catch storage write/remove failures so sign-in and sign-out degrade gracefully. <!-- source: story-004 -->

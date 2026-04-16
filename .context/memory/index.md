@@ -52,7 +52,7 @@ src/ui/AccountSettings.svelte — Authenticated account settings shell for profi
 src/ui/ChangePasswordForm.svelte — Password-change form used inside account settings.
 
 src/ui/components/AppTopbar.svelte — Shared branded topbar with the menu/back action used across study and settings screens.
-public/audio/sample_preview.html — (undescribed)
-public/audio/manifest.json — (undescribed)
-scripts/generate_audio_gcp.py — (undescribed)
-scripts/check_audio_coverage.py — (undescribed)
+public/audio/sample_preview.html — Full 300-word audio QA preview page with per-word playback controls
+public/audio/manifest.json — Bundled audio coverage manifest with file metadata for the 300-word deck
+scripts/generate_audio_gcp.py — Google Cloud Text-to-Speech generator for bundled Arabic pronunciation files
+scripts/check_audio_coverage.py — Seed-deck audio coverage checker that validates manifest/file presence
