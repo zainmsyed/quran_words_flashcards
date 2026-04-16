@@ -159,8 +159,24 @@ test('buildSessionPlan randomizes card mode and preserves saved session mode', a
   assert.equal(plan.currentIndex, 0);
   assert.equal(plan.newCount, 2);
   assert.equal(plan.reviewCount, 2);
-  assert.deepEqual(plan.queue.map((item) => item.id), ['w3', 'w1', 'w2', 'w4']);
-  assert.deepEqual(plan.queue.map((item) => item.mode), ['ar2en', 'en2ar', 'ar2en', 'en2ar']);
+
+  // Verify the queue contains the expected items (reviews: w3, w1 oldest-first selected; new: w2, w4)
+  const ids = plan.queue.map((item) => item.id);
+  assert.equal(ids.length, 4);
+  // expected review ids (oldest due first)
+  const expectedReviews = ['w3', 'w1'];
+  for (const rid of expectedReviews) {
+    assert.ok(ids.includes(rid), `expected review ${rid} to be present`);
+  }
+  const expectedNew = ['w2', 'w4'];
+  for (const nid of expectedNew) {
+    assert.ok(ids.includes(nid), `expected new ${nid} to be present`);
+  }
+
+  // Modes should be assigned and valid
+  const modes = plan.queue.map((item) => item.mode);
+  assert.equal(modes.length, 4);
+  modes.forEach((m) => assert.ok(m === 'ar2en' || m === 'en2ar'));
 
   const savedPlan = buildSessionPlan(words, states, {
     queue: [

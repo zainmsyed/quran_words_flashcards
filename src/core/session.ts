@@ -126,27 +126,54 @@ export function buildSessionPlan(
     };
   }
 
-  const dueReviews = words
+  const dueAll = words
     .filter((word) => {
       const state = states[word.id];
       return Boolean(state && state.interval > 0 && new Date(state.dueDate).getTime() <= nowMs);
     })
-    .sort((a, b) => new Date(states[a.id].dueDate).getTime() - new Date(states[b.id].dueDate).getTime())
-    .slice(0, limits.reviewPerSession);
+    .sort((a, b) => new Date(states[a.id].dueDate).getTime() - new Date(states[b.id].dueDate).getTime());
 
-  const newCards = words
-    .filter((word) => (states[word.id]?.interval ?? 0) === 0)
-    .slice(0, limits.newPerSession);
+  const newAll = words
+    .filter((word) => (states[word.id]?.interval ?? 0) === 0);
 
-  const queue = [...dueReviews, ...newCards].map((word) => ({
-    id: word.id,
-    mode: pickSessionMode(random),
-  }));
+  // Determine targets following the quota rules
+  const maxNew = limits.newPerSession;
+  const maxReview = limits.reviewPerSession;
+
+  let targetNew = Math.min(maxNew, newAll.length);
+  let targetReview = 0;
+
+  if (dueAll.length === 0) {
+    // No reviews available: cap new words at newPerSession (typically 10)
+    targetReview = 0;
+    targetNew = Math.min(maxNew, newAll.length);
+  } else {
+    // Some reviews exist. New words never exceed maxNew (typically 10).
+    targetNew = Math.min(maxNew, newAll.length);
+    // Fill reviews up to maxReview, but never exceed total cap of (maxNew + maxReview)
+    targetReview = Math.min(maxReview, dueAll.length, (maxNew + maxReview) - targetNew);
+  }
+
+  const selectedReviews = dueAll.slice(0, targetReview);
+  const selectedNew = newAll.slice(0, targetNew);
+
+  // Build combined list and randomize final queue order while preserving quotas
+  const combined = [...selectedReviews, ...selectedNew];
+
+  // Fisher-Yates shuffle using provided random()
+  for (let i = combined.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    const tmp = combined[i];
+    combined[i] = combined[j];
+    combined[j] = tmp;
+  }
+
+  const queue = combined.map((word) => ({ id: word.id, mode: pickSessionMode(random) }));
 
   return {
     queue,
     currentIndex: 0,
-    newCount: newCards.length,
-    reviewCount: dueReviews.length,
+    newCount: selectedNew.length,
+    reviewCount: selectedReviews.length,
   };
 }
