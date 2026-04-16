@@ -627,7 +627,7 @@
     color: var(--text);
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    font-size: 0.72rem;
+    font-size: 0.9rem; /* increased for desktop readability */
     font-family: 'Work Sans', sans-serif;
     font-weight: 800;
     transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s, opacity 0.15s;
@@ -700,7 +700,7 @@
 
   .rating-label {
     line-height: 1;
-    font-size: 0.72rem;
+    font-size: 0.9rem; /* increased for desktop readability */
     font-weight: 800;
   }
 
@@ -812,7 +812,7 @@
       min-height: 4.35rem;
       padding: 0.68rem 0.55rem;
       letter-spacing: 0.1em;
-      font-size: 0.68rem;
+      font-size: 0.68rem; /* keep compact on mobile */
     }
 
     .rating-icon {
