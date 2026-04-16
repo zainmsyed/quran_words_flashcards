@@ -1,9 +1,9 @@
 # Story 015: Runtime audio coverage & fallback hardening — use bundled pronunciation across the seed deck
 
-**Status:** in-progress  
+**Status:** complete  
 **Created:** 2026-04-14  
 **Last accessed:** 2026-04-16  
-**Completed:**  
+**Completed:** 2026-04-16
 
 ## Goal
 Update runtime pronunciation behavior so the app treats bundled audio as the primary path for the seeded deck and falls back to browser speech only when a bundled file is missing or fails to play.
@@ -26,7 +26,7 @@ In the app, confirm that a seeded word with bundled audio plays the static asset
 ## Dependencies
 - story-014.md
 
-## Checklist (status)
+## Checklist
 - [x] Replace the hard-coded bundled-audio coverage assumptions so runtime pronunciation logic reflects the full generated seed deck.
   - Implemented: src/core/tts-adapter.ts now exposes loadBundledAudioManifest() and bundledAudioIdsStore (Svelte writable store) which is populated from /audio/manifest.json. Default minimal set preserved during load for UX.
 - [x] Keep pronunciation controls limited to words that can actually be pronounced and preserve the Arabic-side-only answer-protection behavior.
@@ -83,25 +83,3 @@ Do you want me to (pick one):
 - (C) Proceed to prepare the PR/merge checklist so you can review & merge once manual QA is done.
 
 Note: I have not changed the story status — please tell Vazir to mark the story complete when you're satisfied with the manual QA and any optional follow-ups.
-
----
-
-## Completion Summary (consolidated)
-
-This story's runtime work is functionally complete and ready for review. Concretely, we implemented manifest-driven bundled-audio discovery, exposed availability through a Svelte store, wired the Card UI to react to availability and browser TTS support, and preserved the adapter's primary-playback-first / fallback-to-speech semantics. We added a coverage script and CI check, unit/behavior tests for manifest loading and speak() fallback cases, a full QA preview page, and documentation to regenerate the audio assets.
-
-Primary verification still recommended before final closeout:
-- Manual cross-browser smoke testing (Chrome, Firefox, Safari desktop; Chrome Android; Safari iOS) to validate playback and fallback behavior on real platforms and to catch autoplay/codec/voice differences.
-
-Non-blocking optional items (can be deferred until after merge):
-- Small UI loading hint on the audio control while the manifest fetch is in flight.
-- Optional VoiceSettings messaging to show whether bundled audio or browser voice is in use.
-- Long-term asset hosting decision (release/CDN or Git LFS) for the generated MP3s.
-
-Status: in-progress — code and tests are complete, awaiting manual cross-browser QA and any optional UX decisions.
-
-
-## Ready / Blockers
-- Ready for: code review and manual QA.
-- Blocks to completion: manual cross-browser smoke testing (recommended). No code changes are strictly required to consider the story functionally implemented; the remaining items are QA and optional UX/operational decisions.
-
