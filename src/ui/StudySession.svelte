@@ -544,7 +544,7 @@
   }
 
   .session-quota {
-    margin-top: 0.4rem;
+    margin-top: 0.85rem;
   }
 
   .quota-badges {
