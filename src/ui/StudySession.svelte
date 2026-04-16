@@ -46,6 +46,24 @@
   $: currentCardNumber = deck.length > 0 ? Math.min(currentIndex + 1, deck.length) : 0;
   $: progressPercent = deck.length > 0 ? Math.round((currentCardNumber / deck.length) * 100) : 0;
 
+  // Session quota hint text shown on the StudySession screen
+  let quotaText = '';
+  $: {
+    const maxNew = NEW_PER_SESSION;
+    const maxReview = REVIEW_PER_SESSION;
+    const total = sessionNewCount + sessionReviewCount;
+
+    if (sessionReviewCount === 0) {
+      quotaText = `No reviews due — up to ${maxNew} new words this session.`;
+    } else if (sessionNewCount >= maxNew) {
+      quotaText = `Up to ${maxNew + maxReview} cards per session — typically ${maxNew} new + up to ${maxReview} review.`;
+    } else if (sessionNewCount === 0 && sessionReviewCount > 0) {
+      quotaText = `No new words available — reviewing ${sessionReviewCount} due word${sessionReviewCount !== 1 ? 's' : ''} (up to ${maxNew + maxReview} cards).`;
+    } else {
+      quotaText = `This session: ${sessionNewCount} new • ${sessionReviewCount} review (max ${maxNew + maxReview}).`;
+    }
+  }
+
   function normalizeStates(input: Record<string, CardState> | null | undefined) {
     const out: Record<string, CardState> = {};
     for (const [id, state] of Object.entries(input || {})) {
@@ -316,6 +334,7 @@
                 <div class="progress-fill" style={`width: ${progressPercent}%`}></div>
               </div>
               <div class="progress-meta">{progressPercent}% complete</div>
+              <div class="session-quota" aria-live="polite">{quotaText}</div>
             </div>
           </div>
         {/if}
@@ -528,6 +547,14 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-secondary);
+  }
+
+  .session-quota {
+    margin-top: 0.4rem;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.86rem;
+    color: var(--text);
+    opacity: 0.9;
   }
 
   .card-stage {
