@@ -47,21 +47,10 @@
   $: progressPercent = deck.length > 0 ? Math.round((currentCardNumber / deck.length) * 100) : 0;
 
   // Session quota hint text shown on the StudySession screen
+  // Display concise counts: "X new and Y to review"
   let quotaText = '';
   $: {
-    const maxNew = NEW_PER_SESSION;
-    const maxReview = REVIEW_PER_SESSION;
-    const total = sessionNewCount + sessionReviewCount;
-
-    if (sessionReviewCount === 0) {
-      quotaText = `No reviews due — up to ${maxNew} new words this session.`;
-    } else if (sessionNewCount >= maxNew) {
-      quotaText = `Up to ${maxNew + maxReview} cards per session — typically ${maxNew} new + up to ${maxReview} review.`;
-    } else if (sessionNewCount === 0 && sessionReviewCount > 0) {
-      quotaText = `No new words available — reviewing ${sessionReviewCount} due word${sessionReviewCount !== 1 ? 's' : ''} (up to ${maxNew + maxReview} cards).`;
-    } else {
-      quotaText = `This session: ${sessionNewCount} new • ${sessionReviewCount} review (max ${maxNew + maxReview}).`;
-    }
+    quotaText = `${sessionNewCount} new and ${sessionReviewCount} to review`;
   }
 
   function normalizeStates(input: Record<string, CardState> | null | undefined) {
