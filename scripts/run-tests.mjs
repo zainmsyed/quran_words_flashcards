@@ -267,6 +267,150 @@ test('tts support helpers distinguish speech and bundled audio availability', as
   }
 });
 
+test('tts manifest loader populates bundled audio set', async () => {
+  const originalWindow = globalThis.window;
+  const originalFetch = globalThis.fetch;
+  const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, 'window');
+
+  Object.defineProperty(globalThis, 'window', {
+    value: {},
+    configurable: true,
+    writable: true,
+  });
+
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.endsWith('/audio/manifest.json')) {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          generated_at: '2026-04-16T00:00:00Z',
+          provider: 'none',
+          voice: 'ar-XA-Neural-B',
+          sample_rate: 24000,
+          entries: [
+            { id: 'w200', filename: 'w200.mp3', bytes: 1234, exists: true },
+            { id: 'w201', filename: 'w201.mp3', bytes: 1234, exists: true },
+          ],
+        }),
+      };
+    }
+    throw new Error(`Unexpected fetch: ${url}`);
+  };
+
+  try {
+    const { hasBundledAudioForWordId, loadBundledAudioManifest } = await importTs('src/core/tts-adapter.ts');
+
+    // defaults contain w1..w10
+    assert.equal(hasBundledAudioForWordId('w1'), true);
+    assert.equal(hasBundledAudioForWordId('w200'), false);
+
+    await loadBundledAudioManifest();
+
+    // after manifest load the new ids should be present
+    assert.equal(hasBundledAudioForWordId('w200'), true);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (!hadWindow) {
+      delete globalThis.window;
+    } else {
+      Object.defineProperty(globalThis, 'window', {
+        value: originalWindow,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+});
+
+
+test('speak uses bundled audio when playback succeeds and avoids SpeechSynthesis', async () => {
+  const originalWindow = globalThis.window;
+  const originalAudio = globalThis.Audio;
+  const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, 'window');
+
+  let speechCalled = false;
+  Object.defineProperty(globalThis, 'window', {
+    value: {
+      speechSynthesis: { speak: (u) => { speechCalled = true; if (typeof u.onend === 'function') setTimeout(u.onend, 0); } },
+      SpeechSynthesisUtterance: function SpeechSynthesisUtterance() {},
+    },
+    configurable: true,
+    writable: true,
+  });
+
+  globalThis.Audio = function (src) {
+    this._listeners = {};
+    this.src = src;
+    this.preload = '';
+    this.addEventListener = (name, h) => { this._listeners[name] = this._listeners[name] || []; this._listeners[name].push(h); };
+    this.removeEventListener = (name, h) => { if (!this._listeners[name]) return; this._listeners[name] = this._listeners[name].filter(x => x !== h); };
+    this.play = () => {
+      // simulate async playback completion
+      setTimeout(() => {
+        const handlers = this._listeners['ended'] || [];
+        handlers.forEach((fn) => fn());
+      }, 0);
+      return Promise.resolve();
+    };
+    this.pause = () => {};
+    this.currentTime = 0;
+  };
+
+  try {
+    const { speak } = await importTs('src/core/tts-adapter.ts');
+    await speak('مِنْ', { audioSources: ['/audio/w1.mp3'] });
+    // ensure speech synthesis was not invoked
+    assert.equal(speechCalled, false);
+  } finally {
+    if (originalAudio === undefined) delete globalThis.Audio; else globalThis.Audio = originalAudio;
+    if (!hadWindow) delete globalThis.window; else Object.defineProperty(globalThis, 'window', { value: originalWindow, configurable: true, writable: true });
+  }
+});
+
+
+test('speak falls back to SpeechSynthesis when audio playback fails', async () => {
+  const originalWindow = globalThis.window;
+  const originalAudio = globalThis.Audio;
+  const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, 'window');
+
+  let speechCalled = false;
+  Object.defineProperty(globalThis, 'window', {
+    value: {
+      speechSynthesis: { speak: (u) => { speechCalled = true; if (typeof u.onend === 'function') setTimeout(u.onend, 0); } },
+      SpeechSynthesisUtterance: function SpeechSynthesisUtterance() {},
+    },
+    configurable: true,
+    writable: true,
+  });
+
+  globalThis.Audio = function (src) {
+    this._listeners = {};
+    this.src = src;
+    this.preload = '';
+    this.addEventListener = (name, h) => { this._listeners[name] = this._listeners[name] || []; this._listeners[name].push(h); };
+    this.removeEventListener = (name, h) => { if (!this._listeners[name]) return; this._listeners[name] = this._listeners[name].filter(x => x !== h); };
+    this.play = () => {
+      // simulate playback failure
+      return Promise.reject(new Error('playback failed'));
+    };
+    this.pause = () => {};
+    this.currentTime = 0;
+  };
+
+  try {
+    const { speak } = await importTs('src/core/tts-adapter.ts');
+    await speak('مِنْ', { audioSources: ['/audio/w1.mp3'] });
+    // ensure speech synthesis was invoked
+    assert.equal(speechCalled, true);
+  } finally {
+    if (originalAudio === undefined) delete globalThis.Audio; else globalThis.Audio = originalAudio;
+    if (!hadWindow) delete globalThis.window; else Object.defineProperty(globalThis, 'window', { value: originalWindow, configurable: true, writable: true });
+  }
+});
+
+
 test('pocketbase auth helpers tolerate storage persistence failures', async () => {
   const originalFetch = globalThis.fetch;
   const originalLocalStorage = globalThis.localStorage;

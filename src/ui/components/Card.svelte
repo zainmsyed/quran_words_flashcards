@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import type { Word } from '../../core/wordlist';
   import { browserStorage } from '../../core/storage-adapter';
-  import { speak, stop, canPronounceWord, loadBundledAudioManifest } from '../../core/tts-adapter';
+  import { speak, stop, loadBundledAudioManifest, bundledAudioIdsStore, isSpeechSupported } from '../../core/tts-adapter';
 
   export let word: Word;
   export let mode: 'ar2en' | 'en2ar' = 'ar2en';
@@ -14,7 +14,8 @@
   let ttsAvailable = false;
   let preferredVoice: string | null = null;
 
-  $: ttsAvailable = canPronounceWord(word?.id || '');
+  // reactive: re-evaluate when the store updates or when word changes
+  $: ttsAvailable = isSpeechSupported() || (word && $bundledAudioIdsStore ? $bundledAudioIdsStore.has(word.id) : false);
 
   onMount(async () => {
     try {
@@ -29,8 +30,6 @@
     } catch (e) {
       // ignore
     }
-    // recompute availability after manifest info is available
-    ttsAvailable = canPronounceWord(word?.id || '');
   });
 
   function flip() {

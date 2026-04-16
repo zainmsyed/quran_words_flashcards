@@ -1,13 +1,16 @@
 # Review Summary
 
-**Last updated:** 2026-04-16T03:02:05Z
+**Last updated:** 2026-04-16T03:56:40Z
 
 ## Findings
 - When a mobile top bar looks clipped, restore the header’s own padding/safe-area inset instead of changing viewport-level spacing so the rest of the screen stays put. | count: 2 | status: promoted | sources: review-20260414-200827.md, remembered.md | stories: story-009
 - — (not proposed as a cross-project rule; this is repo-specific cleanup) | count: 1 | status: tracked | sources: review-20260413-204423.md
 - Add automated coverage before changing persistence formats or session state machines. | count: 1 | status: tracked | sources: review-20260409-222457.md
+- Add tests for new logic and scripts before merging feature branches (yes) | count: 1 | status: tracked | sources: review-20260416-032919.md | stories: story-014
 - Don't persist a mode enum if every producer hardcodes the same value. | count: 1 | status: tracked | sources: review-20260409-222457.md
 - Keep unique-item counters separate from total-event counters when a dashboard needs both. | count: 1 | status: tracked | sources: review-20260409-222457.md
+- Prefer Svelte stores or explicit subscription APIs for cross-component runtime state changes so UI reactivity is reliable (yes) | count: 1 | status: tracked | sources: review-20260416-032919.md | stories: story-014
+- Use artifact storage or releases for generated binary assets (yes — good candidate) | count: 1 | status: tracked | sources: review-20260416-032919.md | stories: story-014
 - When a story scopes UI work to specific screens/files, keep unrelated header/card fixes out of the same implementation commit so regressions stay attributable. | count: 1 | status: tracked | sources: review-20260412-233704.md | stories: story-009
 - When adding a secondary panel to a card screen, reuse the card’s wrapper and spacing tokens so both edges stay aligned. | count: 1 | status: promoted | sources: remembered.md
 - When live browser QA is still listed as a blocker, do not mark the manual-test checklist item complete. | count: 1 | status: tracked | sources: review-20260412-233704.md | stories: story-009

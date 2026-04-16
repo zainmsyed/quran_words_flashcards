@@ -1,8 +1,8 @@
 # Story 015: Runtime audio coverage & fallback hardening — use bundled pronunciation across the seed deck
 
-**Status:** not-started  
+**Status:** in-progress  
 **Created:** 2026-04-14  
-**Last accessed:** 2026-04-14  
+**Last accessed:** 2026-04-16  
 **Completed:**  
 
 ## Goal

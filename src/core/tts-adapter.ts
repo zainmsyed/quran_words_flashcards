@@ -1,3 +1,5 @@
+import { writable } from 'svelte/store';
+
 export type TtsOptions = {
   lang?: string;
   rate?: number;
@@ -26,6 +28,7 @@ const DEFAULT_BUNDLED_IDS = [
 ];
 
 let bundledAudioIds: Set<string> = new Set(DEFAULT_BUNDLED_IDS);
+export const bundledAudioIdsStore = writable<Set<string>>(new Set(bundledAudioIds));
 let manifestLoaded = false;
 let manifestLoadPromise: Promise<void> | null = null;
 
@@ -52,6 +55,7 @@ export async function loadBundledAudioManifest(manifestUrl = '/audio/manifest.js
         }
         if (ids.size > 0) {
           bundledAudioIds = ids;
+          try { bundledAudioIdsStore.set(new Set(bundledAudioIds)); } catch (e) { /* ignore */ }
         }
       }
     } catch (e) {

@@ -55,3 +55,4 @@ src/ui/components/AppTopbar.svelte — Shared branded topbar with the menu/back 
 public/audio/sample_preview.html — (undescribed)
 public/audio/manifest.json — (undescribed)
 scripts/generate_audio_gcp.py — (undescribed)
+scripts/check_audio_coverage.py — (undescribed)
