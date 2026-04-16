@@ -46,12 +46,7 @@
   $: currentCardNumber = deck.length > 0 ? Math.min(currentIndex + 1, deck.length) : 0;
   $: progressPercent = deck.length > 0 ? Math.round((currentCardNumber / deck.length) * 100) : 0;
 
-  // Session quota hint text shown on the StudySession screen
-  // Display concise counts: "X new and Y to review"
-  let quotaText = '';
-  $: {
-    quotaText = `${sessionNewCount} new and ${sessionReviewCount} to review`;
-  }
+
 
   function normalizeStates(input: Record<string, CardState> | null | undefined) {
     const out: Record<string, CardState> = {};
@@ -323,7 +318,18 @@
                 <div class="progress-fill" style={`width: ${progressPercent}%`}></div>
               </div>
               <div class="progress-meta">{progressPercent}% complete</div>
-              <div class="session-quota" aria-live="polite">{quotaText}</div>
+              <div class="session-quota" aria-live="polite">
+                <div class="quota-badges" role="status" aria-live="polite">
+                  <span class="badge badge-new" aria-label={sessionNewCount + ' new'}>
+                    <span class="badge-count">{sessionNewCount}</span>
+                    <span class="badge-label">new</span>
+                  </span>
+                  <span class="badge badge-review" aria-label={sessionReviewCount + ' to review'}>
+                    <span class="badge-count">{sessionReviewCount}</span>
+                    <span class="badge-label">review</span>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         {/if}
@@ -540,10 +546,47 @@
 
   .session-quota {
     margin-top: 0.4rem;
+  }
+
+  .quota-badges {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
     font-family: 'Work Sans', sans-serif;
-    font-size: 0.86rem;
-    color: var(--text);
-    opacity: 0.9;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .badge-count {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 0.95rem;
+  }
+
+  .badge-label {
+    font-weight: 700;
+    opacity: 0.95;
+    font-size: 0.72rem;
+    text-transform: none;
+  }
+
+  .badge-new {
+    background: var(--primary);
+    color: var(--on-primary);
+  }
+
+  .badge-review {
+    background: var(--primary-container);
+    color: var(--primary);
+    border: 0.5px solid var(--border);
   }
 
   .card-stage {
