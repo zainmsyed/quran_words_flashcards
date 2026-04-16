@@ -1,6 +1,6 @@
 # Review Summary
 
-**Last updated:** 2026-04-16T04:17:52Z
+**Last updated:** 2026-04-16T04:20:26Z
 
 ## Findings
 - When a mobile top bar looks clipped, restore the header’s own padding/safe-area inset instead of changing viewport-level spacing so the rest of the screen stays put. | count: 2 | status: promoted | sources: review-20260414-200827.md, remembered.md | stories: story-009
