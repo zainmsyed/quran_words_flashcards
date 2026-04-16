@@ -18,18 +18,58 @@ export type TtsOptions = {
 
 let activeAudio: HTMLAudioElement | null = null;
 
-const BUNDLED_AUDIO_WORD_IDS = new Set([
-  'w1',
-  'w2',
-  'w3',
-  'w4',
-  'w5',
-  'w6',
-  'w7',
-  'w8',
-  'w9',
-  'w10',
-]);
+// Bundled audio IDs: by default include the first 10 words so the UI shows audio
+// controls before the manifest is loaded. At runtime we attempt to load
+// /audio/manifest.json to populate the full set of available bundled files.
+const DEFAULT_BUNDLED_IDS = [
+  'w1','w2','w3','w4','w5','w6','w7','w8','w9','w10'
+];
+
+let bundledAudioIds: Set<string> = new Set(DEFAULT_BUNDLED_IDS);
+let manifestLoaded = false;
+let manifestLoadPromise: Promise<void> | null = null;
+
+/**
+ * Load the bundled audio manifest from the server and populate bundledAudioIds.
+ * This is idempotent; subsequent calls return the same promise. Manifest URL
+ * defaults to /audio/manifest.json which is produced by the generator script.
+ */
+export async function loadBundledAudioManifest(manifestUrl = '/audio/manifest.json'): Promise<void> {
+  if (typeof window === 'undefined') return;
+  if (manifestLoadPromise) return manifestLoadPromise;
+  manifestLoadPromise = (async () => {
+    try {
+      const res = await fetch(manifestUrl, { cache: 'no-store' });
+      if (!res.ok) {
+        manifestLoaded = true;
+        return;
+      }
+      const data = await res.json();
+      if (data && Array.isArray(data.entries)) {
+        const ids = new Set<string>();
+        for (const e of data.entries) {
+          if (e && e.id && e.exists) ids.add(e.id);
+        }
+        if (ids.size > 0) {
+          bundledAudioIds = ids;
+        }
+      }
+    } catch (e) {
+      // ignore fetch/parse errors — keep defaults
+    } finally {
+      manifestLoaded = true;
+    }
+  })();
+  return manifestLoadPromise;
+}
+
+/**
+ * Returns a promise that resolves when the manifest load has completed (success or failure).
+ * Convenient helper for components that want to wait for the bundled-audio list.
+ */
+export function whenBundledAudioLoaded(): Promise<void> {
+  return loadBundledAudioManifest();
+}
 
 function hasSpeechSupport(): boolean {
   if (typeof window === 'undefined') return false;
@@ -181,7 +221,7 @@ export function isSpeechSupported(): boolean {
 }
 
 export function hasBundledAudioForWordId(wordId: string): boolean {
-  return BUNDLED_AUDIO_WORD_IDS.has(wordId);
+  return Boolean(wordId && bundledAudioIds.has(wordId));
 }
 
 export function canPronounceWord(wordId: string): boolean {

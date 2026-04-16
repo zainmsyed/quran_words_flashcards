@@ -1,6 +1,6 @@
 # Story 012: QA / responsive polish — cross-screen fixes and accessibility
 
-**Status:** completed  
+**Status:** complete  
 **Created:** 2026-04-12
 **Last accessed:** 2026-04-14  
 **Completed:**

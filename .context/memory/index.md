@@ -52,3 +52,6 @@ src/ui/AccountSettings.svelte — Authenticated account settings shell for profi
 src/ui/ChangePasswordForm.svelte — Password-change form used inside account settings.
 
 src/ui/components/AppTopbar.svelte — Shared branded topbar with the menu/back action used across study and settings screens.
+public/audio/sample_preview.html — (undescribed)
+public/audio/manifest.json — (undescribed)
+scripts/generate_audio_gcp.py — (undescribed)

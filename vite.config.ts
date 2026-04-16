@@ -10,7 +10,7 @@ const pocketBaseProxy = {
 export default defineConfig({
   plugins: [svelte()],
   server: {
-    port: 5180,
+    port: 5185,
     proxy: {
       '/api': pocketBaseProxy,
       '/_/': pocketBaseProxy,

@@ -1,32 +1,52 @@
 # Intake Brief
 
-**Last updated:** 2026-04-12
+**Last updated:** 2026-04-14
 
 ## Planning brief
-A Bauhaus-inspired visual refresh across the entire Quranic Flashcards SPA (study, word list, stats, settings, voice settings, and app shell). This is a purely visual update: do not change study mechanics, SRS behavior, or auth/login flows. The update is mobile-first and must match the Bauhaus aesthetic (bold geometric typography, strong primary color accents, high contrast) while remaining pragmatic and lightweight.
+Expand Arabic pronunciation coverage from the current 10 generated files to the full current 300-word seed deck. Prefer one bundled static pronunciation file per word so the deployed app can serve audio without runtime VPS work and without relying on inconsistent browser Arabic voices. Build-time use of an external service is acceptable if it produces a better long-term pipeline. Keep browser speech only as a fallback when a bundled file is missing or fails to play.
 
-Key decisions (final):
-- Target users: people who want to learn Quranic Arabic; the site is responsive and mobile-first.
-- Scope: restyle all screens (study, WordList, Stats, Settings, VoiceSettings, app shell/topbar) — visual changes only.
-- Fonts: Space Grotesk for headings, Work Sans for UI/body, Noto Naskh Arabic for Arabic script. Load weights: Space Grotesk 400/700/800; Work Sans 400/500/700; Noto Naskh Arabic 400/700.
-- Color palette:
-  - Primary (red): #D62828
-  - Accent (yellow): #FFD166
-  - Near‑black (text): #111111
-  - Background (light): #F8F8F6
-  - Card surface: #FFFFFF
-  - Muted grey / borders: #E6E6E6
-  - Success (green): #1E7A4A
-  - Danger (darker red/maroon): #9E1A1A
-- Geometry: rectangular UI surfaces and controls with a 6px corner radius (buttons, cards, panels, badges). The brand-mark is a rectangular 6px-radius box (primary red) containing the Arabic letter "ا" (logo glyph) rendered in Noto Naskh Arabic; the app name to the right is "alif" (lowercase) in Space Grotesk.
-- Semantic color mappings: info/new → yellow #FFD166 (on near‑black text); warn/review → red #D62828 (white text); success → green #1E7A4A; danger → #9E1A1A (white text).
-- References: use all files in .context/intake/references/ as visual examples for different screens; do not treat them as hard requirements—"inspired by" is acceptable.
+## Source files
+- .context/intake/dictionaries/quran_300_words.csv (11519 bytes)
+- .context/intake/prd/quranic-flashcards-auth-addon.md (18094 bytes)
+- .context/intake/prd/quranic-flashcards-prd.md (4170 bytes)
+- .context/intake/references/background_pattern compressed.webp (33994 bytes)
+- .context/intake/references/haus_archive/DESIGN.md (6264 bytes)
+- .context/intake/references/maktaba_bold_manifesto/code.html (10106 bytes)
+- .context/intake/references/maktaba_bold_manifesto/screen.png (119201 bytes)
+- .context/intake/references/maktaba_login/code.html (10556 bytes)
+- .context/intake/references/maktaba_login/screen.png (125728 bytes)
+- .context/intake/references/maktaba_stats/code.html (14433 bytes)
+- .context/intake/references/maktaba_stats/screen.png (82362 bytes)
+- .context/intake/references/maktaba_word_list/code.html (17124 bytes)
+- .context/intake/references/maktaba_word_list/screen.png (49495 bytes)
+- .context/intake/references/staatliche_bold/DESIGN.md (5691 bytes)
+- .context/intake/references/stitch_bauhaus_circle_design/DESIGN.md (6264 bytes)
+- .context/intake/references/stitch_bauhaus_circle_design/screen.png (28 bytes)
 
-## Source files referenced (canonical inputs)
-- .context/intake/dictionaries/quran_300_words.csv
-- .context/intake/prd/quranic-flashcards-prd.md
-- .context/intake/prd/quranic-flashcards-auth-addon.md
-- .context/intake/references/* (haus_archive, maktaba_*, staatliche_bold)
+## Distilled notes
+- Primary users for this scope: a small invited group of learners, general Quran learners, and Arabic beginners.
+- Audio scope is limited to the current 300 seeded words.
+- Default direction: bundled static audio files committed to the repo and deployed with the app.
+- Runtime browser speech remains allowed only as a fallback when static audio is missing or playback fails.
+- One pronunciation per word only; no multiple voice options in v1.
+- Build-time use of an external TTS provider is acceptable.
+- The current Python gTTS script is only a prototype and can be replaced.
+- Add a decision story first to choose the best provider and output format before standardizing the pipeline.
+- Priority order for tradeoffs:
+  1. Minimal VPS/server resource usage
+  2. Better pronunciation quality
+  3. Fast playback/loading
+  4. Small total storage size
+- Offline playback is only a stretch benefit if it falls out naturally from bundled static assets; do not add separate PWA/offline-cache work in this replan.
+- Explicitly out of scope for this v1 audio expansion:
+  - multiple voices per word
+  - per-user voice selection for bundled audio
+  - runtime cloud TTS requests
+  - manual recording workflow
+  - admin upload tools
+  - waveform or audio-debug UI
 
-## Planning rules (reminder)
-- Intake files are planning inputs only; preserve study/login behavior and existing story files. Ask before changing ambiguous behavior. Surface contradictions instead of silently resolving them.
+## Planning rules
+- Treat intake files as raw planning inputs, not permanent system rules.
+- Ask only delta questions after reviewing this brief and any raw files you actually need.
+- Surface contradictions instead of resolving them silently.
