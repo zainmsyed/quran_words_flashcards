@@ -812,17 +812,21 @@
       min-height: 4.35rem;
       padding: 0.68rem 0.55rem;
       letter-spacing: 0.1em;
-      font-size: 0.68rem; /* keep compact on mobile */
+      font-size: 0.6rem; /* slightly smaller on mobile */
+    }
+
+    .rating-label {
+      font-size: 0.58rem; /* smaller label on mobile */
     }
 
     .rating-icon {
-      width: 2.45rem;
-      height: 2.45rem;
+      width: 2.25rem;
+      height: 2.25rem;
     }
 
     .rating-icon svg {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
   }
 </style>
