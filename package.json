@@ -12,7 +12,9 @@
     "smoke:pocketbase": "node scripts/pocketbase-smoke-test.mjs",
     "generate-audio": "python3 scripts/generate_audio_gcp.py --out public/audio",
     "generate-audio:sample": "python3 scripts/generate_audio_gcp.py --out public/audio --sample 10",
-    "generate-audio:manifest": "python3 scripts/generate_audio_gcp.py --out public/audio --manifest-only"
+    "generate-audio:manifest": "python3 scripts/generate_audio_gcp.py --out public/audio --manifest-only",
+    "check-audio-coverage": "python3 scripts/check_audio_coverage.py",
+    "generate-audio:coverage": "python3 scripts/generate_audio_gcp.py --out public/audio --manifest-only && python3 scripts/check_audio_coverage.py"
   },
   "dependencies": {
     "svelte": "^4.0.0"
