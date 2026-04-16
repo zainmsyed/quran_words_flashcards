@@ -1,9 +1,9 @@
 # Intake Brief
 
-**Last updated:** 2026-04-14
+**Last updated:** 2026-04-16
 
 ## Planning brief
-Expand Arabic pronunciation coverage from the current 10 generated files to the full current 300-word seed deck. Prefer one bundled static pronunciation file per word so the deployed app can serve audio without runtime VPS work and without relying on inconsistent browser Arabic voices. Build-time use of an external service is acceptable if it produces a better long-term pipeline. Keep browser speech only as a fallback when a bundled file is missing or fails to play.
+i want to update the study flow for the reinforced learning so that each session has at most 15 cards total. when 10 or more new words are available, the session should target 10 brand new words plus up to 5 due reviews. if there are 5 to 9 new words, use all available new words and fill the remaining slots with reviews. if there are fewer than 5 new words, use all of them and fill the rest with reviews. if there are no due reviews, cap the session at 10 new words. due reviews should be chosen oldest first, and the final order can be randomized as long as those rules are respected.
 
 ## Source files
 - .context/intake/dictionaries/quran_300_words.csv (11519 bytes)
@@ -24,27 +24,53 @@ Expand Arabic pronunciation coverage from the current 10 generated files to the 
 - .context/intake/references/stitch_bauhaus_circle_design/screen.png (28 bytes)
 
 ## Distilled notes
-- Primary users for this scope: a small invited group of learners, general Quran learners, and Arabic beginners.
-- Audio scope is limited to the current 300 seeded words.
-- Default direction: bundled static audio files committed to the repo and deployed with the app.
-- Runtime browser speech remains allowed only as a fallback when static audio is missing or playback fails.
-- One pronunciation per word only; no multiple voice options in v1.
-- Build-time use of an external TTS provider is acceptable.
-- The current Python gTTS script is only a prototype and can be replaced.
-- Add a decision story first to choose the best provider and output format before standardizing the pipeline.
-- Priority order for tradeoffs:
-  1. Minimal VPS/server resource usage
-  2. Better pronunciation quality
-  3. Fast playback/loading
-  4. Small total storage size
-- Offline playback is only a stretch benefit if it falls out naturally from bundled static assets; do not add separate PWA/offline-cache work in this replan.
-- Explicitly out of scope for this v1 audio expansion:
-  - multiple voices per word
-  - per-user voice selection for bundled audio
-  - runtime cloud TTS requests
-  - manual recording workflow
-  - admin upload tools
-  - waveform or audio-debug UI
+### .context/intake/dictionaries/quran_300_words.csv
+Large file (11519 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/prd/quranic-flashcards-auth-addon.md
+Large file (18094 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/prd/quranic-flashcards-prd.md
+Large file (4170 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/references/background_pattern compressed.webp
+Unsupported preview type. Use the raw file only if the user specifically points to it.
+
+### .context/intake/references/haus_archive/DESIGN.md
+Large file (6264 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/references/maktaba_bold_manifesto/code.html
+Large file (10106 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/references/maktaba_bold_manifesto/screen.png
+Unsupported preview type. Use the raw file only if the user specifically points to it.
+
+### .context/intake/references/maktaba_login/code.html
+Large file (10556 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/references/maktaba_login/screen.png
+Unsupported preview type. Use the raw file only if the user specifically points to it.
+
+### .context/intake/references/maktaba_stats/code.html
+Large file (14433 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/references/maktaba_stats/screen.png
+Unsupported preview type. Use the raw file only if the user specifically points to it.
+
+### .context/intake/references/maktaba_word_list/code.html
+Large file (17124 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/references/maktaba_word_list/screen.png
+Unsupported preview type. Use the raw file only if the user specifically points to it.
+
+### .context/intake/references/staatliche_bold/DESIGN.md
+Large file (5691 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/references/stitch_bauhaus_circle_design/DESIGN.md
+Large file (6264 bytes). Do not read it wholesale by default. Skim selectively or ask the user which section matters most.
+
+### .context/intake/references/stitch_bauhaus_circle_design/screen.png
+Unsupported preview type. Use the raw file only if the user specifically points to it.
 
 ## Planning rules
 - Treat intake files as raw planning inputs, not permanent system rules.

@@ -1,7 +1,7 @@
 # Project — Plan
 
 **Created:** 2026-03-29  
-**Last updated:** 2026-04-14
+**Last updated:** 2026-04-16
 
 ---
 
@@ -46,6 +46,7 @@ The app will use a custom Svelte login gate and account screens. PocketBase rema
 | story-013.md | Audio provider & format decision — choose the bundled Arabic pronunciation pipeline | not-started | story-014.md |
 | story-014.md | Full 300-word static audio pipeline — generate, normalize, and bundle pronunciation assets | not-started | story-015.md |
 | story-015.md | Runtime audio coverage & fallback hardening — use bundled pronunciation across the seed deck | not-started | — |
+| story-016.md | Study session quota engine — cap sessions at 15 cards with 10 new / 5 review mix | not-started | — |
 
 ## Scope addendum — 2026-04-14 static Arabic audio expansion
 - Preserve existing UI refresh story history; add new stories only for the Arabic audio expansion.
@@ -56,7 +57,18 @@ The app will use a custom Svelte login gate and account screens. PocketBase rema
 - Start with a decision story to choose the best provider and output format before batch generation.
 - Do not add multiple bundled voices, runtime cloud TTS, manual recording/admin upload tooling, or separate PWA/offline-cache work in this scope.
 
+## Scope addendum — 2026-04-16 reinforced study flow sizing
+- Cap each study session at 15 total cards.
+- Prefer 10 new words plus up to 5 due reviews when possible.
+- If at least 5 new words are available, keep the session anchored around 10 new words and fill remaining slots with reviews up to 15 total.
+- If fewer than 5 new words are available, use all available new words and fill the rest with reviews.
+- If no due reviews are available, cap the session at 10 new words.
+- Select the oldest due reviews first, then randomize the final queue order if desired as long as the quota rules are preserved.
+- Keep auth, account, audio, and deck scope unchanged; do not change SRS interval math beyond session composition.
+
 ## Replanning log
 - 2026-04-09: Replanned v1 to layer PocketBase auth onto the original study app. Confirmed invite-only manual onboarding for a small friends-and-family group, custom Svelte auth UI, change-password plus forgot/reset-password flows, PocketBase-backed persistence, repo-contained deployment files/instructions, and a fresh start with no localStorage migration.
 - 2026-04-12: Replanned visual update to a Bauhaus-inspired theme across all screens. Decisions: replace palette with a red/yellow/near‑black Bauhaus palette and add a success green (#1E7A4A); load Space Grotesk (headings), Work Sans (UI/body), and Noto Naskh Arabic (Arabic script); convert pill-shaped surfaces to rectangular 6px-radius geometry; brand-mark set to a rectangular red box with the Arabic letter "ا" and app name "alif" in Space Grotesk. Added story-005 through story-011 to implement fonts, tokens, topbar/brand, card restyle, session chrome, WordList/Stats, Settings/VoiceSettings, and QA/responsive polish. Preserved existing study/auth behavior and story history.
 - 2026-04-14: Replanned audio scope around full bundled pronunciation coverage for the current 300-word seed deck. Decisions: prefer static audio files committed to the repo and served by the app; keep one pronunciation per word; allow build-time external TTS; preserve browser speech only as a fallback when bundled audio is missing or fails; prioritize minimal VPS usage first, then pronunciation quality, playback speed, and storage size; treat offline as a stretch benefit only if it falls out naturally from static assets. Added story-013 through story-015 to choose the provider/format, generate the full bundled audio set, and harden runtime audio coverage without overwriting existing story history.
+- 2026-04-16: Replanned the study flow so sessions cap at 15 cards and prefer 10 new words plus up to 5 due reviews when possible. Sessions should use all available new words when fewer than 10 are available, never exceed 15 total, prefer the oldest due reviews first, and randomize the final order only after the quota rules are satisfied. Added story-016 to implement the quota engine and its verification.
+
