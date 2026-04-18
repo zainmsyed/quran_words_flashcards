@@ -3,9 +3,7 @@
 **Status:** in-progress  
 **Created:** 2026-04-16  
 **Last accessed:** 2026-04-16  
-**Completed:**  
-
-## Goal
+**Completed:** 2026-04-16
 Update the study-session planner so each session contains at most 15 cards total, targets 10 new words plus up to 5 due reviews when possible, uses all available new words when fewer than 10 exist, and always chooses the oldest due reviews first.
 
 ## Verification

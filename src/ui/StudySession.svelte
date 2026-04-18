@@ -13,7 +13,7 @@
     type SavedSession,
     type SessionItem,
   } from '../core/session';
-  import { summarizeStudyProgress } from '../core/progress-summary';
+  import { summarizeStudyProgress, MASTERED_EASY_COUNT } from '../core/progress-summary';
   import type { AuthSession } from '../core/pocketbase-auth';
   import {
     clearLegacyStudyStorage,
@@ -27,7 +27,7 @@
   const NEW_PER_SESSION = 10;
   const REVIEW_PER_SESSION = 5;
 
-  const dispatch = createEventDispatcher<{ openSettings: undefined }>();
+  const dispatch = createEventDispatcher<{ openSettings: { tab?: 'stats' | 'account' | 'voice' | 'words' } }>();
 
   let words: Word[] = [];
   let deck: Word[] = [];
@@ -45,6 +45,10 @@
 
   $: currentCardNumber = deck.length > 0 ? Math.min(currentIndex + 1, deck.length) : 0;
   $: progressPercent = deck.length > 0 ? Math.round((currentCardNumber / deck.length) * 100) : 0;
+
+  // Study summary and mastery flag derived from current states
+  $: summary = summarizeStudyProgress(words, states, new Date());
+  $: allMastered = words.length > 0 && summary.masteredCount === words.length;
 
 
 
@@ -280,7 +284,43 @@
   }
 
   function openSettings() {
-    dispatch('openSettings');
+    dispatch('openSettings', { tab: 'stats' });
+  }
+
+  function viewMasteredWords() {
+    dispatch('openSettings', { tab: 'words' });
+  }
+
+  // confetti
+  let confettiActive = false;
+  let confettiPieces: Array<{ id: number; left: number; delay: number; color: string; rotate: number; size: number; duration: number }> = [];
+
+  function generateConfettiPieces(count = 120) {
+    const colors = ['#D62828', '#9E1A1A', '#FFD166', '#1E7A4A', '#FFEDEC', '#8B9294'];
+    const pieces: Array<{ id: number; left: number; delay: number; color: string; rotate: number; size: number; duration: number }> = [];
+    for (let i = 0; i < count; i++) {
+      const dur = parseFloat((3 + Math.random() * 3).toFixed(2));
+      pieces.push({
+        id: i,
+        left: Math.round(Math.random() * 100),
+        delay: parseFloat((Math.random() * 0.6).toFixed(2)),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotate: Math.round(Math.random() * 360),
+        size: Math.round(6 + Math.random() * 12),
+        duration: dur,
+      });
+    }
+    return pieces;
+  }
+
+  $: if (allMastered && currentIndex >= deck.length && !confettiActive) {
+    confettiActive = true;
+    confettiPieces = generateConfettiPieces(120);
+    // stop after a bit
+    setTimeout(() => {
+      confettiPieces = [];
+      confettiActive = false;
+    }, 7600);
   }
 </script>
 
@@ -334,25 +374,59 @@
         {/if}
 
         {#if currentIndex >= deck.length}
-          <div class="session-complete">
-            <div class="complete-mark">✓</div>
-            <h2>{deck.length === 0 ? 'All caught up' : 'Session complete'}</h2>
-            <p>
-              {#if deck.length === 0}
-                No new or due cards are available right now. You can check again or come back later.
-              {:else}
-                You studied {sessionNewCount} new words and reviewed {sessionReviewCount} due words.
-              {/if}
-            </p>
-            <div class="session-actions">
-              <button type="button" class="review-again" on:click={startFreshSession}>
-                {deck.length === 0 ? 'Check again' : 'Start new session'}
-              </button>
-              {#if sessionItems.length > 0}
-                <button type="button" class="review-again secondary" on:click={reviewCompletedSession}>Review again</button>
-              {/if}
+          {#if allMastered}
+            <div class="mastered-overlay" role="dialog" aria-live="polite" aria-label="Congratulations screen">
+              <div class="overlay-confetti" aria-hidden="true">
+                {#each confettiPieces as p (p.id)}
+                  <span
+                    class="confetti-piece overlay"
+                    style={`left: ${p.left}%; width: ${p.size}px; height: ${p.size}px; background: ${p.color}; animation-delay: ${p.delay}s; --r: ${p.rotate}deg; --d: ${p.duration}s;`}
+                  ></span>
+                {/each}
+              </div>
+              <div class="overlay-content" role="document">
+                <div class="overlay-mark">✓</div>
+                <h1>Congratulations!</h1>
+                <p>You’ve mastered the deck. You marked every word "Easy" at least {MASTERED_EASY_COUNT} times.</p>
+                <div class="overlay-actions">
+                  <button type="button" class="btn primary" on:click={viewMasteredWords}>Review words</button>
+                  <button type="button" class="btn secondary" on:click={startFreshSession}>Start new session</button>
+                </div>
+              </div>
             </div>
-          </div>
+          {:else}
+            <div class="session-complete">
+              <div class="complete-mark">✓</div>
+
+              {#if confettiPieces.length}
+                <div class="confetti-container" aria-hidden="true">
+                  {#each confettiPieces as p (p.id)}
+                    <span
+                      class="confetti-piece"
+                      style={`left: ${p.left}%; width: ${p.size}px; height: ${p.size}px; background: ${p.color}; animation-delay: ${p.delay}s; --r: ${p.rotate}deg;`}
+                    ></span>
+                  {/each}
+                </div>
+              {/if}
+
+              <h2>{deck.length === 0 ? 'All caught up' : 'Session complete'}</h2>
+              <p>
+                {#if deck.length === 0}
+                  No new or due cards are available right now. You can check again or come back later.
+                {:else}
+                  You studied {sessionNewCount} new words and reviewed {sessionReviewCount} due words.
+                {/if}
+              </p>
+              <div class="session-actions">
+                <button type="button" class="review-again" on:click={startFreshSession}>
+                  {deck.length === 0 ? 'Check again' : 'Start new session'}
+                </button>
+                {#if sessionItems.length > 0}
+                  <button type="button" class="review-again secondary" on:click={reviewCompletedSession}>Review again</button>
+                {/if}
+              </div>
+            </div>
+          {/if}
         {:else}
           <Card word={deck[currentIndex]} mode={sessionItems[currentIndex]?.mode || 'ar2en'} />
         {/if}
@@ -531,16 +605,6 @@
   .progress-fill {
     background: linear-gradient(90deg, var(--primary), var(--primary-dim));
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
-  }
-
-  .progress-meta {
-    margin-top: 0.55rem;
-    font-family: 'Work Sans', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
   }
 
   .session-quota {
@@ -827,6 +891,189 @@
     .rating-icon svg {
       width: 16px;
       height: 16px;
+    }
+  }
+
+  /* confetti and CTA styles for mastered completion */
+  .session-complete { position: relative; overflow: visible; }
+  .confetti-container { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 12; }
+  .confetti-piece {
+    position: absolute;
+    top: -6vh;
+    border-radius: 2px;
+    opacity: 0;
+    transform-origin: center;
+    animation: confetti-fall 5s cubic-bezier(0.16, 0.9, 0.32, 1) forwards;
+  }
+
+  /* Fullscreen mastered overlay */
+  .mastered-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: grid;
+    place-items: center;
+    padding: clamp(1rem, 4vw, 2.5rem);
+    background: radial-gradient(circle at 50% 18%, rgba(214, 40, 40, 0.08), rgba(248, 248, 246, 0.94));
+    backdrop-filter: blur(5px) saturate(120%);
+    pointer-events: auto;
+  }
+
+  .overlay-confetti { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 1210; }
+
+  .confetti-piece.overlay {
+    position: absolute;
+    top: -10vh;
+    border-radius: 2px;
+    opacity: 0;
+    transform-origin: center;
+    animation: confetti-fall-full var(--d, 5s) cubic-bezier(0.16, 0.9, 0.32, 1) forwards;
+  }
+
+  @keyframes confetti-fall {
+    0% { transform: translateY(-6px) rotate(var(--r)); opacity: 1; }
+    60% { opacity: 1; }
+    100% { transform: translateY(260px) rotate(calc(var(--r) + 720deg)); opacity: 0; }
+  }
+
+  @keyframes confetti-fall-full {
+    0% { transform: translateY(-20vh) rotate(var(--r)) translateX(0); opacity: 1; }
+    40% { transform: translateY(28vh) rotate(calc(var(--r) + 240deg)) translateX(8vw); opacity: 1; }
+    75% { transform: translateY(70vh) rotate(calc(var(--r) + 540deg)) translateX(-6vw); opacity: 1; }
+    100% { transform: translateY(120vh) rotate(calc(var(--r) + 720deg)) translateX(4vw); opacity: 0; }
+  }
+
+  .overlay-content {
+    position: relative;
+    z-index: 1220;
+    width: min(100%, 78rem);
+    max-width: calc(100vw - 1rem);
+    min-height: min(74vh, 52rem);
+    padding: clamp(1.5rem, 6vw, 4.25rem);
+    border-radius: 28px;
+    text-align: center;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.9rem;
+    background: var(--card);
+    box-shadow: 0 40px 120px rgba(17, 17, 17, 0.14);
+    border: 1px solid var(--border);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .overlay-content h1 {
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.5rem, 10vw, 7rem);
+    line-height: 0.94;
+    color: var(--text);
+    letter-spacing: -0.07em;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    max-inline-size: 100%;
+  }
+
+  .overlay-mark {
+    width: clamp(4.8rem, 9vw, 7rem);
+    height: clamp(4.8rem, 9vw, 7rem);
+    margin: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: var(--primary-container);
+    color: var(--primary);
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+    font-weight: 900;
+    box-shadow: inset 0 0 0 1px rgba(214, 40, 40, 0.08);
+  }
+
+  .overlay-content p {
+    max-width: 52rem;
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: clamp(1.05rem, 2.8vw, 1.55rem);
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  .overlay-actions { display:flex; gap:0.9rem; justify-content:center; flex-wrap:wrap; margin-top:0.75rem; }
+
+  .overlay-actions .btn { min-height: 58px; padding: 0.95rem 1.35rem; border-radius: 999px; font-weight:900; }
+
+  .overlay-actions .btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+    color: var(--on-primary);
+    border: 0;
+    box-shadow: 0 14px 30px rgba(214, 40, 40, 0.16);
+  }
+
+  .overlay-actions .btn.secondary {
+    background: var(--card);
+    color: var(--primary);
+    border: 0.5px solid var(--border);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .overlay-actions .btn.primary:hover,
+  .overlay-actions .btn.secondary:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 720px) {
+    .mastered-overlay {
+      padding: 0.5rem;
+    }
+
+    .overlay-content {
+      width: min(100%, 42rem);
+      min-height: auto;
+      max-height: calc(100dvh - 1rem);
+      overflow: auto;
+      padding: 1.2rem 1rem 1.3rem;
+      border-radius: 22px;
+      gap: 0.75rem;
+      align-content: center;
+    }
+
+    .overlay-content h1 {
+      font-size: clamp(2rem, 11vw, 3.4rem);
+      line-height: 0.96;
+    }
+
+    .overlay-mark {
+      width: 4.15rem;
+      height: 4.15rem;
+      font-size: 1.4rem;
+      border-radius: 14px;
+    }
+
+    .overlay-content p {
+      font-size: clamp(0.95rem, 4.2vw, 1.1rem);
+      line-height: 1.45;
+      max-width: 100%;
+    }
+
+    .overlay-actions {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.65rem;
+      margin-top: 0.35rem;
+    }
+
+    .overlay-actions .btn {
+      width: 100%;
+      min-height: 50px;
+      padding: 0.85rem 1rem;
+    }
+
+    .confetti-piece.overlay {
+      width: 5px !important;
+      height: 5px !important;
     }
   }
 </style>

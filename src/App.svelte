@@ -13,6 +13,7 @@
   } from './core/pocketbase-auth';
 
   let currentPage: 'study' | 'settings' = 'study';
+  let settingsInitialTab: 'stats' | 'account' | 'voice' | 'words' = 'stats';
   let appState: 'booting' | 'login' | 'unavailable' | 'ready' = 'booting';
   let authBusy = false;
   let authError = '';
@@ -107,7 +108,7 @@
     </section>
   {:else if currentPage === 'study'}
     <section class="screen active study-screen">
-      <StudySession authSession={session} on:openSettings={() => (currentPage = 'settings')} />
+      <StudySession authSession={session} on:openSettings={(e) => { currentPage = 'settings'; settingsInitialTab = (e?.detail?.tab) ?? 'stats'; }} />
     </section>
   {:else}
     <section class="screen active settings-screen">
@@ -118,6 +119,7 @@
         on:close={() => (currentPage = 'study')}
         on:logout={handleSignOut}
         on:sessionchange={handleSessionChange}
+        initialTab={settingsInitialTab}
       />
     </section>
   {/if}

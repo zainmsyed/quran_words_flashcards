@@ -8,13 +8,14 @@
   export let states: Record<string, CardState> = {};
   export let appStats: AppStats = { studied: 0, easy: 0, streak: 0, lastStudyDate: undefined };
 
-  const MASTERED_INTERVAL = 3;
+  import { MASTERED_EASY_COUNT } from '../core/progress-summary';
 
   $: now = Date.now();
   $: entries = words.map((word) => {
     const state = states[word.id];
+    const easyCount = state?.easyCount ?? 0;
+    const mastered = easyCount >= MASTERED_EASY_COUNT;
     const interval = state?.interval ?? 0;
-    const mastered = interval >= MASTERED_INTERVAL;
     const due = Boolean(state && interval > 0 && new Date(state.dueDate).getTime() <= now);
     return { word, state, interval, mastered, due };
   });

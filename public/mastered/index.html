@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mastered preview — Quranic Flashcards</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root{
+      --surface:#F8F8F6;
+      --card:#FFFFFF;
+      --border:#E6E6E6;
+      --primary:#D62828;
+      --primary-dim:#9E1A1A;
+      --primary-container:#FFEDEC;
+      --on-primary:#FFFFFF;
+      --accent:#FFD166;
+      --text:#111111;
+      --text-secondary:#5a6062;
+      --text-tertiary:#8b9294;
+      --success-bg:#1E7A4A;
+      --success-text:#FFFFFF;
+      --shadow-primary: 0 6px 16px rgba(17, 17, 17, 0.06);
+    }
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;background:var(--surface);color:var(--text);overflow-x:hidden;overflow-y:auto}
+    .overlay{position:fixed;inset:0;display:grid;place-items:center;padding:clamp(1rem,4vw,3rem);background:radial-gradient(circle at 50% 18%, rgba(214,40,40,0.08), rgba(248,248,246,0.94));overflow:hidden}
+    .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+    .piece{position:absolute;top:-12vh;border-radius:2px;opacity:0;animation:fall var(--d,5s) linear forwards;will-change:transform,opacity}
+    @keyframes fall{0%{transform:translateY(-10vh) rotate(var(--r));opacity:1}60%{opacity:1}100%{transform:translateY(120vh) rotate(calc(var(--r) + 720deg));opacity:0}}
+    .card{position:relative;z-index:1;width:min(100%,72rem);padding:clamp(1.5rem,6vw,4rem);border-radius:28px;background:var(--card);box-shadow:0 40px 100px rgba(17,17,17,0.14);border:1px solid var(--border);text-align:center;overflow-wrap:anywhere;word-break:break-word}
+    .mark{width:clamp(4rem,8vw,6rem);height:clamp(4rem,8vw,6rem);margin:0 auto 1rem;display:grid;place-items:center;border-radius:18px;background:var(--primary-container);color:var(--primary);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;box-shadow:inset 0 0 0 1px rgba(214,40,40,0.08)}
+    h1{margin:0;font-family:'Space Grotesk',sans-serif;font-size:clamp(2.4rem,8vw,6.5rem);line-height:.95;letter-spacing:-0.05em;color:var(--text);overflow-wrap:anywhere;word-break:break-word;hyphens:auto}
+    p{max-width:48rem;margin:1rem auto 0;color:var(--text-secondary);font-size:clamp(1rem,2.3vw,1.4rem);line-height:1.65;overflow-wrap:anywhere}
+    .actions{display:flex;justify-content:center;gap:.9rem;flex-wrap:wrap;margin-top:1.5rem}
+    .btn{appearance:none;border:0;border-radius:999px;padding:1rem 1.35rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:54px}
+    .btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary-dim));color:var(--on-primary);box-shadow:0 14px 30px rgba(214,40,40,.16)}
+    .btn.secondary{background:var(--card);color:var(--primary);border:1px solid var(--border);box-shadow:var(--shadow-primary)}
+    .hint{display:block;margin-top:1rem;color:var(--text-tertiary);font-size:.92rem}
+
+    @media (max-width: 720px){
+      .overlay{padding:.5rem}
+      .card{width:min(100%,42rem);min-height:auto;max-height:calc(100dvh - 1rem);overflow:auto;padding:1.2rem 1rem 1.3rem;border-radius:22px;display:grid;align-content:center;justify-items:center}
+      h1{font-size:clamp(2rem,11vw,3.4rem);line-height:.96}
+      p{font-size:clamp(.95rem,4.2vw,1.1rem);line-height:1.45;max-width:100%}
+      .mark{width:4.15rem;height:4.15rem;font-size:1.4rem;border-radius:14px}
+      .actions{flex-direction:column;width:100%;align-items:stretch;gap:.65rem}
+      .btn{width:100%;min-height:50px;padding:.9rem 1rem}
+      .piece{width:5px !important;height:5px !important}
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" role="img" aria-label="Congratulations screen with confetti">
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+    <div class="card">
+      <div class="mark">✓</div>
+      <h1>Congratulations!</h1>
+      <p>You’ve mastered the deck. You marked every word <strong>Easy</strong> at least 3 times. Great work — keep going or review the words again.</p>
+      <div class="actions">
+        <a class="btn primary" href="/">Review words</a>
+        <a class="btn secondary" href="/">Start new session</a>
+      </div>
+      <small class="hint">This is a full-screen preview of the mastered state.</small>
+    </div>
+  </div>
+  <script>
+    (function(){
+      const root = document.getElementById('confetti');
+      if(!root) return;
+      const colors = ['#D62828','#9E1A1A','#FFD166','#1E7A4A','#FFEDEC','#8B9294'];
+      for(let i=0;i<120;i++){
+        const el = document.createElement('span');
+        const left = Math.round(Math.random()*100);
+        const size = Math.round(6 + Math.random()*12);
+        const delay = (Math.random()*1.2).toFixed(2);
+        const duration = (4 + Math.random()*4).toFixed(2);
+        const rotate = Math.round(Math.random()*360);
+        el.className = 'piece';
+        el.style.left = left + '%';
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.background = colors[Math.floor(Math.random()*colors.length)];
+        el.style.setProperty('--r', rotate + 'deg');
+        el.style.setProperty('--d', duration + 's');
+        el.style.animationDelay = delay + 's';
+        root.appendChild(el);
+      }
+    })();
+  </script>
+</body>
+</html>

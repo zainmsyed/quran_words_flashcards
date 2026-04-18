@@ -5,14 +5,15 @@
   export let words: Word[] = [];
   export let states: Record<string, CardState> = {};
 
-  const MASTERED_INTERVAL = 3;
+  import { MASTERED_EASY_COUNT } from '../core/progress-summary';
 
   $: entries = words.map((word) => {
     const state = states[word.id];
-    const mastered = Boolean(state && state.interval >= MASTERED_INTERVAL);
-    const learning = Boolean(state && state.interval > 0 && state.interval < MASTERED_INTERVAL);
-    const seen = Boolean(state && state.reviewCount > 0);
-    const status = mastered ? 'mastered' : learning ? 'learning' : seen ? 'learning' : 'new';
+    const easyCount = state?.easyCount ?? 0;
+    const mastered = easyCount >= MASTERED_EASY_COUNT;
+    const seen = Boolean(state && (state.reviewCount ?? 0) > 0);
+    const learning = seen && !mastered;
+    const status = mastered ? 'mastered' : learning ? 'learning' : 'new';
     return { word, status };
   });
 

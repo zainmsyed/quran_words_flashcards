@@ -762,6 +762,10 @@ function branchLabel(cwd: string): string {
   return _useJJ ? "jj" : "workspace";
 }
 
+function repoNameLabel(cwd: string): string {
+  return path.basename(cwd);
+}
+
 // ── Footer segments ────────────────────────────────────────────────────
 
 function separatorDot(): string {
@@ -911,7 +915,7 @@ function sessionFooterLine(
   const cwd = snapshot.cwd;
   if (!isVazirInitialized(cwd)) {
     const left = [
-      paint("◈ vazir", "accent", true),
+      paint(`◈ ${repoNameLabel(cwd)}`, "accent", true),
       paint("setup required", "warning"),
       paint("run /vazir-init", "text"),
     ].join(separatorDot());
@@ -921,24 +925,20 @@ function sessionFooterLine(
   const summary = storyProgressSummary(cwd);
   const storyLabel = summary?.slug ?? "no active story";
   const branch = clipInline(_hasGitRepo ? (footerData.getGitBranch() ?? branchLabel(cwd)) : branchLabel(cwd), 24);
+  const branchWithStatus = `${paint(branch, "branch")}${separatorDot()}${footerGitStatusSegment()}`;
   const modelLabel = clipInline(shortModelLabel(snapshot), 30);
   const thinkingLevel = latestThinkingLevel(snapshot);
   const leftSegments = activeToolCalls > 0 && currentWorkingMessage
     ? [
-        paint("◈ vazir", "accent", true),
-        paint(storyLabel, "text"),
-        paint(branch, "branch"),
-        footerIssueSegment(summary),
+        paint(`◈ ${repoNameLabel(cwd)}`, "accent", true),
+        branchWithStatus,
         footerTokenOrWorkSegment(snapshot),
         footerContextSegment(snapshot),
         footerSpendSegment(snapshot),
       ].filter(Boolean)
     : [
-        paint("◈ vazir", "accent", true),
-        paint(storyLabel, "text"),
-        paint(branch, "branch"),
-        footerIssueSegment(summary),
-        footerGitStatusSegment(),
+        paint(`◈ ${repoNameLabel(cwd)}`, "accent", true),
+        branchWithStatus,
         `${paint(modelLabel, "dim")} ${paint(`(${thinkingLevel})`, "dim")}`,
         footerTokenOrWorkSegment(snapshot),
         footerContextSegment(snapshot),

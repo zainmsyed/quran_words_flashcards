@@ -92,6 +92,20 @@ test('summarizeStudyProgress counts seen words, reviews, mastery, and due cards'
   assert.equal(summary.dueCount, 2);
 });
 
+test('all words mastered are detected when easyCount >= MASTERED_EASY_COUNT', async () => {
+  const { summarizeStudyProgress, MASTERED_EASY_COUNT } = await importTs('src/core/progress-summary.ts');
+
+  const words = [makeWord('mw1'), makeWord('mw2'), makeWord('mw3')];
+  const states = {
+    mw1: makeCardState('mw1', { reviewCount: 3, easyCount: MASTERED_EASY_COUNT }),
+    mw2: makeCardState('mw2', { reviewCount: 2, easyCount: MASTERED_EASY_COUNT + 1 }),
+    mw3: makeCardState('mw3', { reviewCount: 1, easyCount: MASTERED_EASY_COUNT }),
+  };
+
+  const summary = summarizeStudyProgress(words, states, new Date('2026-04-09T12:00:00.000Z'));
+  assert.equal(summary.masteredCount, 3);
+});
+
 test('applyRatingToCard advances interval and counters', async () => {
   const { initialCardState, applyRatingToCard } = await importTs('src/core/srs.ts');
 

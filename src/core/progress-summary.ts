@@ -9,7 +9,7 @@ export type StudyProgressSummary = {
   dueCount: number;
 };
 
-const MASTERED_INTERVAL = 3;
+export const MASTERED_EASY_COUNT = 3;
 
 export function summarizeStudyProgress(
   words: Word[],
@@ -29,13 +29,16 @@ export function summarizeStudyProgress(
 
     const interval = state.interval ?? 0;
     const reviewTotal = state.reviewCount ?? 0;
+    const easyTotal = state.easyCount ?? 0;
 
     if (reviewTotal > 0) seenWords += 1;
-    if (interval >= MASTERED_INTERVAL) masteredCount += 1;
+    // A word is considered mastered when it has been marked 'easy' at least
+    // MASTERED_EASY_COUNT times (explicit user mastery rather than interval).
+    if (easyTotal >= MASTERED_EASY_COUNT) masteredCount += 1;
     if (interval > 0 && new Date(state.dueDate).getTime() <= nowMs) dueCount += 1;
 
     reviewCount += reviewTotal;
-    easyCount += state.easyCount ?? 0;
+    easyCount += easyTotal;
   }
 
   return {

@@ -25,7 +25,10 @@
     sessionchange: AuthSession;
   }>();
 
-  let tab: 'stats' | 'account' | 'voice' | 'words' = 'stats';
+  export let initialTab: 'stats' | 'account' | 'voice' | 'words' = 'stats';
+  let tab: 'stats' | 'account' | 'voice' | 'words' = initialTab;
+
+  $: if (initialTab) tab = initialTab;
   let words: Word[] = [];
   let states: Record<string, CardState> = {};
   let appStats: AppStats = { studied: 0, easy: 0, streak: 0, lastStudyDate: undefined };
