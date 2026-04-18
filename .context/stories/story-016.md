@@ -1,9 +1,9 @@
 # Story 016: Study session quota engine — cap sessions at 15 cards with 10 new / 5 review mix
 
-**Status:** in-progress  
+**Status:** complete  
 **Created:** 2026-04-16  
 **Last accessed:** 2026-04-18  
-**Completed:** —
+**Completed:** 2026-04-18
 Update the study-session planner so each session contains at most 15 cards total, targets 10 new words plus up to 5 due reviews when a full new-card set is available, uses all available new words when fewer than 10 exist, fills the remaining slots with due reviews, and always chooses the oldest due reviews first.
 
 ## Verification
