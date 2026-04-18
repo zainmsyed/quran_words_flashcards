@@ -7,10 +7,11 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import { bootstrapPocketBaseSuperuser, ensurePocketBaseBinary, runPocketBaseMigrations } from './pocketbase-bootstrap.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const pocketBaseDataDir = path.resolve(repoRoot, 'pb_data');
-const pocketBaseHttp = '127.0.0.1:8090';
+const pocketBaseDataDir = path.resolve(repoRoot, process.env.POCKETBASE_DATA_DIR?.trim() || 'pb_data');
+const pocketBaseHttp = (process.env.POCKETBASE_BIND?.trim() || '127.0.0.1:8090');
+const pocketBaseHealthPort = (pocketBaseHttp.includes(':') ? pocketBaseHttp.split(':').pop() : pocketBaseHttp) || '8090';
 const viteCli = path.resolve(repoRoot, 'node_modules/vite/bin/vite.js');
-const vitePort = '5180';
+const vitePort = process.env.APP_PORT?.trim() || '5180';
 
 let pocketBaseProc = null;
 let viteProc = null;
@@ -186,7 +187,7 @@ async function main() {
     env: devEnv,
   });
 
-  console.log('[dev] Starting PocketBase on http://127.0.0.1:8090…');
+  console.log(`[dev] Starting PocketBase on http://${pocketBaseHttp}…`);
   pocketBaseProc = spawn(
     pocketBaseBin,
     ['serve', `--http=${pocketBaseHttp}`, `--dir=${pocketBaseDataDir}`],
@@ -206,8 +207,8 @@ async function main() {
     }
   });
 
-  await waitForReady(`http://${pocketBaseHttp}/api/health`);
-  console.log('[dev] PocketBase is ready. Starting Vite on http://127.0.0.1:5180…');
+  await waitForReady(`http://127.0.0.1:${pocketBaseHealthPort}/api/health`);
+  console.log(`[dev] PocketBase is ready. Starting Vite on http://127.0.0.1:${vitePort}…`);
 
   viteProc = spawn(process.execPath, [viteCli, '--port', vitePort], {
     cwd: repoRoot,

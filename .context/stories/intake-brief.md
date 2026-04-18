@@ -1,9 +1,9 @@
 # Intake Brief
 
-**Last updated:** 2026-04-16
+**Last updated:** 2026-04-18
 
 ## Planning brief
-i want to update the study flow for the reinforced learning so that each session has at most 15 cards total. when 10 or more new words are available, the session should target 10 brand new words plus up to 5 due reviews. if there are 5 to 9 new words, use all available new words and fill the remaining slots with reviews. if there are fewer than 5 new words, use all of them and fill the rest with reviews. if there are no due reviews, cap the session at 10 new words. due reviews should be chosen oldest first, and the final order can be randomized as long as those rules are respected.
+Secure the Quranic Flashcards app for an invite-only deployment that is primarily managed through Coolify on a generic VPS (for example Hetzner or a similar provider) where the app and PocketBase database run on the same host. Prioritize server hardening and application/code hardening so logins, user data, and authenticated sessions stay protected, and include basic automated security checks after the baseline hardening work. Keep operational recovery work such as backup/restore drills for a later phase.
 
 ## Source files
 - .context/intake/dictionaries/quran_300_words.csv (11519 bytes)

@@ -1,0 +1,12 @@
+.git
+node_modules
+dist
+pb_data
+.context
+scripts/.dev
+scripts/.dev-previews
+.vscode
+.env
+.env.*
+!.env.example
+*.log

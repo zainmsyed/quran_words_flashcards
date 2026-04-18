@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        VITE_POCKETBASE_URL: ${VITE_POCKETBASE_URL:-}
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    restart: unless-stopped
+    expose:
+      - "80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/healthz >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  pocketbase:
+    build:
+      context: .
+      target: pocketbase
+      args:
+        PB_VERSION: ${PB_VERSION:-latest}
+    environment:
+      PB_ADMIN_EMAIL: ${PB_ADMIN_EMAIL}
+      PB_ADMIN_PASSWORD: ${PB_ADMIN_PASSWORD}
+      POCKETBASE_BIND: ${POCKETBASE_BIND:-0.0.0.0:8090}
+      POCKETBASE_DATA_DIR: ${POCKETBASE_DATA_DIR:-/pb/data}
+    restart: unless-stopped
+    expose:
+      - "8090"
+    volumes:
+      - pocketbase-data:${POCKETBASE_DATA_DIR:-/pb/data}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8090/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pocketbase-data:

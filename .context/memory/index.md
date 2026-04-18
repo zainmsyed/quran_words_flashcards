@@ -56,3 +56,5 @@ public/audio/sample_preview.html — Full 300-word audio QA preview page with pe
 public/audio/manifest.json — Bundled audio coverage manifest with file metadata for the 300-word deck
 scripts/generate_audio_gcp.py — Google Cloud Text-to-Speech generator for bundled Arabic pronunciation files
 scripts/check_audio_coverage.py — Seed-deck audio coverage checker that validates manifest/file presence
+docker-compose.yml — (undescribed)
+scripts/coolify-compose-smoke.mjs — (undescribed)
