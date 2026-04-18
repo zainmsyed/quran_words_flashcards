@@ -116,7 +116,7 @@
         authSession={session}
         userEmail={session?.user.email || null}
         signOutBusy={authBusy}
-        on:close={() => (currentPage = 'study')}
+        on:close={() => { currentPage = 'study'; settingsInitialTab = 'stats'; }}
         on:logout={handleSignOut}
         on:sessionchange={handleSessionChange}
         initialTab={settingsInitialTab}

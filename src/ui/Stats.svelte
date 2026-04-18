@@ -2,21 +2,18 @@
   import type { Word } from '../core/wordlist';
   import type { CardState } from '../core/srs';
   import type { AppStats } from '../core/app-stats';
-  import { summarizeStudyProgress } from '../core/progress-summary';
+  import { isDueCardState, isMasteredCardState, summarizeStudyProgress } from '../core/progress-summary';
 
   export let words: Word[] = [];
   export let states: Record<string, CardState> = {};
   export let appStats: AppStats = { studied: 0, easy: 0, streak: 0, lastStudyDate: undefined };
 
-  import { MASTERED_EASY_COUNT } from '../core/progress-summary';
-
   $: now = Date.now();
   $: entries = words.map((word) => {
     const state = states[word.id];
-    const easyCount = state?.easyCount ?? 0;
-    const mastered = easyCount >= MASTERED_EASY_COUNT;
     const interval = state?.interval ?? 0;
-    const due = Boolean(state && interval > 0 && new Date(state.dueDate).getTime() <= now);
+    const mastered = isMasteredCardState(state);
+    const due = isDueCardState(state, now);
     return { word, state, interval, mastered, due };
   });
   $: seenEntries = entries.filter((entry) => (entry.state?.reviewCount ?? 0) > 0);

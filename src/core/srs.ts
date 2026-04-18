@@ -30,13 +30,11 @@ export function initialCardState(id: string): CardState {
 
 export function normalizeCardState(state: Partial<CardState> & { id: string }): CardState {
   const base = initialCardState(state.id);
+  // Spread base defaults first, then state overrides. lastRating and lastReviewedAt
+  // are explicitly set last to ensure undefined is preserved (not replaced by base defaults).
   return {
     ...base,
     ...state,
-    reviewCount: state.reviewCount ?? base.reviewCount,
-    hardCount: state.hardCount ?? base.hardCount,
-    gotCount: state.gotCount ?? base.gotCount,
-    easyCount: state.easyCount ?? base.easyCount,
     lastRating: state.lastRating,
     lastReviewedAt: state.lastReviewedAt,
   };

@@ -58,6 +58,29 @@ function makeCardState(id, overrides = {}) {
   };
 }
 
+function makeMixedSessionDeck({ newCount, dueCount }) {
+  const words = [];
+  const states = {};
+
+  for (let i = 1; i <= newCount; i += 1) {
+    const id = `n${i}`;
+    words.push(makeWord(id));
+    states[id] = makeCardState(id);
+  }
+
+  for (let i = 1; i <= dueCount; i += 1) {
+    const id = `r${i}`;
+    words.push(makeWord(id));
+    states[id] = makeCardState(id, {
+      interval: 1,
+      dueDate: new Date(Date.UTC(2026, 0, i, 9, 0, 0)).toISOString(),
+      reviewCount: 1,
+    });
+  }
+
+  return { words, states };
+}
+
 test('summarizeStudyProgress counts seen words, reviews, mastery, and due cards', async () => {
   const { summarizeStudyProgress } = await importTs('src/core/progress-summary.ts');
 
@@ -106,6 +129,30 @@ test('all words mastered are detected when easyCount >= MASTERED_EASY_COUNT', as
   assert.equal(summary.masteredCount, 3);
 });
 
+
+test('shared study-card helpers keep mastered overdue cards out of due lists', async () => {
+  const { MASTERED_EASY_COUNT, isDueCardState, isMasteredCardState } = await importTs('src/core/progress-summary.ts');
+
+  const now = new Date('2026-04-09T12:00:00.000Z');
+  const masteredOverdue = makeCardState('m1', {
+    interval: 2,
+    dueDate: new Date('2026-04-08T09:00:00.000Z').toISOString(),
+    easyCount: MASTERED_EASY_COUNT,
+    reviewCount: 5,
+  });
+  const learningOverdue = makeCardState('l1', {
+    interval: 2,
+    dueDate: new Date('2026-04-08T09:00:00.000Z').toISOString(),
+    easyCount: MASTERED_EASY_COUNT - 1,
+    reviewCount: 5,
+  });
+
+  assert.equal(isMasteredCardState(masteredOverdue), true);
+  assert.equal(isDueCardState(masteredOverdue, now), false);
+  assert.equal(isMasteredCardState(learningOverdue), false);
+  assert.equal(isDueCardState(learningOverdue, now), true);
+});
+
 test('applyRatingToCard advances interval and counters', async () => {
   const { initialCardState, applyRatingToCard } = await importTs('src/core/srs.ts');
 
@@ -145,7 +192,7 @@ test('recordStudy tracks streak rollover and easy counts', async () => {
 });
 
 test('buildSessionPlan randomizes card mode and preserves saved session mode', async () => {
-  const { buildSessionPlan, retrySessionItem, isSameLocalDay } = await importTs('src/core/session.ts');
+  const { buildSessionPlan, isSameLocalDay } = await importTs('src/core/session.ts');
 
   const words = [makeWord('w1'), makeWord('w2'), makeWord('w3'), makeWord('w4')];
   const states = {
@@ -209,9 +256,52 @@ test('buildSessionPlan randomizes card mode and preserves saved session mode', a
   assert.equal(savedPlan.reviewCount, 1);
   assert.deepEqual(savedPlan.queue.map((item) => item.id), ['w2', 'w3']);
   assert.deepEqual(savedPlan.queue.map((item) => item.mode), ['en2ar', 'ar2en']);
-  assert.deepEqual(retrySessionItem({ id: 'w2', mode: 'en2ar' }), { id: 'w2', mode: 'en2ar' });
   assert.equal(isSameLocalDay(new Date(2026, 3, 9, 9, 0, 0).toISOString(), new Date(2026, 3, 9, 18, 0, 0)), true);
   assert.equal(isSameLocalDay(new Date(2026, 3, 10, 9, 0, 0).toISOString(), new Date(2026, 3, 9, 18, 0, 0)), false);
+});
+
+
+test('buildSessionPlan fills remaining session capacity with the oldest due reviews across quota bands', async () => {
+  const { buildSessionPlan } = await importTs('src/core/session.ts');
+
+  const now = new Date('2026-04-09T12:00:00.000Z');
+  const assertQuota = ({ newCount, dueCount, expectedNew, expectedReview }) => {
+    const { words, states } = makeMixedSessionDeck({ newCount, dueCount });
+    const plan = buildSessionPlan(words, states, undefined, {
+      limits: { newPerSession: 10, reviewPerSession: 5 },
+      now,
+      random: () => 0.1,
+    });
+
+    assert.equal(plan.newCount, expectedNew, `expected ${expectedNew} new cards when ${newCount} new / ${dueCount} due exist`);
+    assert.equal(plan.reviewCount, expectedReview, `expected ${expectedReview} review cards when ${newCount} new / ${dueCount} due exist`);
+    assert.equal(plan.queue.length, expectedNew + expectedReview, 'queue length should match selected totals');
+    assert.ok(plan.queue.length <= 15, 'queue should never exceed the 15-card session cap');
+
+    const ids = plan.queue.map((item) => item.id);
+    for (let i = 1; i <= expectedReview; i += 1) {
+      assert.ok(ids.includes(`r${i}`), `expected oldest due review r${i} to be selected`);
+    }
+    if (dueCount > expectedReview) {
+      assert.ok(!ids.includes(`r${expectedReview + 1}`), 'newer due reviews should be excluded once the quota is full');
+    }
+  };
+
+  assertQuota({ newCount: 0, dueCount: 20, expectedNew: 0, expectedReview: 15 });
+  assertQuota({ newCount: 4, dueCount: 20, expectedNew: 4, expectedReview: 11 });
+  assertQuota({ newCount: 7, dueCount: 20, expectedNew: 7, expectedReview: 8 });
+  assertQuota({ newCount: 10, dueCount: 20, expectedNew: 10, expectedReview: 5 });
+  assertQuota({ newCount: 12, dueCount: 20, expectedNew: 10, expectedReview: 5 });
+
+  const noReviewDeck = makeMixedSessionDeck({ newCount: 12, dueCount: 0 });
+  const noReviewPlan = buildSessionPlan(noReviewDeck.words, noReviewDeck.states, undefined, {
+    limits: { newPerSession: 10, reviewPerSession: 5 },
+    now,
+    random: () => 0.1,
+  });
+  assert.equal(noReviewPlan.newCount, 10);
+  assert.equal(noReviewPlan.reviewCount, 0);
+  assert.equal(noReviewPlan.queue.length, 10, 'sessions without due reviews should cap at 10 new cards');
 });
 
 test('pocketbase auth helpers normalize urls and parse sessions safely', async () => {
@@ -340,6 +430,71 @@ test('tts manifest loader populates bundled audio set', async () => {
 
     // after manifest load the new ids should be present
     assert.equal(hasBundledAudioForWordId('w200'), true);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (!hadWindow) {
+      delete globalThis.window;
+    } else {
+      Object.defineProperty(globalThis, 'window', {
+        value: originalWindow,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+});
+
+
+test('tts manifest loader retries after a failed response', async () => {
+  const originalWindow = globalThis.window;
+  const originalFetch = globalThis.fetch;
+  const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, 'window');
+
+  Object.defineProperty(globalThis, 'window', {
+    value: {},
+    configurable: true,
+    writable: true,
+  });
+
+  let fetchCalls = 0;
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (!url.endsWith('/audio/manifest.json')) {
+      throw new Error(`Unexpected fetch: ${url}`);
+    }
+
+    fetchCalls += 1;
+    if (fetchCalls === 1) {
+      return {
+        ok: false,
+        status: 503,
+        json: async () => ({}),
+      };
+    }
+
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        entries: [
+          { id: 'w200', filename: 'w200.mp3', bytes: 1234, exists: true },
+        ],
+      }),
+    };
+  };
+
+  try {
+    const { hasBundledAudioForWordId, loadBundledAudioManifest } = await importTs('src/core/tts-adapter.ts');
+
+    assert.equal(hasBundledAudioForWordId('w200'), false);
+
+    await loadBundledAudioManifest();
+    assert.equal(fetchCalls, 1, 'first manifest request should be attempted once');
+    assert.equal(hasBundledAudioForWordId('w200'), false, 'failed load should keep defaults');
+
+    await loadBundledAudioManifest();
+    assert.equal(fetchCalls, 2, 'a later call should retry the manifest fetch');
+    assert.equal(hasBundledAudioForWordId('w200'), true, 'successful retry should update bundled audio coverage');
   } finally {
     globalThis.fetch = originalFetch;
     if (!hadWindow) {
@@ -561,6 +716,88 @@ test('pocketbase bootstrap helpers resolve binary paths and asset names', async 
   assert.equal(linuxAsset.tag, 'v1.2.3');
   assert.equal(linuxAsset.assetName, 'pocketbase_1.2.3_linux_amd64.zip');
   assert.equal(linuxAsset.binaryName, 'pocketbase');
+});
+
+test('mastered words are excluded from dueCount and review queue', async () => {
+  const { summarizeStudyProgress, MASTERED_EASY_COUNT } = await importTs('src/core/progress-summary.ts');
+  const { buildSessionPlan } = await importTs('src/core/session.ts');
+
+  const now = new Date('2026-04-09T12:00:00.000Z');
+  const pastDate = new Date('2026-04-08T09:00:00.000Z').toISOString(); // overdue
+
+  // w1: mastered AND overdue — should NOT count as due, should NOT appear in review queue
+  // w2: not mastered AND overdue — SHOULD count as due and appear in review queue
+  const words = [makeWord('w1'), makeWord('w2')];
+  const states = {
+    w1: makeCardState('w1', { interval: 2, dueDate: pastDate, reviewCount: 5, easyCount: MASTERED_EASY_COUNT }),
+    w2: makeCardState('w2', { interval: 1, dueDate: pastDate, reviewCount: 3, easyCount: 1 }),
+  };
+
+  // summarizeStudyProgress should exclude w1 from dueCount
+  const summary = summarizeStudyProgress(words, states, now);
+  assert.equal(summary.masteredCount, 1, 'w1 should be mastered');
+  assert.equal(summary.dueCount, 1, 'only w2 should be due — mastered w1 excluded');
+
+  // buildSessionPlan should not include mastered w1 in the review queue
+  const plan = buildSessionPlan(words, states, undefined, {
+    limits: { reviewPerSession: 5, newPerSession: 5 },
+    now,
+    random: () => 0.1,
+  });
+  const reviewIds = plan.queue.map((item) => item.id);
+  assert.ok(!reviewIds.includes('w1'), 'mastered w1 should not appear in review queue');
+  assert.ok(reviewIds.includes('w2'), 'non-mastered due w2 should appear in review queue');
+  assert.equal(plan.reviewCount, 1, 'review count should be 1 (only w2)');
+});
+
+
+test('buildSessionPlan returns an empty queue when the whole deck is mastered', async () => {
+  const { MASTERED_EASY_COUNT } = await importTs('src/core/progress-summary.ts');
+  const { buildSessionPlan } = await importTs('src/core/session.ts');
+
+  const words = [makeWord('w1'), makeWord('w2'), makeWord('w3')];
+  const states = {
+    w1: makeCardState('w1', { interval: 3, dueDate: new Date('2026-04-08T09:00:00.000Z').toISOString(), reviewCount: 6, easyCount: MASTERED_EASY_COUNT }),
+    w2: makeCardState('w2', { interval: 4, dueDate: new Date('2026-04-08T09:00:00.000Z').toISOString(), reviewCount: 6, easyCount: MASTERED_EASY_COUNT + 1 }),
+    w3: makeCardState('w3', { interval: 5, dueDate: new Date('2026-04-08T09:00:00.000Z').toISOString(), reviewCount: 6, easyCount: MASTERED_EASY_COUNT }),
+  };
+
+  const plan = buildSessionPlan(words, states, undefined, {
+    limits: { reviewPerSession: 5, newPerSession: 10 },
+    now: new Date('2026-04-09T12:00:00.000Z'),
+    random: () => 0.1,
+  });
+
+  assert.equal(plan.queue.length, 0);
+  assert.equal(plan.newCount, 0);
+  assert.equal(plan.reviewCount, 0);
+});
+
+test('normalizeCardState preserves all card fields and keeps lastRating/lastReviewedAt as undefined when absent', async () => {
+  const { normalizeCardState, initialCardState } = await importTs('src/core/srs.ts');
+
+  // Full state round-trip
+  const full = {
+    id: 'x1', interval: 4, ease: 2.3, dueDate: '2026-04-10T00:00:00.000Z',
+    reviewCount: 5, hardCount: 1, gotCount: 2, easyCount: 2,
+    lastRating: 'easy', lastReviewedAt: '2026-04-09T00:00:00.000Z',
+  };
+  const normalized = normalizeCardState(full);
+  assert.equal(normalized.interval, 4);
+  assert.equal(normalized.ease, 2.3);
+  assert.equal(normalized.reviewCount, 5);
+  assert.equal(normalized.hardCount, 1);
+  assert.equal(normalized.gotCount, 2);
+  assert.equal(normalized.easyCount, 2);
+  assert.equal(normalized.lastRating, 'easy');
+
+  // Partial state — missing fields should fall back to defaults
+  const partial = normalizeCardState({ id: 'x2' });
+  assert.equal(partial.interval, 0);
+  assert.equal(partial.ease, 2.5);
+  assert.equal(partial.reviewCount, 0);
+  assert.equal(partial.lastRating, undefined);
+  assert.equal(partial.lastReviewedAt, undefined);
 });
 
 let failed = 0;

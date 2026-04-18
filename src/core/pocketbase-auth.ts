@@ -1,6 +1,7 @@
 import { browserStorage } from './storage-adapter';
 
 const AUTH_STORAGE_KEY = 'qfc2_pb_auth';
+// URL resolution order: VITE_POCKETBASE_URL env var → window.location.origin (production) → localhost fallback (local dev).
 const FALLBACK_BASE_URL = 'http://127.0.0.1:8090';
 
 export type AuthUser = {

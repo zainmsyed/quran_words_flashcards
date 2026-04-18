@@ -29,24 +29,27 @@ const DEFAULT_BUNDLED_IDS = [
 
 let bundledAudioIds: Set<string> = new Set(DEFAULT_BUNDLED_IDS);
 export const bundledAudioIdsStore = writable<Set<string>>(new Set(bundledAudioIds));
-let manifestLoaded = false;
 let manifestLoadPromise: Promise<void> | null = null;
 
 /**
  * Load the bundled audio manifest from the server and populate bundledAudioIds.
- * This is idempotent; subsequent calls return the same promise. Manifest URL
- * defaults to /audio/manifest.json which is produced by the generator script.
+ * Successful loads are memoized; failed loads reset the memoized promise so a
+ * later call can retry. Manifest URL defaults to /audio/manifest.json which is
+ * produced by the generator script.
  */
 export async function loadBundledAudioManifest(manifestUrl = '/audio/manifest.json'): Promise<void> {
   if (typeof window === 'undefined') return;
   if (manifestLoadPromise) return manifestLoadPromise;
+
   manifestLoadPromise = (async () => {
+    let loaded = false;
+
     try {
       const res = await fetch(manifestUrl, { cache: 'no-store' });
       if (!res.ok) {
-        manifestLoaded = true;
         return;
       }
+
       const data = await res.json();
       if (data && Array.isArray(data.entries)) {
         const ids = new Set<string>();
@@ -58,12 +61,17 @@ export async function loadBundledAudioManifest(manifestUrl = '/audio/manifest.js
           try { bundledAudioIdsStore.set(new Set(bundledAudioIds)); } catch (e) { /* ignore */ }
         }
       }
+
+      loaded = true;
     } catch (e) {
-      // ignore fetch/parse errors — keep defaults
+      // ignore fetch/parse errors — keep defaults and allow a later retry
     } finally {
-      manifestLoaded = true;
+      if (!loaded) {
+        manifestLoadPromise = null;
+      }
     }
   })();
+
   return manifestLoadPromise;
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import Card from './components/Card.svelte';
   import AppTopbar from './components/AppTopbar.svelte';
   import { loadSeedWords, type Word } from '../core/wordlist';
@@ -9,7 +9,6 @@
     buildSessionPlan,
     isSameLocalDay,
     normalizeSavedSession,
-    retrySessionItem,
     type SavedSession,
     type SessionItem,
   } from '../core/session';
@@ -185,7 +184,7 @@
     const nextSessionItems = [...sessionItems];
 
     if (rating === 'hard' && currentItem) {
-      nextSessionItems.push(retrySessionItem(currentItem));
+      nextSessionItems.push({ id: currentItem.id, mode: currentItem.mode });
     }
 
     const nextSession = {
@@ -208,7 +207,7 @@
       loadError = '';
 
       if (rating === 'hard' && currentItem) {
-        sessionItems.push(retrySessionItem(currentItem));
+        sessionItems.push({ id: currentItem.id, mode: currentItem.mode });
         deck.push(word);
       }
 
@@ -291,8 +290,9 @@
     dispatch('openSettings', { tab: 'words' });
   }
 
-  // confetti
+  // confetti — timer id stored so it can be cancelled in onDestroy
   let confettiActive = false;
+  let confettiTimer: ReturnType<typeof setTimeout> | null = null;
   let confettiPieces: Array<{ id: number; left: number; delay: number; color: string; rotate: number; size: number; duration: number }> = [];
 
   function generateConfettiPieces(count = 120) {
@@ -316,12 +316,25 @@
   $: if (allMastered && currentIndex >= deck.length && !confettiActive) {
     confettiActive = true;
     confettiPieces = generateConfettiPieces(120);
-    // stop after a bit
-    setTimeout(() => {
+    confettiTimer = setTimeout(() => {
       confettiPieces = [];
       confettiActive = false;
+      confettiTimer = null;
     }, 7600);
   }
+
+  // Focus the primary action button when the mastered overlay appears.
+  let overlayPrimaryBtn: HTMLButtonElement | null = null;
+  $: if (confettiPieces.length > 0 && overlayPrimaryBtn) {
+    overlayPrimaryBtn.focus();
+  }
+
+  onDestroy(() => {
+    if (confettiTimer) {
+      clearTimeout(confettiTimer);
+      confettiTimer = null;
+    }
+  });
 </script>
 
 <svelte:window on:keydown={handleWindowKeydown} />
@@ -375,7 +388,7 @@
 
         {#if currentIndex >= deck.length}
           {#if allMastered}
-            <div class="mastered-overlay" role="dialog" aria-live="polite" aria-label="Congratulations screen">
+            <div class="mastered-overlay" role="dialog" aria-modal="true" aria-label="Congratulations screen">
               <div class="overlay-confetti" aria-hidden="true">
                 {#each confettiPieces as p (p.id)}
                   <span
@@ -389,25 +402,14 @@
                 <h1>Congratulations!</h1>
                 <p>You’ve mastered the deck. You marked every word "Easy" at least {MASTERED_EASY_COUNT} times.</p>
                 <div class="overlay-actions">
-                  <button type="button" class="btn primary" on:click={viewMasteredWords}>Review words</button>
-                  <button type="button" class="btn secondary" on:click={startFreshSession}>Start new session</button>
+                  <button type="button" class="btn primary" bind:this={overlayPrimaryBtn} on:click={viewMasteredWords}>Review words</button>
+                  <button type="button" class="btn secondary" on:click={openSettings}>View stats</button>
                 </div>
               </div>
             </div>
           {:else}
             <div class="session-complete">
               <div class="complete-mark">✓</div>
-
-              {#if confettiPieces.length}
-                <div class="confetti-container" aria-hidden="true">
-                  {#each confettiPieces as p (p.id)}
-                    <span
-                      class="confetti-piece"
-                      style={`left: ${p.left}%; width: ${p.size}px; height: ${p.size}px; background: ${p.color}; animation-delay: ${p.delay}s; --r: ${p.rotate}deg;`}
-                    ></span>
-                  {/each}
-                </div>
-              {/if}
 
               <h2>{deck.length === 0 ? 'All caught up' : 'Session complete'}</h2>
               <p>
@@ -896,15 +898,6 @@
 
   /* confetti and CTA styles for mastered completion */
   .session-complete { position: relative; overflow: visible; }
-  .confetti-container { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 12; }
-  .confetti-piece {
-    position: absolute;
-    top: -6vh;
-    border-radius: 2px;
-    opacity: 0;
-    transform-origin: center;
-    animation: confetti-fall 5s cubic-bezier(0.16, 0.9, 0.32, 1) forwards;
-  }
 
   /* Fullscreen mastered overlay */
   .mastered-overlay {
@@ -928,12 +921,6 @@
     opacity: 0;
     transform-origin: center;
     animation: confetti-fall-full var(--d, 5s) cubic-bezier(0.16, 0.9, 0.32, 1) forwards;
-  }
-
-  @keyframes confetti-fall {
-    0% { transform: translateY(-6px) rotate(var(--r)); opacity: 1; }
-    60% { opacity: 1; }
-    100% { transform: translateY(260px) rotate(calc(var(--r) + 720deg)); opacity: 0; }
   }
 
   @keyframes confetti-fall-full {

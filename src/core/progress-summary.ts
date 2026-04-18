@@ -11,12 +11,32 @@ export type StudyProgressSummary = {
 
 export const MASTERED_EASY_COUNT = 3;
 
+function toNowMs(now: Date | number): number {
+  return typeof now === 'number' ? now : now.getTime();
+}
+
+export function isMasteredCardState(state?: CardState | null): boolean {
+  return (state?.easyCount ?? 0) >= MASTERED_EASY_COUNT;
+}
+
+export function isDueCardState(state: CardState | null | undefined, now: Date | number = new Date()): boolean {
+  if (!state) return false;
+  if (isMasteredCardState(state)) return false;
+
+  const interval = state.interval ?? 0;
+  if (interval <= 0) return false;
+
+  const dueMs = new Date(state.dueDate).getTime();
+  if (Number.isNaN(dueMs)) return false;
+
+  return dueMs <= toNowMs(now);
+}
+
 export function summarizeStudyProgress(
   words: Word[],
   states: Record<string, CardState>,
   now: Date = new Date(),
 ): StudyProgressSummary {
-  const nowMs = now.getTime();
   let seenWords = 0;
   let reviewCount = 0;
   let easyCount = 0;
@@ -27,15 +47,12 @@ export function summarizeStudyProgress(
     const state = states[word.id];
     if (!state) continue;
 
-    const interval = state.interval ?? 0;
     const reviewTotal = state.reviewCount ?? 0;
     const easyTotal = state.easyCount ?? 0;
 
     if (reviewTotal > 0) seenWords += 1;
-    // A word is considered mastered when it has been marked 'easy' at least
-    // MASTERED_EASY_COUNT times (explicit user mastery rather than interval).
-    if (easyTotal >= MASTERED_EASY_COUNT) masteredCount += 1;
-    if (interval > 0 && new Date(state.dueDate).getTime() <= nowMs) dueCount += 1;
+    if (isMasteredCardState(state)) masteredCount += 1;
+    if (isDueCardState(state, now)) dueCount += 1;
 
     reviewCount += reviewTotal;
     easyCount += easyTotal;

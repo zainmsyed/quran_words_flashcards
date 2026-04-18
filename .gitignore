@@ -6,3 +6,5 @@ pocketbase
 pocketbase_*.zip
 .env
 .vscode/
+scripts/.dev/
+scripts/.dev-previews/

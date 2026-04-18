@@ -1,5 +1,6 @@
 import type { Word } from './wordlist';
 import type { CardState } from './srs';
+import { isDueCardState } from './progress-summary';
 
 export type SessionMode = 'ar2en' | 'en2ar';
 
@@ -43,10 +44,6 @@ export function isSameLocalDay(isoDate?: string, now: Date = new Date()): boolea
 
 export function pickSessionMode(random: () => number = Math.random): SessionMode {
   return random() < 0.5 ? 'ar2en' : 'en2ar';
-}
-
-export function retrySessionItem(item: SessionItem): SessionItem {
-  return { id: item.id, mode: item.mode };
 }
 
 export function normalizeSavedSession(
@@ -127,31 +124,29 @@ export function buildSessionPlan(
   }
 
   const dueAll = words
-    .filter((word) => {
-      const state = states[word.id];
-      return Boolean(state && state.interval > 0 && new Date(state.dueDate).getTime() <= nowMs);
-    })
+    .filter((word) => isDueCardState(states[word.id], nowMs))
     .sort((a, b) => new Date(states[a.id].dueDate).getTime() - new Date(states[b.id].dueDate).getTime());
 
   const newAll = words
     .filter((word) => (states[word.id]?.interval ?? 0) === 0);
 
-  // Determine targets following the quota rules
+  // Determine targets following the quota rules.
+  // `reviewPerSession` contributes to the total 15-card cap, but when fewer than
+  // 10 new words exist we fill the remaining session capacity with due reviews.
   const maxNew = limits.newPerSession;
-  const maxReview = limits.reviewPerSession;
+  const reviewBuffer = limits.reviewPerSession;
+  const totalCap = maxNew + reviewBuffer;
 
   let targetNew = Math.min(maxNew, newAll.length);
   let targetReview = 0;
 
   if (dueAll.length === 0) {
-    // No reviews available: cap new words at newPerSession (typically 10)
+    // No reviews available: cap new words at newPerSession (typically 10).
     targetReview = 0;
     targetNew = Math.min(maxNew, newAll.length);
   } else {
-    // Some reviews exist. New words never exceed maxNew (typically 10).
-    targetNew = Math.min(maxNew, newAll.length);
-    // Fill reviews up to maxReview, but never exceed total cap of (maxNew + maxReview)
-    targetReview = Math.min(maxReview, dueAll.length, (maxNew + maxReview) - targetNew);
+    const remainingCapacity = Math.max(totalCap - targetNew, 0);
+    targetReview = Math.min(dueAll.length, remainingCapacity);
   }
 
   const selectedReviews = dueAll.slice(0, targetReview);
