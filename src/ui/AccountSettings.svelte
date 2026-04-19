@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { changePassword, type AuthSession } from '../core/pocketbase-auth';
+  import { changePassword, describePocketBaseError, PocketBaseAuthError, type AuthSession } from '../core/pocketbase-auth';
   import ChangePasswordForm from './ChangePasswordForm.svelte';
 
   export let authSession: AuthSession | null = null;
@@ -8,6 +8,10 @@
 
   const dispatch = createEventDispatcher<{
     sessionchange: AuthSession;
+    sessionissue: {
+      code: 'unauthorized' | 'unavailable';
+      message: string;
+    };
   }>();
 
   let changeBusy = false;
@@ -17,12 +21,6 @@
 
   async function handleChangePassword(event: CustomEvent<{ currentPassword: string; nextPassword: string; confirmPassword: string }>) {
     if (!authSession) return;
-
-    if (event.detail.nextPassword !== event.detail.confirmPassword) {
-      changeError = 'New passwords do not match.';
-      changeSuccess = '';
-      return;
-    }
 
     changeBusy = true;
     changeError = '';
@@ -34,7 +32,26 @@
       changeSuccess = 'Password updated and your session was refreshed.';
       changeFormKey += 1;
     } catch (error) {
-      changeError = error instanceof Error ? error.message : 'Could not change your password.';
+      if (error instanceof PocketBaseAuthError && (error.code === 'unauthorized' || error.code === 'unavailable')) {
+        dispatch('sessionissue', {
+          code: error.code,
+          message: describePocketBaseError(error, {
+            fallback: error.code === 'unauthorized'
+              ? 'Your session expired. Please sign in again.'
+              : 'PocketBase could not be reached.',
+            unauthorized: 'Your session expired. Please sign in again.',
+            unavailable: 'PocketBase could not be reached.',
+          }),
+        });
+        return;
+      }
+
+      changeError = describePocketBaseError(error, {
+        fallback: 'Could not change your password. Please try again.',
+        'invalid-credentials': 'Current password was not accepted.',
+        unauthorized: 'Your session expired. Please sign in again.',
+        unavailable: 'PocketBase could not be reached.',
+      });
     } finally {
       changeBusy = false;
     }

@@ -9,11 +9,16 @@
     buildSessionPlan,
     isSameLocalDay,
     normalizeSavedSession,
+    retrySessionItem,
     type SavedSession,
     type SessionItem,
   } from '../core/session';
   import { summarizeStudyProgress, MASTERED_EASY_COUNT } from '../core/progress-summary';
-  import type { AuthSession } from '../core/pocketbase-auth';
+  import {
+    describePocketBaseError,
+    PocketBaseAuthError,
+    type AuthSession,
+  } from '../core/pocketbase-auth';
   import {
     clearLegacyStudyStorage,
     loadAuthenticatedStudySnapshot,
@@ -26,7 +31,13 @@
   const NEW_PER_SESSION = 10;
   const REVIEW_PER_SESSION = 5;
 
-  const dispatch = createEventDispatcher<{ openSettings: { tab?: 'stats' | 'account' | 'voice' | 'words' } }>();
+  const dispatch = createEventDispatcher<{
+    openSettings: { tab?: 'stats' | 'account' | 'voice' | 'words' };
+    sessionissue: {
+      code: 'unauthorized' | 'unavailable';
+      message: string;
+    };
+  }>();
 
   let words: Word[] = [];
   let deck: Word[] = [];
@@ -82,6 +93,29 @@
     deck = sessionItems.map((si) => wordMap.get(si.id)).filter(Boolean) as Word[];
   }
 
+  function dispatchSessionIssue(error: unknown): boolean {
+    if (!(error instanceof PocketBaseAuthError)) {
+      return false;
+    }
+
+    if (error.code !== 'unauthorized' && error.code !== 'unavailable') {
+      return false;
+    }
+
+    dispatch('sessionissue', {
+      code: error.code,
+      message: describePocketBaseError(error, {
+        fallback: error.code === 'unauthorized'
+          ? 'Your session expired. Please sign in again.'
+          : 'PocketBase could not be reached.',
+        unauthorized: 'Your session expired. Please sign in again.',
+        unavailable: 'PocketBase could not be reached.',
+      }),
+    });
+
+    return true;
+  }
+
   function currentSessionSnapshot(createdAt = new Date().toISOString()): SavedSession {
     return {
       queue: sessionItems.map((item) => ({ ...item })),
@@ -90,33 +124,35 @@
     };
   }
 
-  async function persistStudySnapshot(nextStats: AppStats, nextSession: SavedSession | null) {
+  async function persistStudySnapshot(nextStats: AppStats, nextSession: SavedSession | null, stateSnapshot = states) {
     if (!authSession) {
-      throw new Error('Missing PocketBase session.');
+      throw new PocketBaseAuthError('unauthorized', 'Your session expired. Please sign in again.');
     }
 
-    await savePocketBaseStudyState(authSession, nextStats, nextSession);
+    await savePocketBaseStudyState(authSession, nextStats, nextSession, stateSnapshot);
   }
 
-  async function persistStudySnapshotWithRetry(nextStats: AppStats, nextSession: SavedSession | null): Promise<boolean> {
+  async function persistStudySnapshotWithRetry(
+    nextStats: AppStats,
+    nextSession: SavedSession | null,
+    stateSnapshot = states,
+  ): Promise<void> {
     try {
-      await persistStudySnapshot(nextStats, nextSession);
-      return true;
+      await persistStudySnapshot(nextStats, nextSession, stateSnapshot);
     } catch (firstError) {
       try {
-        await persistStudySnapshot(nextStats, nextSession);
-        return true;
+        await persistStudySnapshot(nextStats, nextSession, stateSnapshot);
       } catch (retryError) {
         console.warn(firstError);
         console.warn(retryError);
-        return false;
+        throw retryError;
       }
     }
   }
 
   async function initializeSession() {
     if (!authSession) {
-      throw new Error('Missing PocketBase session.');
+      throw new PocketBaseAuthError('unauthorized', 'Your session expired. Please sign in again.');
     }
 
     words = await loadSeedWords();
@@ -140,10 +176,7 @@
 
     if (!effectiveSession || statsChanged) {
       const sessionToPersist = effectiveSession ?? currentSessionSnapshot();
-      const persisted = await persistStudySnapshotWithRetry(syncedStats, sessionToPersist);
-      if (!persisted) {
-        loadError = 'Could not save your PocketBase session.';
-      }
+      await persistStudySnapshotWithRetry(syncedStats, sessionToPersist);
     }
 
     await clearLegacyStudyStorage();
@@ -155,6 +188,10 @@
     try {
       await initializeSession();
     } catch (error) {
+      if (dispatchSessionIssue(error)) {
+        return;
+      }
+
       console.warn(error);
       loadError = 'Could not load your PocketBase study data.';
     } finally {
@@ -174,6 +211,11 @@
   async function handleRate(rating: 'hard' | 'got' | 'easy') {
     if (ratingBusy) return;
 
+    if (!authSession) {
+      dispatchSessionIssue(new PocketBaseAuthError('unauthorized', 'Your session expired. Please sign in again.'));
+      return;
+    }
+
     const word = deck[currentIndex];
     if (!word) return;
 
@@ -192,15 +234,15 @@
       index: currentIndex + 1,
       createdAt: new Date().toISOString(),
     } satisfies SavedSession;
+    const nextStates = {
+      ...states,
+      [word.id]: updated,
+    };
 
     ratingBusy = true;
     try {
       await savePocketBaseCardState(authSession!, updated);
-      const persisted = await persistStudySnapshotWithRetry(nextStats, nextSession);
-      if (!persisted) {
-        await retryLoad();
-        return;
-      }
+      await persistStudySnapshotWithRetry(nextStats, nextSession, nextStates);
 
       states[word.id] = updated;
       appStats = nextStats;
@@ -213,15 +255,25 @@
 
       currentIndex += 1;
     } catch (error) {
+      if (dispatchSessionIssue(error)) {
+        return;
+      }
+
       console.warn(error);
-      loadError = 'Could not save your PocketBase progress.';
+      await retryLoad();
+      return;
     } finally {
       ratingBusy = false;
     }
   }
 
   async function reviewCompletedSession() {
-    if (sessionItems.length === 0 || !authSession) return;
+    if (sessionItems.length === 0) return;
+
+    if (!authSession) {
+      dispatchSessionIssue(new PocketBaseAuthError('unauthorized', 'Your session expired. Please sign in again.'));
+      return;
+    }
 
     const nextSession = {
       queue: sessionItems,
@@ -230,16 +282,17 @@
     } satisfies SavedSession;
 
     try {
-      const persisted = await persistStudySnapshotWithRetry(appStats, nextSession);
-      if (!persisted) {
-        await retryLoad();
-        return;
-      }
+      await persistStudySnapshotWithRetry(appStats, nextSession);
       currentIndex = 0;
       loadError = '';
     } catch (error) {
+      if (dispatchSessionIssue(error)) {
+        return;
+      }
+
       console.warn(error);
-      loadError = 'Could not save your PocketBase session.';
+      await retryLoad();
+      return;
     }
   }
 
@@ -247,16 +300,22 @@
     loading = true;
     loadError = '';
     try {
-      ensureCardStates();
-      await buildSession(undefined);
-      const persisted = await persistStudySnapshotWithRetry(appStats, currentSessionSnapshot());
-      if (!persisted) {
-        await retryLoad();
+      if (!authSession) {
+        dispatchSessionIssue(new PocketBaseAuthError('unauthorized', 'Your session expired. Please sign in again.'));
         return;
       }
+
+      ensureCardStates();
+      await buildSession(undefined);
+      await persistStudySnapshotWithRetry(appStats, currentSessionSnapshot());
     } catch (error) {
+      if (dispatchSessionIssue(error)) {
+        return;
+      }
+
       console.warn(error);
-      loadError = 'Could not start a new PocketBase session.';
+      await retryLoad();
+      return;
     } finally {
       loading = false;
     }

@@ -8,7 +8,11 @@
   import { loadSeedWords, type Word } from '../core/wordlist';
   import type { CardState } from '../core/srs';
   import type { AppStats } from '../core/app-stats';
-  import type { AuthSession } from '../core/pocketbase-auth';
+  import {
+    describePocketBaseError,
+    PocketBaseAuthError,
+    type AuthSession,
+  } from '../core/pocketbase-auth';
   import {
     clearLegacyStudyStorage,
     loadAuthenticatedStudySnapshot,
@@ -23,6 +27,10 @@
     close: undefined;
     logout: undefined;
     sessionchange: AuthSession;
+    sessionissue: {
+      code: 'unauthorized' | 'unavailable';
+      message: string;
+    };
   }>();
 
   export let initialTab: 'stats' | 'account' | 'voice' | 'words' = 'stats';
@@ -35,12 +43,35 @@
   let loading = true;
   let loadError = '';
 
+  function dispatchSessionIssue(error: unknown): boolean {
+    if (!(error instanceof PocketBaseAuthError)) {
+      return false;
+    }
+
+    if (error.code !== 'unauthorized' && error.code !== 'unavailable') {
+      return false;
+    }
+
+    dispatch('sessionissue', {
+      code: error.code,
+      message: describePocketBaseError(error, {
+        fallback: error.code === 'unauthorized'
+          ? 'Your session expired. Please sign in again.'
+          : 'PocketBase could not be reached.',
+        unauthorized: 'Your session expired. Please sign in again.',
+        unavailable: 'PocketBase could not be reached.',
+      }),
+    });
+
+    return true;
+  }
+
   async function retryLoad() {
     loading = true;
     loadError = '';
     try {
       if (!authSession) {
-        throw new Error('Missing PocketBase session.');
+        throw new PocketBaseAuthError('unauthorized', 'Your session expired. Please sign in again.');
       }
 
       words = await loadSeedWords();
@@ -56,6 +87,10 @@
 
       await clearLegacyStudyStorage();
     } catch (error) {
+      if (dispatchSessionIssue(error)) {
+        return;
+      }
+
       console.warn(error);
       loadError = 'Could not load your PocketBase settings data.';
     } finally {
@@ -78,9 +113,13 @@
   function handleSessionChange(event: CustomEvent<AuthSession>) {
     dispatch('sessionchange', event.detail);
   }
+
+  function handleSessionIssue(event: CustomEvent<{ code: 'unauthorized' | 'unavailable'; message: string }>) {
+    dispatch('sessionissue', event.detail);
+  }
 </script>
 
-<section class="settings-shell" class:stats-bleed={tab === 'stats'}>
+<section class="settings-shell">
   <AppTopbar buttonIcon="back" buttonLabel="Return to study" onAction={close} />
 
   <div class="settings-body">
@@ -119,7 +158,7 @@
       {#if tab === 'stats'}
         <Stats {words} {states} appStats={appStats} />
       {:else if tab === 'account'}
-        <AccountSettings {authSession} {userEmail} on:sessionchange={handleSessionChange} />
+        <AccountSettings {authSession} {userEmail} on:sessionchange={handleSessionChange} on:sessionissue={handleSessionIssue} />
       {:else if tab === 'voice'}
         <VoiceSettings />
       {:else}

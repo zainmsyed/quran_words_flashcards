@@ -12,9 +12,11 @@
   let password = '';
 
   function submit() {
+    const submittedPassword = password;
+    password = '';
     dispatch('signin', {
       email,
-      password,
+      password: submittedPassword,
     });
   }
 </script>
@@ -33,7 +35,7 @@
     <form class="auth-form" on:submit|preventDefault={submit}>
       <label class="field">
         <span>Email</span>
-        <input type="email" bind:value={email} autocomplete="email" placeholder="you@example.com" required />
+        <input type="email" bind:value={email} autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="you@example.com" required />
       </label>
 
       <label class="field">

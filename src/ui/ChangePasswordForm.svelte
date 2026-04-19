@@ -16,13 +16,25 @@
   let currentPassword = '';
   let nextPassword = '';
   let confirmPassword = '';
+  let localError = '';
 
   function submit() {
-    dispatch('submit', {
+    if (nextPassword !== confirmPassword) {
+      localError = 'New passwords do not match.';
+      return;
+    }
+
+    const payload = {
       currentPassword,
       nextPassword,
       confirmPassword,
-    });
+    };
+
+    currentPassword = '';
+    nextPassword = '';
+    confirmPassword = '';
+    localError = '';
+    dispatch('submit', payload);
   }
 </script>
 
@@ -33,7 +45,7 @@
     <p>Use your current password to set a new one for this invite.</p>
   </div>
 
-  <form class="change-form" on:submit|preventDefault={submit}>
+  <form class="change-form" on:submit|preventDefault={submit} on:input={() => (localError = '')}>
     <label class="field">
       <span>Current password</span>
       <input type="password" bind:value={currentPassword} autocomplete="current-password" placeholder="Current password" required />
@@ -49,7 +61,9 @@
       <input type="password" bind:value={confirmPassword} autocomplete="new-password" placeholder="Confirm new password" required />
     </label>
 
-    {#if error}
+    {#if localError}
+      <div class="feedback error" role="alert">{localError}</div>
+    {:else if error}
       <div class="feedback error" role="alert">{error}</div>
     {/if}
 

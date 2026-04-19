@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
-import { buildSync } from 'esbuild';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { build, buildSync } from 'esbuild';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -33,6 +34,410 @@ async function importTs(relativePath) {
   }
 
   return import(`${pathToFileURL(moduleCache.get(entry)).href}?v=${Date.now()}-${Math.random()}`);
+}
+
+const svelteModuleCache = new Map();
+let svelteCompilerPromise = null;
+let sveltePreprocessPromise = null;
+
+function aliasVariants(filePath) {
+  const resolved = path.resolve(filePath);
+  const stripped = resolved.replace(/\.[^.]+$/, '');
+  return stripped === resolved ? [resolved] : [resolved, stripped];
+}
+
+function setGlobalProperty(name, value, previousValues) {
+  previousValues.set(name, globalThis[name]);
+  Object.defineProperty(globalThis, name, {
+    value,
+    configurable: true,
+    writable: true,
+  });
+}
+
+async function withBrowserDom(fn) {
+  const { parseHTML } = await import('linkedom');
+  const { window } = parseHTML('<!doctype html><html><head></head><body><div id="app"></div></body></html>');
+  const previousValues = new Map();
+  setGlobalProperty('window', window, previousValues);
+  setGlobalProperty('self', window, previousValues);
+  setGlobalProperty('document', window.document, previousValues);
+
+  const restoreNames = [
+    'CustomEvent',
+    'Event',
+    'MouseEvent',
+    'KeyboardEvent',
+    'Node',
+    'Element',
+    'HTMLElement',
+    'SVGElement',
+    'Text',
+    'Comment',
+    'DocumentFragment',
+    'navigator',
+    'location',
+    'getComputedStyle',
+    'requestAnimationFrame',
+    'cancelAnimationFrame',
+    'performance',
+    'MutationObserver',
+  ];
+
+  for (const name of restoreNames) {
+    if (typeof window[name] !== 'undefined') {
+      setGlobalProperty(name, window[name], previousValues);
+    }
+  }
+
+  if (typeof window.performance === 'undefined') {
+    setGlobalProperty('performance', { now: () => Date.now() }, previousValues);
+  }
+  if (typeof window.getComputedStyle !== 'function') {
+    setGlobalProperty('getComputedStyle', () => ({ getPropertyValue: () => '' }), previousValues);
+  }
+  if (typeof window.requestAnimationFrame !== 'function') {
+    setGlobalProperty('requestAnimationFrame', (cb) => setTimeout(() => cb(Date.now()), 0), previousValues);
+  }
+  if (typeof window.cancelAnimationFrame !== 'function') {
+    setGlobalProperty('cancelAnimationFrame', (handle) => clearTimeout(handle), previousValues);
+  }
+
+  try {
+    return await fn({ window, document: window.document });
+  } finally {
+    for (const [name, value] of previousValues.entries()) {
+      if (typeof value === 'undefined') {
+        delete globalThis[name];
+      } else {
+        Object.defineProperty(globalThis, name, {
+          value,
+          configurable: true,
+          writable: true,
+        });
+      }
+    }
+  }
+}
+
+async function getSvelteCompiler() {
+  if (!svelteCompilerPromise) {
+    svelteCompilerPromise = import('svelte/compiler');
+  }
+  return svelteCompilerPromise;
+}
+
+async function getSveltePreprocessorFactory() {
+  if (!sveltePreprocessPromise) {
+    sveltePreprocessPromise = import('svelte-preprocess');
+  }
+  return sveltePreprocessPromise;
+}
+
+async function importSvelte(relativePath, aliases = {}) {
+  const entry = path.resolve(repoRoot, relativePath);
+  const aliasMap = new Map();
+  for (const [source, target] of Object.entries(aliases)) {
+    for (const variant of aliasVariants(source)) {
+      aliasMap.set(path.resolve(variant), path.resolve(target));
+    }
+  }
+
+  const cacheKey = `${entry}::${JSON.stringify([...aliasMap.entries()].sort(([a], [b]) => a.localeCompare(b)))}`;
+  if (!svelteModuleCache.has(cacheKey)) {
+    const workspace = mkdtempSync(path.join(tempRoot, 'svelte-'));
+
+    const { compile, preprocess } = await getSvelteCompiler();
+    const preprocessFactoryModule = await getSveltePreprocessorFactory();
+    const createPreprocessor = preprocessFactoryModule.default ?? preprocessFactoryModule;
+    const preprocessor = createPreprocessor({ typescript: true });
+
+    const result = await build({
+      absWorkingDir: repoRoot,
+      entryPoints: [entry],
+      bundle: true,
+      platform: 'browser',
+      format: 'esm',
+      target: 'es2020',
+      nodePaths: [path.join(repoRoot, 'node_modules')],
+      write: false,
+      logLevel: 'silent',
+      plugins: [{
+        name: 'svelte-test-harness',
+        setup(buildApi) {
+          buildApi.onResolve({ filter: /.*/ }, (args) => {
+            if (!(args.path.startsWith('.') || path.isAbsolute(args.path))) return null;
+            const resolved = path.resolve(args.resolveDir, args.path);
+            for (const candidate of aliasVariants(resolved)) {
+              if (aliasMap.has(candidate)) {
+                return { path: aliasMap.get(candidate) };
+              }
+            }
+            return { path: resolved };
+          });
+
+          buildApi.onLoad({ filter: /\.svelte$/ }, async (args) => {
+            const source = await readFile(args.path, 'utf8');
+            const preprocessed = await preprocess(source, preprocessor, { filename: args.path });
+            const compiled = compile(preprocessed.code, {
+              filename: args.path,
+              generate: 'dom',
+              css: 'injected',
+              dev: false,
+            });
+
+            return {
+              contents: compiled.js.code,
+              loader: 'js',
+              resolveDir: path.dirname(args.path),
+            };
+          });
+        },
+      }],
+    });
+
+    const outPath = path.join(workspace, `${svelteModuleCache.size}-${path.basename(relativePath).replace(/\.[^.]+$/, '')}.mjs`);
+    writeFileSync(outPath, result.outputFiles[0].text);
+    svelteModuleCache.set(cacheKey, outPath);
+  }
+
+  return import(`${pathToFileURL(svelteModuleCache.get(cacheKey)).href}?v=${Date.now()}-${Math.random()}`);
+}
+
+function writeWorkspaceFile(root, relativePath, content) {
+  const filePath = path.join(root, relativePath);
+  mkdirSync(path.dirname(filePath), { recursive: true });
+  writeFileSync(filePath, content);
+  return filePath;
+}
+
+async function flushSvelte() {
+  const { tick } = await import('svelte');
+  await tick();
+  await Promise.resolve();
+  await tick();
+}
+
+async function waitForSelector(document, selector, timeoutMs = 3000) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    const element = document.querySelector(selector);
+    if (element) return element;
+    await flushSvelte();
+  }
+  throw new Error(`Timed out waiting for ${selector}`);
+}
+
+function writeSessionIssueAuthStub(root, stateKey) {
+  return writeWorkspaceFile(root, 'app-auth-stub.ts', `
+    const state = globalThis[${JSON.stringify(stateKey)}] ??= {
+      initializeAuthCalls: 0,
+      signOutCalls: 0,
+      signInCalls: 0,
+    };
+
+    export class PocketBaseAuthError extends Error {
+      code;
+
+      constructor(code, message) {
+        super(message);
+        this.name = 'PocketBaseAuthError';
+        this.code = code;
+      }
+    }
+
+    export async function initializeAuth() {
+      state.initializeAuthCalls += 1;
+      return {
+        status: 'authenticated',
+        session: {
+          token: 'session-token',
+          user: {
+            id: 'user-1',
+            email: 'user@example.com',
+          },
+        },
+      };
+    }
+
+    export async function signInWithPassword(email) {
+      state.signInCalls += 1;
+      return {
+        token: 'session-token',
+        user: {
+          id: 'user-1',
+          email,
+        },
+      };
+    }
+
+    export async function signOut() {
+      state.signOutCalls += 1;
+    }
+
+    export function describePocketBaseError(error, messages) {
+      if (error instanceof PocketBaseAuthError) {
+        return messages[error.code] ?? messages.fallback;
+      }
+
+      return messages.fallback;
+    }
+  `);
+}
+
+function writeSessionIssueTtsStub(root, stateKey) {
+  return writeWorkspaceFile(root, 'tts-stub.ts', `
+    const state = globalThis[${JSON.stringify(stateKey)}] ??= {
+      stopCalls: 0,
+    };
+
+    export function stop() {
+      state.stopCalls += 1;
+    }
+  `);
+}
+
+function writeStudySessionDispatchStub(root) {
+  return writeWorkspaceFile(root, 'StudySession.stub.svelte', `
+    <script lang="ts">
+      import { createEventDispatcher } from 'svelte';
+
+      export let authSession: { token?: string } | null = null;
+
+      const dispatch = createEventDispatcher<{
+        openSettings: undefined;
+        sessionissue: {
+          code: 'unauthorized' | 'unavailable';
+          message: string;
+        };
+      }>();
+
+      function openSettings() {
+        dispatch('openSettings');
+      }
+
+      function issueUnauthorized() {
+        dispatch('sessionissue', {
+          code: 'unauthorized',
+          message: 'Your session expired. Please sign in again.',
+        });
+      }
+    </script>
+
+    <div data-testid="study-stub">
+      <span data-testid="study-token">{authSession?.token || 'none'}</span>
+      <button type="button" data-testid="study-open-settings" on:click={openSettings}>Open settings</button>
+      <button type="button" data-testid="study-unauthorized" on:click={issueUnauthorized}>Expire session</button>
+    </div>
+  `);
+}
+
+function writeSettingsDispatchStub(root) {
+  return writeWorkspaceFile(root, 'Settings.stub.svelte', `
+    <script lang="ts">
+      import { createEventDispatcher } from 'svelte';
+
+      export let authSession: { token?: string } | null = null;
+      export let userEmail: string | null = null;
+      export let signOutBusy = false;
+
+      const dispatch = createEventDispatcher<{
+        close: undefined;
+        logout: undefined;
+        sessionchange: { token: string; user: { id: string; email: string } };
+        sessionissue: {
+          code: 'unauthorized' | 'unavailable';
+          message: string;
+        };
+      }>();
+
+      function issueUnavailable() {
+        dispatch('sessionissue', {
+          code: 'unavailable',
+          message: 'PocketBase could not be reached.',
+        });
+      }
+    </script>
+
+    <div data-testid="settings-stub">
+      <span data-testid="settings-token">{authSession?.token || 'none'}</span>
+      <span data-testid="settings-user">{userEmail || 'unknown'}</span>
+      <button type="button" data-testid="settings-unavailable" on:click={issueUnavailable}>Report unavailable</button>
+      <button type="button" data-testid="settings-signout-busy" disabled={signOutBusy}>busy</button>
+    </div>
+  `);
+}
+
+function writeAccountSettingsAuthStub(root, stateKey) {
+  return writeWorkspaceFile(root, 'account-auth-stub.ts', `
+    const state = globalThis[${JSON.stringify(stateKey)}] ??= {
+      changePasswordCalls: 0,
+      lastChangePasswordArgs: null,
+    };
+
+    export class PocketBaseAuthError extends Error {
+      code;
+
+      constructor(code, message) {
+        super(message);
+        this.name = 'PocketBaseAuthError';
+        this.code = code;
+      }
+    }
+
+    export async function changePassword(session, currentPassword, nextPassword) {
+      state.changePasswordCalls += 1;
+      state.lastChangePasswordArgs = {
+        session,
+        currentPassword,
+        nextPassword,
+      };
+      throw new PocketBaseAuthError('unauthorized', 'PocketBase session expired.');
+    }
+
+    export function describePocketBaseError(error, messages) {
+      if (error instanceof PocketBaseAuthError) {
+        return messages[error.code] ?? messages.fallback;
+      }
+
+      return messages.fallback;
+    }
+  `);
+}
+
+function writeChangePasswordFormDispatchStub(root) {
+  return writeWorkspaceFile(root, 'ChangePasswordForm.stub.svelte', `
+    <script lang="ts">
+      import { createEventDispatcher } from 'svelte';
+
+      export let busy = false;
+      export let error = '';
+      export let success = '';
+
+      const dispatch = createEventDispatcher<{
+        submit: {
+          currentPassword: string;
+          nextPassword: string;
+          confirmPassword: string;
+        };
+      }>();
+
+      function emitSubmit() {
+        dispatch('submit', {
+          currentPassword: 'current-password',
+          nextPassword: 'new-password',
+          confirmPassword: 'new-password',
+        });
+      }
+    </script>
+
+    <div data-testid="change-password-stub">
+      <span data-testid="change-password-busy">{busy ? 'busy' : 'idle'}</span>
+      <span data-testid="change-password-error">{error}</span>
+      <span data-testid="change-password-success">{success}</span>
+      <button type="button" data-testid="change-password-submit" on:click={emitSubmit}>Update password</button>
+    </div>
+  `);
 }
 
 const tests = [];
@@ -80,6 +485,31 @@ function makeMixedSessionDeck({ newCount, dueCount }) {
 
   return { words, states };
 }
+
+function makeLocalStorageMock({ initial = {}, failSet = false, failRemove = false } = {}) {
+  const entries = new Map(Object.entries(initial));
+  return {
+    entries,
+    storage: {
+      getItem(key) {
+        return entries.has(key) ? entries.get(key) : null;
+      },
+      setItem(key, value) {
+        if (failSet) {
+          throw new Error('blocked write');
+        }
+        entries.set(key, String(value));
+      },
+      removeItem(key) {
+        if (failRemove) {
+          throw new Error('blocked remove');
+        }
+        entries.delete(key);
+      },
+    },
+  };
+}
+
 
 test('summarizeStudyProgress counts seen words, reviews, mastery, and due cards', async () => {
   const { summarizeStudyProgress } = await importTs('src/core/progress-summary.ts');
@@ -344,6 +774,237 @@ test('pocketbase auth helpers normalize urls and parse sessions safely', async (
     },
   });
 
+});
+
+test('storage adapter clears stale data when writes fail and tombstones removals when deletes fail', async () => {
+  const originalLocalStorage = globalThis.localStorage;
+  const originalWarn = console.warn;
+  const writeFailure = makeLocalStorageMock({
+    initial: {
+      qfc2_pb_auth: JSON.stringify({ token: 'old-token', user: { id: 'user-old', email: 'old@example.com' } }),
+    },
+    failSet: true,
+  });
+  const parseFailure = makeLocalStorageMock({
+    initial: {
+      qfc2_pb_auth: '{not-json',
+    },
+  });
+  const removeFailure = makeLocalStorageMock({
+    initial: {
+      qfc2_pb_auth: JSON.stringify({ token: 'old-token', user: { id: 'user-old', email: 'old@example.com' } }),
+    },
+    failRemove: true,
+  });
+
+  console.warn = () => {};
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: writeFailure.storage,
+    configurable: true,
+    writable: true,
+  });
+
+  try {
+    const { browserStorage } = await importTs('src/core/storage-adapter.ts');
+
+    await browserStorage.setItem('qfc2_pb_auth', {
+      token: 'fresh-token',
+      user: { id: 'user-new', email: 'new@example.com' },
+    });
+    assert.equal(writeFailure.entries.has('qfc2_pb_auth'), false);
+
+    Object.defineProperty(globalThis, 'localStorage', {
+      value: parseFailure.storage,
+      configurable: true,
+      writable: true,
+    });
+
+    assert.equal(await browserStorage.getItem('qfc2_pb_auth'), null);
+    assert.equal(parseFailure.entries.has('qfc2_pb_auth'), false);
+
+    Object.defineProperty(globalThis, 'localStorage', {
+      value: removeFailure.storage,
+      configurable: true,
+      writable: true,
+    });
+
+    await browserStorage.removeItem('qfc2_pb_auth');
+    assert.equal(removeFailure.entries.get('qfc2_pb_auth'), 'null');
+  } finally {
+    console.warn = originalWarn;
+    if (originalLocalStorage === undefined) {
+      delete globalThis.localStorage;
+    } else {
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: originalLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+});
+
+test('initializeAuth clears malformed stored sessions before refreshing', async () => {
+  const originalFetch = globalThis.fetch;
+  const originalLocalStorage = globalThis.localStorage;
+  const storage = makeLocalStorageMock({
+    initial: {
+      qfc2_pb_auth: JSON.stringify({
+        token: 'token-1',
+        user: {
+          id: 'user-1',
+        },
+      }),
+    },
+  });
+  let refreshCalled = false;
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: storage.storage,
+    configurable: true,
+    writable: true,
+  });
+
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.endsWith('/api/health')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({ status: 'ok' }),
+      };
+    }
+
+    if (url.endsWith('/api/collections/users/auth-refresh')) {
+      refreshCalled = true;
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          token: 'token-2',
+          record: {
+            id: 'user-1',
+            email: 'user@example.com',
+          },
+        }),
+      };
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  };
+
+  try {
+    const { initializeAuth } = await importTs('src/core/pocketbase-auth.ts');
+    const result = await initializeAuth();
+
+    assert.deepEqual(result, { status: 'signed-out' });
+    assert.equal(refreshCalled, false);
+    assert.equal(storage.entries.has('qfc2_pb_auth'), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalLocalStorage === undefined) {
+      delete globalThis.localStorage;
+    } else {
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: originalLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+});
+
+test('initializeAuth clears stored sessions when refresh is unauthorized', async () => {
+  const originalFetch = globalThis.fetch;
+  const originalLocalStorage = globalThis.localStorage;
+  const storage = makeLocalStorageMock({
+    initial: {
+      qfc2_pb_auth: JSON.stringify({
+        token: 'token-1',
+        user: {
+          id: 'user-1',
+          email: 'user@example.com',
+        },
+      }),
+    },
+  });
+
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: storage.storage,
+    configurable: true,
+    writable: true,
+  });
+
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.endsWith('/api/health')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({ status: 'ok' }),
+      };
+    }
+
+    if (url.endsWith('/api/collections/users/auth-refresh')) {
+      return {
+        ok: false,
+        status: 401,
+        text: async () => JSON.stringify({ message: 'Session expired' }),
+      };
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  };
+
+  try {
+    const { initializeAuth } = await importTs('src/core/pocketbase-auth.ts');
+    const result = await initializeAuth();
+
+    assert.deepEqual(result, { status: 'signed-out' });
+    assert.equal(storage.entries.has('qfc2_pb_auth'), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalLocalStorage === undefined) {
+      delete globalThis.localStorage;
+    } else {
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: originalLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+});
+
+test('describePocketBaseError hides backend details while preserving migration guidance', async () => {
+  const { PocketBaseAuthError, describePocketBaseError } = await importTs('src/core/pocketbase-auth.ts');
+
+  const messages = {
+    fallback: 'Could not sign in. Please try again.',
+    'invalid-credentials': 'Invalid email or password.',
+    unauthorized: 'Your session expired. Please sign in again.',
+    unavailable: 'PocketBase could not be reached.',
+  };
+
+  assert.equal(
+    describePocketBaseError(new PocketBaseAuthError('invalid-credentials', 'database user lookup failed'), messages),
+    'Invalid email or password.',
+  );
+  assert.equal(
+    describePocketBaseError(new PocketBaseAuthError('unauthorized', 'token leak here'), messages),
+    'Your session expired. Please sign in again.',
+  );
+  assert.equal(
+    describePocketBaseError(new PocketBaseAuthError('unavailable', 'database timeout'), messages),
+    'PocketBase could not be reached.',
+  );
+  assert.equal(
+    describePocketBaseError(
+      new PocketBaseAuthError('unavailable', 'PocketBase collection "study_state" is missing. Run the PocketBase migrations and reload.'),
+      messages,
+    ),
+    'PocketBase collection "study_state" is missing. Run the PocketBase migrations and reload.',
+  );
 });
 
 test('tts support helpers distinguish speech and bundled audio availability', async () => {
@@ -657,9 +1318,182 @@ test('pocketbase auth helpers tolerate storage persistence failures', async () =
   }
 });
 
-test('study persistence helpers normalize saved session and stored state blobs', async () => {
+test('account settings dispatches sessionissue when password change is unauthorized', async () => {
+  const stateKey = '__qfcStory018AccountSettingsState';
+  const workspace = mkdtempSync(path.join(tempRoot, 'account-settings-'));
+  const authStub = writeAccountSettingsAuthStub(workspace, stateKey);
+  const changeStub = writeChangePasswordFormDispatchStub(workspace);
+  globalThis[stateKey] = {
+    changePasswordCalls: 0,
+    lastChangePasswordArgs: null,
+  };
+
+  try {
+    await withBrowserDom(async ({ document }) => {
+      const { default: AccountSettings } = await importSvelte('src/ui/AccountSettings.svelte', {
+        [path.resolve(repoRoot, 'src/core/pocketbase-auth.ts')]: authStub,
+        [path.resolve(repoRoot, 'src/ui/ChangePasswordForm.svelte')]: changeStub,
+      });
+
+      const target = document.getElementById('app');
+      assert.ok(target);
+
+      const component = new AccountSettings({
+        target,
+        props: {
+          authSession: {
+            token: 'session-token',
+            user: { id: 'user-1', email: 'user@example.com' },
+          },
+          userEmail: 'user@example.com',
+        },
+      });
+
+      let sessionIssue = null;
+      component.$on('sessionissue', (event) => {
+        sessionIssue = event.detail;
+      });
+
+      await waitForSelector(document, '[data-testid="change-password-submit"]');
+      document.querySelector('[data-testid="change-password-submit"]')?.dispatchEvent(new window.Event('click', { bubbles: true }));
+      await flushSvelte();
+      await flushSvelte();
+
+      assert.equal(globalThis[stateKey].changePasswordCalls, 1);
+      assert.ok(sessionIssue);
+      assert.deepEqual(sessionIssue, {
+        code: 'unauthorized',
+        message: 'Your session expired. Please sign in again.',
+      });
+
+      component.$destroy();
+    });
+  } finally {
+    delete globalThis[stateKey];
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test('app clears session and signs out when StudySession reports unauthorized', async () => {
+  const stateKey = '__qfcStory018AppUnauthorizedState';
+  const workspace = mkdtempSync(path.join(tempRoot, 'app-sessionissue-unauthorized-'));
+  const authStub = writeSessionIssueAuthStub(workspace, stateKey);
+  const ttsStub = writeSessionIssueTtsStub(workspace, stateKey);
+  const studyStub = writeStudySessionDispatchStub(workspace);
+  const settingsStub = writeSettingsDispatchStub(workspace);
+  globalThis[stateKey] = {
+    initializeAuthCalls: 0,
+    signOutCalls: 0,
+    signInCalls: 0,
+    stopCalls: 0,
+  };
+
+  try {
+    await withBrowserDom(async ({ document }) => {
+      const { default: App } = await importSvelte('src/App.svelte', {
+        [path.resolve(repoRoot, 'src/core/pocketbase-auth.ts')]: authStub,
+        [path.resolve(repoRoot, 'src/core/tts-adapter.ts')]: ttsStub,
+        [path.resolve(repoRoot, 'src/ui/StudySession.svelte')]: studyStub,
+        [path.resolve(repoRoot, 'src/ui/Settings.svelte')]: settingsStub,
+      });
+
+      const target = document.getElementById('app');
+      assert.ok(target);
+      const app = new App({ target });
+
+      await waitForSelector(document, '[data-testid="study-stub"]');
+      assert.equal(globalThis[stateKey].initializeAuthCalls, 1);
+      assert.equal(document.querySelector('[data-testid="study-token"]')?.textContent, 'session-token');
+
+      document.querySelector('[data-testid="study-unauthorized"]')?.dispatchEvent(new window.Event('click', { bubbles: true }));
+      await waitForSelector(document, 'input[type="password"]');
+      await flushSvelte();
+
+      assert.equal(globalThis[stateKey].stopCalls, 1);
+      assert.equal(globalThis[stateKey].signOutCalls, 1);
+      assert.ok(document.querySelector('input[type="password"]'));
+      assert.equal(document.querySelector('[data-testid="study-stub"]'), null);
+
+      app.$destroy();
+    });
+  } finally {
+    delete globalThis[stateKey];
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test('app shows unavailable when Settings reports a backend outage', async () => {
+  const stateKey = '__qfcStory018AppUnavailableState';
+  const workspace = mkdtempSync(path.join(tempRoot, 'app-sessionissue-unavailable-'));
+  const authStub = writeSessionIssueAuthStub(workspace, stateKey);
+  const ttsStub = writeSessionIssueTtsStub(workspace, stateKey);
+  const studyStub = writeStudySessionDispatchStub(workspace);
+  const settingsStub = writeSettingsDispatchStub(workspace);
+  globalThis[stateKey] = {
+    initializeAuthCalls: 0,
+    signOutCalls: 0,
+    signInCalls: 0,
+    stopCalls: 0,
+  };
+
+  try {
+    await withBrowserDom(async ({ document }) => {
+      const { default: App } = await importSvelte('src/App.svelte', {
+        [path.resolve(repoRoot, 'src/core/pocketbase-auth.ts')]: authStub,
+        [path.resolve(repoRoot, 'src/core/tts-adapter.ts')]: ttsStub,
+        [path.resolve(repoRoot, 'src/ui/StudySession.svelte')]: studyStub,
+        [path.resolve(repoRoot, 'src/ui/Settings.svelte')]: settingsStub,
+      });
+
+      const target = document.getElementById('app');
+      assert.ok(target);
+      const app = new App({ target });
+
+      await waitForSelector(document, '[data-testid="study-open-settings"]');
+      document.querySelector('[data-testid="study-open-settings"]')?.dispatchEvent(new window.Event('click', { bubbles: true }));
+      await waitForSelector(document, '[data-testid="settings-unavailable"]');
+      document.querySelector('[data-testid="settings-unavailable"]')?.dispatchEvent(new window.Event('click', { bubbles: true }));
+      await waitForSelector(document, '.status-card');
+      await flushSvelte();
+
+      assert.equal(globalThis[stateKey].stopCalls, 1);
+      assert.equal(globalThis[stateKey].signOutCalls, 0);
+      assert.equal(document.querySelector('[data-testid="settings-stub"]'), null);
+      assert.ok(document.body.textContent?.includes('Study is temporarily unavailable'));
+
+      app.$destroy();
+    });
+  } finally {
+    delete globalThis[stateKey];
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test('study persistence helpers derive fingerprints and ignore stale snapshots', async () => {
   const { normalizeSavedSession } = await importTs('src/core/session.ts');
-  const { decodeStoredStudyState } = await importTs('src/core/pocketbase-study.ts');
+  const {
+    createCardProgressFingerprint,
+    createStoredStudyState,
+    decodeStoredStudyState,
+    loadAuthenticatedStudySnapshot,
+  } = await importTs('src/core/pocketbase-study.ts');
+
+  const states = {
+    w1: makeCardState('w1', {
+      interval: 1,
+      dueDate: new Date('2026-04-08T09:00:00.000Z').toISOString(),
+      reviewCount: 1,
+    }),
+    w2: makeCardState('w2', {
+      interval: 2,
+      dueDate: new Date('2026-04-07T09:00:00.000Z').toISOString(),
+      reviewCount: 2,
+      easyCount: 1,
+    }),
+  };
+  const fingerprint = createCardProgressFingerprint(states);
+
+  assert.notEqual(fingerprint, createCardProgressFingerprint({ ...states, w2: { ...states.w2, easyCount: 2 } }));
 
   assert.deepEqual(normalizeSavedSession({
     queue: [
@@ -678,14 +1512,16 @@ test('study persistence helpers normalize saved session and stored state blobs',
     createdAt: '2026-04-09T12:00:00.000Z',
   });
 
-  const decoded = decodeStoredStudyState(JSON.stringify({
-    stats: { studied: 4, easy: 2, streak: 3, lastStudyDate: '2026-04-09' },
-    session: {
+  const storedState = createStoredStudyState(
+    { studied: 4, easy: 2, streak: 3, lastStudyDate: '2026-04-09' },
+    {
       queue: [{ id: 'w3', mode: 'en2ar' }],
       index: 1,
       createdAt: '2026-04-09T12:00:00.000Z',
     },
-  }));
+    fingerprint,
+  );
+  const decoded = decodeStoredStudyState(JSON.stringify(storedState));
 
   assert.deepEqual(decoded, {
     stats: { studied: 4, easy: 2, streak: 3, lastStudyDate: '2026-04-09' },
@@ -694,7 +1530,122 @@ test('study persistence helpers normalize saved session and stored state blobs',
       index: 1,
       createdAt: '2026-04-09T12:00:00.000Z',
     },
+    progressFingerprint: fingerprint,
   });
+
+  const originalFetch = globalThis.fetch;
+  const originalLocalStorage = globalThis.localStorage;
+  const state = {
+    qfc2_pb_auth: JSON.stringify({
+      token: 'token-1',
+      user: { id: 'user-1', email: 'user@example.com' },
+    }),
+  };
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: {
+      getItem(key) {
+        return state[key] ?? null;
+      },
+      setItem(key, value) {
+        state[key] = String(value);
+      },
+      removeItem(key) {
+        delete state[key];
+      },
+    },
+    configurable: true,
+    writable: true,
+  });
+
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.endsWith('/api/collections/card_progress/records?page=1&perPage=200&filter=user%3D%22user-1%22')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          items: [
+            {
+              id: 'record-1',
+              user: 'user-1',
+              word_id: 'w1',
+              interval: 1,
+              ease: 2.5,
+              due_date: '2026-04-10T09:00:00.000Z',
+              review_count: 1,
+              hard_count: 0,
+              got_count: 1,
+              easy_count: 0,
+              last_rating: 'got',
+              last_reviewed_at: '2026-04-09T09:00:00.000Z',
+            },
+            {
+              id: 'record-2',
+              user: 'user-1',
+              word_id: 'w2',
+              interval: 2,
+              ease: 2.6,
+              due_date: '2026-04-11T09:00:00.000Z',
+              review_count: 2,
+              hard_count: 0,
+              got_count: 1,
+              easy_count: 1,
+              last_rating: 'easy',
+              last_reviewed_at: '2026-04-09T10:00:00.000Z',
+            },
+          ],
+          totalPages: 1,
+        }),
+      };
+    }
+
+    if (url.endsWith('/api/collections/study_state/records?page=1&perPage=1&filter=user%3D%22user-1%22')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          items: [{
+            id: 'state-1',
+            user: 'user-1',
+            state_json: JSON.stringify({
+              stats: { studied: 99, easy: 42, streak: 7, lastStudyDate: '2026-04-09' },
+              session: { queue: [{ id: 'w1', mode: 'ar2en' }], index: 1, createdAt: '2026-04-09T12:00:00.000Z' },
+              progressFingerprint: 'stale-fingerprint',
+            }),
+          }],
+          totalPages: 1,
+        }),
+      };
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  };
+
+  try {
+    const { loadAuthenticatedStudySnapshot } = await importTs('src/core/pocketbase-study.ts');
+    const words = [
+      { id: 'w1', arabic: 'word1', english: 'word1' },
+      { id: 'w2', arabic: 'word2', english: 'word2' },
+    ];
+    const snapshot = await loadAuthenticatedStudySnapshot({ token: 'token-1', user: { id: 'user-1', email: 'user@example.com' } }, words);
+
+    assert.equal(snapshot.session, null);
+    assert.equal(snapshot.states.w1.reviewCount, 1);
+    assert.equal(snapshot.states.w2.easyCount, 1);
+    assert.equal(snapshot.appStats.studied, 2);
+    assert.equal(snapshot.appStats.easy, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalLocalStorage === undefined) {
+      delete globalThis.localStorage;
+    } else {
+      Object.defineProperty(globalThis, 'localStorage', {
+        value: originalLocalStorage,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
 });
 
 test('pocketbase bootstrap helpers resolve binary paths and asset names', async () => {

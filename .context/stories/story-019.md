@@ -1,8 +1,8 @@
 # Story 019: Security automation — dependency scanning, secret scanning, and audit gates
 
-**Status:** not-started  
+**Status:** in-progress  
 **Created:** 2026-04-18  
-**Last accessed:** 2026-04-18  
+**Last accessed:** 2026-04-19  
 **Completed:** —
 
 ## Goal

@@ -5,12 +5,14 @@
   import AuthGate from './ui/AuthGate.svelte';
   import AuthUnavailable from './ui/AuthUnavailable.svelte';
   import {
+    describePocketBaseError,
     initializeAuth,
     type AuthSession,
-    type PocketBaseAuthError,
+    PocketBaseAuthError,
     signInWithPassword,
     signOut,
   } from './core/pocketbase-auth';
+  import { stop } from './core/tts-adapter';
 
   let currentPage: 'study' | 'settings' = 'study';
   let settingsInitialTab: 'stats' | 'account' | 'voice' | 'words' = 'stats';
@@ -19,6 +21,11 @@
   let authError = '';
   let unavailableMessage = 'PocketBase could not be reached.';
   let session: AuthSession | null = null;
+
+  type SessionIssueDetail = {
+    code: 'unauthorized' | 'unavailable';
+    message: string;
+  };
 
   onMount(() => {
     void bootstrapAuth();
@@ -38,12 +45,19 @@
       }
 
       session = null;
+      currentPage = 'study';
       if (result.status === 'unavailable') {
-        unavailableMessage = result.message;
+        unavailableMessage = result.message || 'PocketBase could not be reached.';
         appState = 'unavailable';
         return;
       }
 
+      appState = 'login';
+    } catch (error) {
+      console.warn(error);
+      session = null;
+      currentPage = 'study';
+      authError = 'Could not verify your session. Please sign in again.';
       appState = 'login';
     } finally {
       authBusy = false;
@@ -60,14 +74,22 @@
       appState = 'ready';
     } catch (error) {
       const authIssue = error as PocketBaseAuthError | undefined;
-      if (authIssue?.code === 'unavailable') {
-        unavailableMessage = authIssue.message;
+      session = null;
+      currentPage = 'study';
+
+      if (authIssue instanceof PocketBaseAuthError && authIssue.code === 'unavailable') {
+        unavailableMessage = 'PocketBase could not be reached.';
+        authError = '';
         appState = 'unavailable';
       } else {
-        authError = authIssue?.message || 'Could not sign in. Please try again.';
+        authError = describePocketBaseError(error, {
+          fallback: 'Could not sign in. Please try again.',
+          'invalid-credentials': 'Invalid email or password.',
+          unauthorized: 'Your session expired. Please sign in again.',
+          unavailable: 'PocketBase could not be reached.',
+        });
         appState = 'login';
       }
-      session = null;
     } finally {
       authBusy = false;
     }
@@ -75,15 +97,43 @@
 
   async function handleSignOut() {
     authBusy = true;
+    stop();
+    session = null;
+    currentPage = 'study';
+    settingsInitialTab = 'stats';
+    authError = '';
+    appState = 'login';
+
     try {
       await signOut();
-      session = null;
-      currentPage = 'study';
-      authError = '';
-      appState = 'login';
     } finally {
       authBusy = false;
     }
+  }
+
+  async function handleSessionIssue(event: CustomEvent<SessionIssueDetail>) {
+    stop();
+    session = null;
+    currentPage = 'study';
+    settingsInitialTab = 'stats';
+    authError = '';
+
+    if (event.detail.code === 'unauthorized') {
+      authBusy = true;
+      appState = 'login';
+      authError = event.detail.message || 'Your session expired. Please sign in again.';
+
+      try {
+        await signOut();
+      } finally {
+        authBusy = false;
+      }
+
+      return;
+    }
+
+    unavailableMessage = event.detail.message || 'PocketBase could not be reached.';
+    appState = 'unavailable';
   }
 
   async function handleSessionChange(event: CustomEvent<AuthSession>) {
@@ -108,7 +158,7 @@
     </section>
   {:else if currentPage === 'study'}
     <section class="screen active study-screen">
-      <StudySession authSession={session} on:openSettings={(e) => { currentPage = 'settings'; settingsInitialTab = (e?.detail?.tab) ?? 'stats'; }} />
+      <StudySession authSession={session} on:openSettings={(e) => { currentPage = 'settings'; settingsInitialTab = (e?.detail?.tab) ?? 'stats'; }} on:sessionissue={handleSessionIssue} />
     </section>
   {:else}
     <section class="screen active settings-screen">
@@ -120,6 +170,7 @@
         on:logout={handleSignOut}
         on:sessionchange={handleSessionChange}
         initialTab={settingsInitialTab}
+        on:sessionissue={handleSessionIssue}
       />
     </section>
   {/if}

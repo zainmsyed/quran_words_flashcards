@@ -25,7 +25,15 @@ export const browserStorage: StorageAdapter = {
       if (!storage) return null;
       const v = storage.getItem(key);
       return v ? JSON.parse(v) : null;
-    } catch (e) {
+    } catch {
+      const storage = getLocalStorage();
+      if (storage) {
+        try {
+          storage.removeItem(key);
+        } catch {
+          // ignore read cleanup failures
+        }
+      }
       return null;
     }
   },
@@ -39,6 +47,11 @@ export const browserStorage: StorageAdapter = {
     try {
       storage.setItem(key, JSON.stringify(value));
     } catch (error) {
+      try {
+        storage.removeItem(key);
+      } catch (removeError) {
+        warnStorageFailure('remove', key, removeError);
+      }
       warnStorageFailure('write', key, error);
     }
   },
@@ -52,6 +65,11 @@ export const browserStorage: StorageAdapter = {
     try {
       storage.removeItem(key);
     } catch (error) {
+      try {
+        storage.setItem(key, 'null');
+      } catch (writeError) {
+        warnStorageFailure('write', key, writeError);
+      }
       warnStorageFailure('remove', key, error);
     }
   }

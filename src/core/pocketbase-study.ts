@@ -16,6 +16,7 @@ const LEGACY_STUDY_KEYS = ['qfc2_states', 'qfc2_stats', 'qfc2_session'] as const
 export type StoredStudyState = {
   stats: AppStats;
   session: SavedSession | null;
+  progressFingerprint: string;
 };
 
 export type PocketBaseStudySnapshot = {
@@ -65,10 +66,44 @@ function toNumber(value: unknown, fallback: number): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }
 
+function hashString(input: string): string {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < input.length; index += 1) {
+    hash ^= input.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+export function createCardProgressFingerprint(states: Record<string, CardState>): string {
+  const canonical = Object.values(states)
+    .map((state) => normalizeCardState({ id: state.id, ...state }))
+    .sort((left, right) => left.id.localeCompare(right.id))
+    .map((state) => ({
+      id: state.id,
+      interval: state.interval,
+      ease: state.ease,
+      dueDate: state.dueDate,
+      reviewCount: state.reviewCount,
+      hardCount: state.hardCount,
+      gotCount: state.gotCount,
+      easyCount: state.easyCount,
+      lastRating: state.lastRating ?? '',
+      lastReviewedAt: state.lastReviewedAt ?? '',
+    }));
+
+  return hashString(JSON.stringify(canonical));
+}
+
+function normalizeFingerprint(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
 function encodeStoredStudyState(state: StoredStudyState): string {
   return JSON.stringify({
     stats: normalizeAppStats(state.stats),
     session: normalizeSavedSession(state.session) ?? null,
+    progressFingerprint: normalizeFingerprint(state.progressFingerprint),
   });
 }
 
@@ -88,7 +123,8 @@ export function decodeStoredStudyState(raw: unknown): StoredStudyState | null {
 
   const stats = normalizeAppStats(payload.stats);
   const session = normalizeSavedSession(payload.session ?? null);
-  return { stats, session };
+  const progressFingerprint = normalizeFingerprint(payload.progressFingerprint);
+  return { stats, session, progressFingerprint };
 }
 
 function isRecordLike(input: unknown): input is Record<string, unknown> {
@@ -280,10 +316,15 @@ function normalizeStudyStateRecord(record: PocketBaseStudyStateRecord | null): S
   return decodeStoredStudyState(rawState);
 }
 
-export function createStoredStudyState(stats: AppStats, session: SavedSession | null): StoredStudyState {
+export function createStoredStudyState(
+  stats: AppStats,
+  session: SavedSession | null,
+  progressFingerprint: string,
+): StoredStudyState {
   return {
     stats: normalizeAppStats(stats),
     session: normalizeSavedSession(session),
+    progressFingerprint: normalizeFingerprint(progressFingerprint),
   };
 }
 
@@ -308,16 +349,17 @@ export async function loadAuthenticatedStudySnapshot(session: AuthSession, words
     states[state.id] = state;
   }
 
+  const progressFingerprint = createCardProgressFingerprint(states);
   const storedState = normalizeStudyStateRecord(studyStateRecord);
   const summary = summarizeStudyProgress(words, states, new Date());
-  const appStats = normalizeAppStats(
-    storedState?.stats ?? {
-      ...initialAppStats(),
-      studied: summary.seenWords,
-      easy: summary.easyCount,
-    },
-  );
-  const sessionState = normalizeSavedSession(storedState?.session);
+  const appStats = normalizeAppStats({
+    ...(storedState?.stats ?? initialAppStats()),
+    studied: summary.seenWords,
+    easy: summary.easyCount,
+  });
+  const sessionState = storedState?.progressFingerprint === progressFingerprint
+    ? normalizeSavedSession(storedState.session)
+    : null;
 
   return {
     states,
@@ -335,10 +377,11 @@ export async function savePocketBaseStudyState(
   session: AuthSession,
   stats: AppStats,
   savedSession: SavedSession | null,
+  states: Record<string, CardState>,
 ): Promise<void> {
   const payload = {
     user: session.user.id,
-    ...toStudyStateRecordPayload(createStoredStudyState(stats, savedSession)),
+    ...toStudyStateRecordPayload(createStoredStudyState(stats, savedSession, createCardProgressFingerprint(states))),
   };
 
   await upsertPocketBaseRecord(session, STUDY_STATE_COLLECTION, `user="${session.user.id}"`, payload);

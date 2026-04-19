@@ -29,6 +29,26 @@ export class PocketBaseAuthError extends Error {
   }
 }
 
+export type PocketBaseAuthErrorCode = PocketBaseAuthError['code'];
+export type PocketBaseErrorMessages = Partial<Record<PocketBaseAuthErrorCode, string>> & {
+  fallback: string;
+};
+
+export function describePocketBaseError(error: unknown, messages: PocketBaseErrorMessages): string {
+  if (error instanceof PocketBaseAuthError) {
+    if (error.code === 'unavailable') {
+      const detail = error.message.trim();
+      if (detail && /collection|migration/i.test(detail)) {
+        return detail;
+      }
+    }
+
+    return messages[error.code] ?? messages.fallback;
+  }
+
+  return messages.fallback;
+}
+
 type AuthApiResponse = {
   token?: string;
   record?: {
@@ -142,7 +162,13 @@ async function requestJson<T>(path: string, options: RequestInit = {}): Promise<
 
 async function readStoredSession(): Promise<AuthSession | null> {
   const raw = await browserStorage.getItem<unknown>(AUTH_STORAGE_KEY);
-  return parseAuthSession(raw);
+  const session = parseAuthSession(raw);
+
+  if (!session && raw != null) {
+    await clearStoredSession();
+  }
+
+  return session;
 }
 
 async function persistSession(session: AuthSession): Promise<void> {
@@ -162,13 +188,10 @@ export async function checkPocketBaseAvailability(): Promise<void> {
 export async function initializeAuth(): Promise<AuthBootstrapResult> {
   try {
     await checkPocketBaseAvailability();
-  } catch (error) {
-    const message = error instanceof PocketBaseAuthError
-      ? error.message
-      : 'PocketBase is unavailable.';
+  } catch {
     return {
       status: 'unavailable',
-      message,
+      message: 'PocketBase could not be reached.',
     };
   }
 
@@ -196,7 +219,7 @@ export async function initializeAuth(): Promise<AuthBootstrapResult> {
     if (error instanceof PocketBaseAuthError && error.code === 'unavailable') {
       return {
         status: 'unavailable',
-        message: error.message,
+        message: 'PocketBase could not be reached.',
       };
     }
 
