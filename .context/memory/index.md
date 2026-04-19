@@ -58,3 +58,4 @@ scripts/generate_audio_gcp.py — Google Cloud Text-to-Speech generator for bund
 scripts/check_audio_coverage.py — Seed-deck audio coverage checker that validates manifest/file presence
 docker-compose.yml — (undescribed)
 scripts/coolify-compose-smoke.mjs — (undescribed)
+scripts/security-check.mjs — (undescribed)

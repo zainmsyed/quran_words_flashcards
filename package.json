@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node scripts/run-tests.mjs",
+    "security-check": "node scripts/security-check.mjs",
     "smoke:pocketbase": "node scripts/pocketbase-smoke-test.mjs",
     "smoke:compose": "node scripts/coolify-compose-smoke.mjs",
     "generate-audio": "python3 scripts/generate_audio_gcp.py --out public/audio",
