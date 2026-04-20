@@ -49,3 +49,135 @@ Notes and tips
 | w63 | سَبِيل | sabīl | /audio/w63.mp3 | sayinh sabilin instead of sabil | regen gcp | you | 2026-04-20 |
 
 | w69 | إِلَه | ilāh | /audio/w69.mp3 | saying ilahun isntead of ilah | regen gcp | you | 2026-04-20 |
+
+| w70 | بَعْض | baʿḍ | /audio/w70.mp3 | not dying the d at the end | regen gcp | you | 2026-04-20 |
+
+| w71 | عَلِيم | ʿalīm | /audio/w71.mp3 | saying alimu instead of alim | regen gcp | you | 2026-04-20 |
+
+| w76 | آخِر | ākhir | /audio/w76.mp3 | saying akhiru instead of akhir | regen gcp | you | 2026-04-20 |
+
+| w81 | قَلْب | qalb | /audio/w81.mp3 | saying qalbun instead of qalb | regen gcp | you | 2026-04-20 |
+
+| w82 | اتَّبِعْ | ittabiʿ | /audio/w82.mp3 | saying ittaba instead of ittabi | regen gcp | you | 2026-04-20 |
+
+| w88 | عَبْد | ʿabd | /audio/w88.mp3 | not saying the full word | regen gcp | you | 2026-04-20 |
+
+| w94 | رَحِيم | raḥīm | /audio/w94.mp3 | saying rahimun instead of rahim | regen gcp | you | 2026-04-20 |
+
+| w95 | مُبِين | mubīn | /audio/w95.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w97 | عَظِيم | ʿaẓīm | /audio/w97.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w101 | عَزِيز | ʿazīz | /audio/w101.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w102 | أَجْر | ajr | /audio/w102.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w106 | دِين | dīn | /audio/w106.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w111 | شَيْطَان | shayṭān | /audio/w111.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w113 | غَفُور | ghafūr | /audio/w113.mp3 | adding oo at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w114 | مَلَك | malak | /audio/w114.mp3 | completely wrong pronounciation | regen gcp | you | 2026-04-20 |
+
+| w120 | مَال | māl | /audio/w120.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w124 | لَيْل | layl | /audio/w124.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w130 | الزَّوْج | al-zawj | /audio/w130.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w131 | جَهَنَّم | jahannam | /audio/w131.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w132 | صَاحِب | ṣāḥib | /audio/w132.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w134 | الأَخ | al-akh | /audio/w134.mp3 | adding oo at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w137 | خَالِدُون | khālidūn | /audio/w137.mp3 | adding a at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w140 | مَثَل | mathal | /audio/w140.mp3 | adding oo at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w142 | أَلِيم | alīm | /audio/w142.mp3 | adding oo at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w148 | وَجْه | wajh | /audio/w148.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w150 | قَلِيل | qalīl | /audio/w150.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w159 | أَب | ab | /audio/w159.mp3 | adding oo at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w161 | أُمَّة | ummah | /audio/w161.mp3 | adding tun at the end of the word | a | you | 2026-04-20 |
+
+| w166 | ابْن | ibn | /audio/w166.mp3 | saying abn instead of ibn | regen gcp | you | 2026-04-20 |
+
+| w167 | مَاء | māʾ | /audio/w167.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w177 | شَدِيد | shadīd | /audio/w177.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w178 | نَهَار | nahār | /audio/w178.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w180 | نَذِير | nadhīr | /audio/w180.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w181 | وَلَد | walad | /audio/w181.mp3 | adding a at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w183 | شَهِيد | shahīd | /audio/w183.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w191 | جَمِيع | jamīʿ | /audio/w191.mp3 | adding ah at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w192 | نَهَر | nahr | /audio/w192.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w193 | مُجْرِم | mujrim | /audio/w193.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w196 | أَجَل | ajal | /audio/w196.mp3 | says ajaran not ajal | regen gcp | you | 2026-04-20 |
+
+| w199 | سُوء | sūʾ | /audio/w199.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w204 | بَصِير | baṣīr | /audio/w204.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w205 | الدَّار | al-dār | /audio/w205.mp3 | adding ie at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w210 | الْغَيْب | al-ghayb | /audio/w210.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w213 | الصِّرَاط | al-ṣirāṭ | /audio/w213.mp3 | adding oo at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w219 | صَدْر | ṣadr | /audio/w219.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w221 | فَوْق | fawq | /audio/w221.mp3 | adding aa at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w230 | بَحْر | baḥr | /audio/w230.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w238 | مَعْرُوف | maʿrūf | /audio/w238.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w242 | مَيِّت | mayyit | /audio/w242.mp3 | adding ah at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w244 | إِذْن | idhn | /audio/w244.mp3 | saying inna instead of idhn | regen gcp | you | 2026-04-20 |
+
+| w245 | فَاسِق | fāsiq | /audio/w245.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w246 | بَشَر | bashar | /audio/w246.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w254 | ذَنْب | dhanb | /audio/w254.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w261 | مَتَاع | matāʿ | /audio/w261.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w263 | إِثْم | ithm | /audio/w263.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w268 | آلَاء | ālāʾ | /audio/w268.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w269 | اخْتَلَفَ | ikhtilāf | /audio/w269.mp3 | saying the wrong word | regen gcp | you | 2026-04-20 |
+
+| w273 | خَاسِر | khāsir | /audio/w273.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w275 | شَمْس | shams | /audio/w275.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w277 | زَكَاة | zakāh | /audio/w277.mp3 | adding tun at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w279 | فَرِيق | farīq | /audio/w279.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w285 | الْمَلَأ | al-malaʾ | /audio/w285.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w291 | رَجُل | rajul | /audio/w291.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w295 | رِيح | rīḥ | /audio/w295.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w297 | جُنْد | jund | /audio/w297.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
+
+| w299 | عَرْش | ʿarsh | /audio/w299.mp3 | adding un at the end of the word | regen gcp | you | 2026-04-20 |
