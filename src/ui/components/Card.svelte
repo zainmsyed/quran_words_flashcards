@@ -100,11 +100,13 @@
       {#if mode === 'ar2en'}
         <div class="card-core front-core">
           <div class="center-zone">
-            <div class="arabic-text">{word.arabic}</div>
+            <div class="arabic-block">
+              <div class="arabic-text">{word.arabic}</div>
+              {#if word.transliteration}
+                <div class="transliteration">{word.transliteration}</div>
+              {/if}
+            </div>
           </div>
-          {#if word.transliteration}
-            <div class="transliteration">{word.transliteration}</div>
-          {/if}
           <div class="flip-hint">
             <span class="flip-symbol">↺</span>
             <span>tap card to flip</span>
@@ -141,10 +143,12 @@
         </div>
       {:else}
         <div class="card-core back-core">
-          <div class="arabic-text">{word.arabic}</div>
-          {#if word.transliteration}
-            <div class="transliteration">{word.transliteration}</div>
-          {/if}
+          <div class="arabic-block">
+            <div class="arabic-text">{word.arabic}</div>
+            {#if word.transliteration}
+              <div class="transliteration">{word.transliteration}</div>
+            {/if}
+          </div>
         </div>
       {/if}
     </div>
@@ -326,15 +330,21 @@
     font-weight: 500;
   }
 
-  /* place transliteration below centered Arabic without overlapping */
-  .card-face.front .transliteration {
-    margin-top: 0.45rem;
+  /* place transliteration directly under Arabic with consistent spacing */
+  .arabic-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .transliteration {
     text-align: center;
   }
 
   @media (max-width: 520px) {
-    .card-face.front .transliteration {
-      margin-top: 0.35rem;
+    .arabic-block {
+      gap: 0.35rem;
     }
   }
 
