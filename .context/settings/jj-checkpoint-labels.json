@@ -503,6 +503,25 @@
     "151a0376": "coomit and psh. look story for message",
     "89c1dc0b": "can you check the codebase for any keys etc. in the code base that should be in ",
     "1cb2efa2": "go to the last commit please",
-    "dfed2c81": "ok we need to commit push and rebase all together"
+    "dfed2c81": "ok we need to commit push and rebase all together",
+    "24dacbda": "i think we should be able to do it normally try that again",
+    "47bdf137": "why did that take so long?",
+    "5b7a460c": "create a new branch for bug-fixes",
+    "b9a008f7": "so the transliteration whe the arabic is show first is on the bottom and when th",
+    "185956bc": "yes",
+    "e1468c94": "commit and puh",
+    "df8a9d37": "some of the audio for the words are not right. what is the best thing to do for ",
+    "cdd1244e": "let me get a running list going of mispronounciations then",
+    "f9522add": "1",
+    "77e1c76e": "where is the audio preview page?",
+    "ec09a28d": "can you add (A) add a tiny CLI script to append rows from the command line, and ",
+    "bb1445ac": "i would like when i hit flag it add the entry to the document",
+    "9dd66932": "im only seeing 2 words http://localhost:5185/audio/sample_preview.html",
+    "c4a160e1": "im not seeing the flag button now",
+    "66a9093e": "im not seeing the flag button now http://localhost:5185/audio/sample_preview.htm",
+    "60d86b2d": "what happens when i hit the flag button?",
+    "a7bc6e94": "how do i start the 8000 server",
+    "06ad89f8": "{\"app\":\"masar\",\"version\":\"0.1.0\",\"docs\":\"/docs\"}\n\nthis is wha ti see when i got ",
+    "b9ace9f9": "ok when i hit flag i want it to automatically add the row and fill out eveything"
   }
 }

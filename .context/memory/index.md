@@ -59,3 +59,9 @@ scripts/check_audio_coverage.py — Seed-deck audio coverage checker that valida
 docker-compose.yml — (undescribed)
 scripts/coolify-compose-smoke.mjs — (undescribed)
 scripts/security-check.mjs — (undescribed)
+
+scripts/add_mispronunciation.mjs — (undescribed)
+scripts/preview_flag_server.mjs — (undescribed)
+scripts/generate_sample_preview.mjs — (undescribed)
+scripts/fix_preview_script.mjs — (undescribed)
+public/audio/sample_preview_flag.js — (undescribed)
