@@ -656,51 +656,6 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
 
-  .session-quota {
-    margin-top: 0.85rem;
-  }
-
-  .quota-badges {
-    display: inline-flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    font-family: 'Work Sans', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 800;
-  }
-
-  .badge-count {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 900;
-    font-size: 0.95rem;
-  }
-
-  .badge-label {
-    font-weight: 700;
-    opacity: 0.95;
-    font-size: 0.72rem;
-    text-transform: none;
-  }
-
-  .badge-new {
-    background: var(--primary);
-    color: var(--on-primary);
-  }
-
-  .badge-review {
-    background: var(--primary-container);
-    color: var(--primary);
-    border: 0.5px solid var(--border);
-  }
-
   .card-stage {
     grid-column: 2;
     width: 100%;

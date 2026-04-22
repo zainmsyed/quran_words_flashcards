@@ -1417,6 +1417,63 @@ test('speak falls back to SpeechSynthesis when audio playback fails', async () =
 });
 
 
+test('Card.svelte hides pronunciation controls for blocked ids', async () => {
+  await withBrowserDom(async ({ document, window }) => {
+    window.speechSynthesis = { speak() {} };
+    window.SpeechSynthesisUtterance = function SpeechSynthesisUtterance() {};
+
+    const { default: Card } = await importSvelte('src/ui/components/Card.svelte', {
+      [path.resolve(repoRoot, 'src/core/storage-adapter.ts')]: path.resolve(repoRoot, 'src/core/storage-adapter.ts'),
+      [path.resolve(repoRoot, 'src/core/tts-adapter.ts')]: path.resolve(repoRoot, 'src/core/tts-adapter.ts'),
+      [path.resolve(repoRoot, 'src/core/wordlist.ts')]: path.resolve(repoRoot, 'src/core/wordlist.ts'),
+    });
+    const target = document.getElementById('app');
+    assert.ok(target);
+
+    const cases = [
+      {
+        word: { id: 'w12', arabic: 'لِ', transliteration: 'li', english: 'For/to' },
+        mode: 'ar2en',
+        expectButton: true,
+      },
+      {
+        word: { id: 'w59', arabic: 'عِنْد', transliteration: 'ʿinda', english: 'At/near' },
+        mode: 'ar2en',
+        expectButton: false,
+      },
+      {
+        word: { id: 'w82', arabic: 'اتَّبِعْ', transliteration: 'ittabiʿ', english: 'You follow (command)' },
+        mode: 'en2ar',
+        expectButton: false,
+      },
+    ];
+
+    for (const testCase of cases) {
+      target.innerHTML = '';
+      const component = new Card({
+        target,
+        props: {
+          word: testCase.word,
+          mode: testCase.mode,
+        },
+      });
+
+      await flushSvelte();
+      await flushSvelte();
+
+      const audioButton = document.querySelector('.audio-btn');
+      if (testCase.expectButton) {
+        assert.ok(audioButton, `expected ${testCase.word.id} to show a pronunciation button`);
+      } else {
+        assert.equal(audioButton, null, `expected ${testCase.word.id} to hide the pronunciation button`);
+      }
+
+      component.$destroy();
+    }
+  });
+});
+
+
 test('pocketbase auth helpers tolerate storage persistence failures', async () => {
   const originalFetch = globalThis.fetch;
   const originalLocalStorage = globalThis.localStorage;

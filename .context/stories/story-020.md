@@ -1,6 +1,6 @@
 # Story 020: Mispronunciation remediation — free gTTS pass, port 8001 preview, and still-wrong flags
 
-**Status:** in-progress  
+**Status:** complete  
 **Created:** 2026-04-20  
 **Last accessed:** 2026-04-22  
 
@@ -43,6 +43,18 @@ Run the regeneration pass for the flagged IDs, start `node scripts/preview_flag_
   - Implemented: `scripts/run-tests.mjs` now covers review-id dry runs, review-preview generation, duplicate still-wrong CLI appends, and the 8001 flag-server flow.
 - [x] Re-listen to the regenerated files and reevaluate whether the free route is good enough or whether we need a higher-quality provider later.
   - Implemented: regenerated review MP3s with final sukun; audited via preview at http://localhost:8001/audio/mispronunciations_preview.html; blocked w59 and w82 playback in-app and appended review notes; tests ran and passed locally. Date: 2026-04-22
+
+## Completion Summary
+Story 020 is functionally complete and ready for final closeout. The mispronunciation remediation flow now works end-to-end:
+- Added review-table-driven gTTS regeneration with final-sukun-only TTS input and manifest refresh.
+- Added the dedicated port 8001 review preview/flag loop so listeners can audition only the updated subset and append "still wrong" rows back into `.context/reviews/mispronunciations.md`.
+- Regenerated and committed the updated bundled MP3s, refreshed `public/audio/manifest.json`, and verified the preview page at `http://localhost:8001/audio/mispronunciations_preview.html`.
+- Updated the app to use the refreshed audio files and suppress playback for the two intentionally still-broken items, `w59` and `w82`, while leaving the rest of the deck playable.
+- Ran the repository test suite successfully after the changes.
+
+Remaining notes:
+- `w59` and `w82` are intentionally left as still broken in the review table for later higher-quality remediation.
+- No implementation blockers remain; the only remaining step is final story closeout, which Vazir will handle.
 
 ## Issues
 - None yet.
