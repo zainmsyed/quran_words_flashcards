@@ -564,6 +564,8 @@
     "fc84b736": "mark the last todo in the story as complete",
     "d96c18eb": "Run a code review and write the results to .context/reviews/review-20260422-1112",
     "dbe2fced": "fix these errors",
-    "00e46f20": "a"
+    "00e46f20": "a",
+    "6bdd3f2e": "please commit and push",
+    "488e3ac8": "lets remove due today in the settings menu, its just confusing and not really us"
   }
 }

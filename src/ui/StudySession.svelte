@@ -461,9 +461,9 @@
               <h2>{deck.length === 0 ? 'All caught up' : 'Session complete'}</h2>
               <p>
                 {#if deck.length === 0}
-                  No new or due cards are available right now. You can check again or come back later.
+                  No new cards are available right now. You can check again or come back later.
                 {:else}
-                  You studied {sessionNewCount} new words and reviewed {sessionReviewCount} due words.
+                  You studied {sessionNewCount} new words and reviewed {sessionReviewCount} words.
                 {/if}
               </p>
               <div class="session-actions">

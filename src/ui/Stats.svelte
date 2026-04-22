@@ -22,17 +22,15 @@
   $: reviewCount = summary.reviewCount;
   $: easyRate = reviewCount > 0 ? Math.round((summary.easyCount / reviewCount) * 100) : 0;
   $: masteredCount = summary.masteredCount;
-  $: dueCount = summary.dueCount;
   $: streak = appStats.streak ?? 0;
 
-  let selectedFilter: 'none' | 'seen' | 'mastered' | 'due' = 'none';
+  // Removed 'due' filter: simplify selectedFilter to only 'seen' and 'mastered'
+  let selectedFilter: 'none' | 'seen' | 'mastered' = 'none';
   $: filteredEntries = selectedFilter === 'seen'
     ? seenEntries
-    : (selectedFilter === 'mastered'
-      ? entries.filter((e) => e.mastered)
-      : (selectedFilter === 'due' ? entries.filter((e) => e.due) : []));
+    : (selectedFilter === 'mastered' ? entries.filter((e) => e.mastered) : []);
 
-  function toggleFilter(f: 'seen' | 'mastered' | 'due') {
+  function toggleFilter(f: 'seen' | 'mastered') {
     selectedFilter = selectedFilter === f ? 'none' : f;
   }
 
@@ -43,8 +41,8 @@
     return 'Learning';
   }
 
-  $: sectionTitleText = selectedFilter === 'seen' ? 'Seen words' : (selectedFilter === 'mastered' ? 'Mastered words' : 'Due today');
-  $: sectionBadgeClass = selectedFilter === 'seen' ? 'badge-learning' : (selectedFilter === 'mastered' ? 'badge-mastered' : 'badge-due');
+  $: sectionTitleText = selectedFilter === 'seen' ? 'Seen words' : 'Mastered words';
+  $: sectionBadgeClass = selectedFilter === 'seen' ? 'badge-learning' : 'badge-mastered';
 </script>
 
 <section class="stats-scene">
@@ -73,10 +71,6 @@
         <div class="stat-label">mastered</div>
       </button>
 
-      <button class="stat-card clickable" type="button" on:click={() => toggleFilter('due')} aria-pressed={selectedFilter === 'due'}>
-        <div class="stat-num">{dueCount}</div>
-        <div class="stat-label">due today</div>
-      </button>
 
       <div class="stat-card">
         <div class="stat-num">{streak}</div>
@@ -90,7 +84,7 @@
           <h3>{sectionTitleText} <span class={"section-count badge " + sectionBadgeClass}>{filteredEntries.length}</span></h3>
         </div>
         {#if filteredEntries.length === 0}
-          <p class="empty">{selectedFilter === 'due' ? 'No due words today.' : `No ${selectedFilter} words yet.`}</p>
+          <p class="empty">{`No ${selectedFilter} words yet.`}</p>
         {:else}
           {#each filteredEntries as entry}
             <div class="word-row recent-row">
