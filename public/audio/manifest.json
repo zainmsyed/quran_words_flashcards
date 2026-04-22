@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-04-16T00:32:00.781039Z",
-  "provider": "none",
-  "voice": "ar-XA-Neural-B",
+  "generated_at": "2026-04-22T00:19:08.989667Z",
+  "provider": "gtts",
+  "voice": "gtts-ar",
   "sample_rate": 24000,
   "entries": [
     {
@@ -157,7 +157,7 @@
     {
       "id": "w26",
       "filename": "w26.mp3",
-      "bytes": 8064,
+      "bytes": 7872,
       "exists": true
     },
     {
@@ -241,7 +241,7 @@
     {
       "id": "w40",
       "filename": "w40.mp3",
-      "bytes": 9792,
+      "bytes": 8256,
       "exists": true
     },
     {
@@ -379,7 +379,7 @@
     {
       "id": "w63",
       "filename": "w63.mp3",
-      "bytes": 9408,
+      "bytes": 8448,
       "exists": true
     },
     {
@@ -415,7 +415,7 @@
     {
       "id": "w69",
       "filename": "w69.mp3",
-      "bytes": 8448,
+      "bytes": 6720,
       "exists": true
     },
     {
@@ -427,7 +427,7 @@
     {
       "id": "w71",
       "filename": "w71.mp3",
-      "bytes": 8256,
+      "bytes": 8448,
       "exists": true
     },
     {
@@ -457,7 +457,7 @@
     {
       "id": "w76",
       "filename": "w76.mp3",
-      "bytes": 8640,
+      "bytes": 8064,
       "exists": true
     },
     {
@@ -487,7 +487,7 @@
     {
       "id": "w81",
       "filename": "w81.mp3",
-      "bytes": 8064,
+      "bytes": 7104,
       "exists": true
     },
     {
@@ -565,13 +565,13 @@
     {
       "id": "w94",
       "filename": "w94.mp3",
-      "bytes": 9408,
+      "bytes": 8448,
       "exists": true
     },
     {
       "id": "w95",
       "filename": "w95.mp3",
-      "bytes": 9024,
+      "bytes": 8256,
       "exists": true
     },
     {
@@ -583,7 +583,7 @@
     {
       "id": "w97",
       "filename": "w97.mp3",
-      "bytes": 9600,
+      "bytes": 8832,
       "exists": true
     },
     {
@@ -601,19 +601,19 @@
     {
       "id": "w100",
       "filename": "w100.mp3",
-      "bytes": 8448,
+      "bytes": 8064,
       "exists": true
     },
     {
       "id": "w101",
       "filename": "w101.mp3",
-      "bytes": 9984,
+      "bytes": 8640,
       "exists": true
     },
     {
       "id": "w102",
       "filename": "w102.mp3",
-      "bytes": 8064,
+      "bytes": 6912,
       "exists": true
     },
     {
@@ -637,7 +637,7 @@
     {
       "id": "w106",
       "filename": "w106.mp3",
-      "bytes": 8064,
+      "bytes": 7872,
       "exists": true
     },
     {
@@ -667,7 +667,7 @@
     {
       "id": "w111",
       "filename": "w111.mp3",
-      "bytes": 10368,
+      "bytes": 9408,
       "exists": true
     },
     {
@@ -679,13 +679,13 @@
     {
       "id": "w113",
       "filename": "w113.mp3",
-      "bytes": 8640,
+      "bytes": 8448,
       "exists": true
     },
     {
       "id": "w114",
       "filename": "w114.mp3",
-      "bytes": 9024,
+      "bytes": 7680,
       "exists": true
     },
     {
@@ -721,7 +721,7 @@
     {
       "id": "w120",
       "filename": "w120.mp3",
-      "bytes": 8448,
+      "bytes": 7680,
       "exists": true
     },
     {
@@ -745,7 +745,7 @@
     {
       "id": "w124",
       "filename": "w124.mp3",
-      "bytes": 6720,
+      "bytes": 7488,
       "exists": true
     },
     {
@@ -787,13 +787,13 @@
     {
       "id": "w131",
       "filename": "w131.mp3",
-      "bytes": 10176,
+      "bytes": 9792,
       "exists": true
     },
     {
       "id": "w132",
       "filename": "w132.mp3",
-      "bytes": 9984,
+      "bytes": 8640,
       "exists": true
     },
     {
@@ -805,7 +805,7 @@
     {
       "id": "w134",
       "filename": "w134.mp3",
-      "bytes": 8256,
+      "bytes": 7488,
       "exists": true
     },
     {
@@ -823,7 +823,7 @@
     {
       "id": "w137",
       "filename": "w137.mp3",
-      "bytes": 10176,
+      "bytes": 10368,
       "exists": true
     },
     {
@@ -889,7 +889,7 @@
     {
       "id": "w148",
       "filename": "w148.mp3",
-      "bytes": 8448,
+      "bytes": 6912,
       "exists": true
     },
     {
@@ -901,7 +901,7 @@
     {
       "id": "w150",
       "filename": "w150.mp3",
-      "bytes": 9024,
+      "bytes": 7872,
       "exists": true
     },
     {
@@ -967,7 +967,7 @@
     {
       "id": "w161",
       "filename": "w161.mp3",
-      "bytes": 9216,
+      "bytes": 7488,
       "exists": true
     },
     {
@@ -997,13 +997,13 @@
     {
       "id": "w166",
       "filename": "w166.mp3",
-      "bytes": 7488,
+      "bytes": 6528,
       "exists": true
     },
     {
       "id": "w167",
       "filename": "w167.mp3",
-      "bytes": 8640,
+      "bytes": 7104,
       "exists": true
     },
     {
@@ -1063,13 +1063,13 @@
     {
       "id": "w177",
       "filename": "w177.mp3",
-      "bytes": 10176,
+      "bytes": 8832,
       "exists": true
     },
     {
       "id": "w178",
       "filename": "w178.mp3",
-      "bytes": 9792,
+      "bytes": 8064,
       "exists": true
     },
     {
@@ -1081,13 +1081,13 @@
     {
       "id": "w180",
       "filename": "w180.mp3",
-      "bytes": 8256,
+      "bytes": 7872,
       "exists": true
     },
     {
       "id": "w181",
       "filename": "w181.mp3",
-      "bytes": 7488,
+      "bytes": 7296,
       "exists": true
     },
     {
@@ -1099,7 +1099,7 @@
     {
       "id": "w183",
       "filename": "w183.mp3",
-      "bytes": 9984,
+      "bytes": 8832,
       "exists": true
     },
     {
@@ -1153,13 +1153,13 @@
     {
       "id": "w192",
       "filename": "w192.mp3",
-      "bytes": 8832,
+      "bytes": 6912,
       "exists": true
     },
     {
       "id": "w193",
       "filename": "w193.mp3",
-      "bytes": 9600,
+      "bytes": 8064,
       "exists": true
     },
     {
@@ -1177,7 +1177,7 @@
     {
       "id": "w196",
       "filename": "w196.mp3",
-      "bytes": 8448,
+      "bytes": 6912,
       "exists": true
     },
     {
@@ -1195,7 +1195,7 @@
     {
       "id": "w199",
       "filename": "w199.mp3",
-      "bytes": 8256,
+      "bytes": 7104,
       "exists": true
     },
     {
@@ -1225,13 +1225,13 @@
     {
       "id": "w204",
       "filename": "w204.mp3",
-      "bytes": 9600,
+      "bytes": 8064,
       "exists": true
     },
     {
       "id": "w205",
       "filename": "w205.mp3",
-      "bytes": 8832,
+      "bytes": 7872,
       "exists": true
     },
     {
@@ -1261,7 +1261,7 @@
     {
       "id": "w210",
       "filename": "w210.mp3",
-      "bytes": 8640,
+      "bytes": 8448,
       "exists": true
     },
     {
@@ -1279,7 +1279,7 @@
     {
       "id": "w213",
       "filename": "w213.mp3",
-      "bytes": 9408,
+      "bytes": 8448,
       "exists": true
     },
     {
@@ -1315,7 +1315,7 @@
     {
       "id": "w219",
       "filename": "w219.mp3",
-      "bytes": 8640,
+      "bytes": 6912,
       "exists": true
     },
     {
@@ -1381,7 +1381,7 @@
     {
       "id": "w230",
       "filename": "w230.mp3",
-      "bytes": 8448,
+      "bytes": 7296,
       "exists": true
     },
     {
@@ -1429,7 +1429,7 @@
     {
       "id": "w238",
       "filename": "w238.mp3",
-      "bytes": 10752,
+      "bytes": 8832,
       "exists": true
     },
     {
@@ -1453,7 +1453,7 @@
     {
       "id": "w242",
       "filename": "w242.mp3",
-      "bytes": 8448,
+      "bytes": 7488,
       "exists": true
     },
     {
@@ -1465,19 +1465,19 @@
     {
       "id": "w244",
       "filename": "w244.mp3",
-      "bytes": 6720,
+      "bytes": 7296,
       "exists": true
     },
     {
       "id": "w245",
       "filename": "w245.mp3",
-      "bytes": 10560,
+      "bytes": 9024,
       "exists": true
     },
     {
       "id": "w246",
       "filename": "w246.mp3",
-      "bytes": 8832,
+      "bytes": 7296,
       "exists": true
     },
     {
@@ -1525,7 +1525,7 @@
     {
       "id": "w254",
       "filename": "w254.mp3",
-      "bytes": 8832,
+      "bytes": 7680,
       "exists": true
     },
     {
@@ -1567,7 +1567,7 @@
     {
       "id": "w261",
       "filename": "w261.mp3",
-      "bytes": 9984,
+      "bytes": 7872,
       "exists": true
     },
     {
@@ -1579,7 +1579,7 @@
     {
       "id": "w263",
       "filename": "w263.mp3",
-      "bytes": 7872,
+      "bytes": 7680,
       "exists": true
     },
     {
@@ -1639,7 +1639,7 @@
     {
       "id": "w273",
       "filename": "w273.mp3",
-      "bytes": 10176,
+      "bytes": 8640,
       "exists": true
     },
     {
@@ -1651,7 +1651,7 @@
     {
       "id": "w275",
       "filename": "w275.mp3",
-      "bytes": 7680,
+      "bytes": 8448,
       "exists": true
     },
     {
@@ -1663,7 +1663,7 @@
     {
       "id": "w277",
       "filename": "w277.mp3",
-      "bytes": 10176,
+      "bytes": 8256,
       "exists": true
     },
     {
@@ -1675,7 +1675,7 @@
     {
       "id": "w279",
       "filename": "w279.mp3",
-      "bytes": 9792,
+      "bytes": 8256,
       "exists": true
     },
     {
@@ -1711,7 +1711,7 @@
     {
       "id": "w285",
       "filename": "w285.mp3",
-      "bytes": 8832,
+      "bytes": 7872,
       "exists": true
     },
     {
@@ -1747,7 +1747,7 @@
     {
       "id": "w291",
       "filename": "w291.mp3",
-      "bytes": 8832,
+      "bytes": 7680,
       "exists": true
     },
     {
@@ -1771,7 +1771,7 @@
     {
       "id": "w295",
       "filename": "w295.mp3",
-      "bytes": 8832,
+      "bytes": 7872,
       "exists": true
     },
     {
@@ -1783,7 +1783,7 @@
     {
       "id": "w297",
       "filename": "w297.mp3",
-      "bytes": 7680,
+      "bytes": 7872,
       "exists": true
     },
     {
@@ -1795,7 +1795,7 @@
     {
       "id": "w299",
       "filename": "w299.mp3",
-      "bytes": 8640,
+      "bytes": 8256,
       "exists": true
     },
     {

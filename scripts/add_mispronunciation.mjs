@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 function usage() {
-  console.error('Usage: node scripts/add_mispronunciation.mjs --id <id> [--issue <text>] [--suggested-fix <text>] [--reporter <name>] [--date YYYY-MM-DD] [--force]');
+  console.error('Usage: node scripts/add_mispronunciation.mjs --id <id> [--issue <text>] [--suggested-fix <text>] [--reporter <name>] [--date YYYY-MM-DD] [--still-wrong]');
   process.exit(2);
 }
 
@@ -13,7 +13,14 @@ if (argv.length === 0) usage();
 const args = {};
 for (let i = 0; i < argv.length; i++) {
   const a = argv[i];
-  if (a === '--force') { args.force = true; continue; }
+  if (a === '--force') {
+    args.force = true;
+    continue;
+  }
+  if (a === '--still-wrong') {
+    args.stillWrong = true;
+    continue;
+  }
   if (!a.startsWith('--')) continue;
   const key = a.slice(2);
   const val = argv[i + 1];
@@ -28,11 +35,11 @@ for (let i = 0; i < argv.length; i++) {
 if (!args.id) usage();
 
 const id = args.id;
-const issue = args.issue || 'audio needs recreation';
-const suggested = args['suggested-fix'] || 'recreate';
+const stillWrong = !!args.stillWrong;
+const issue = args.issue || (stillWrong ? 'still wrong after listening' : 'audio needs recreation');
+const suggested = args['suggested-fix'] || (stillWrong ? 'regenerate gTTS and listen again' : 'recreate');
 const reporter = args.reporter || 'you';
 const date = args.date || new Date().toISOString().slice(0, 10);
-const force = !!args.force;
 
 const repoRoot = process.cwd();
 const mdPath = path.resolve(repoRoot, '.context/reviews/mispronunciations.md');
@@ -50,31 +57,28 @@ try {
     }
   }
 } catch (e) {
-  // ignore
+  // ignore seed lookup failures; the id is still the primary key for the row
 }
 
 function escapeCell(s) {
   if (s === undefined || s === null) return '';
-  return String(s).replace(/\|/g, '\|').replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+  return String(s).replace(/\|/g, '\\|').replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-try { fs.mkdirSync(path.dirname(mdPath), { recursive: true }); } catch (e) {}
-
-let content = null;
-if (fs.existsSync(mdPath)) {
-  try { content = fs.readFileSync(mdPath, 'utf8'); } catch (e) { content = null; }
+try {
+  fs.mkdirSync(path.dirname(mdPath), { recursive: true });
+} catch (e) {
+  // ignore directory creation errors and let the write path report them below
 }
 
-if (content !== null) {
-  const escId = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const re = new RegExp('^\\|\\s*' + escId + '\\s*\\|', 'm');
-  if (re.test(content) && !force) {
-    console.error(`Entry for ${id} already exists in ${mdPath}. Use --force to append duplicate.`);
-    process.exit(0);
-  }
-} else {
+if (!fs.existsSync(mdPath)) {
   const header = `# Mispronunciations / audio issues (running list)\n\nThis file was created automatically by scripts/add_mispronunciation.mjs\n\n| id | arabic | transliteration | audio | issue | suggested fix | reporter | date |\n|---|---:|---|---|---|---|---|---|\n`;
-  try { fs.writeFileSync(mdPath, header, 'utf8'); content = header; } catch (e) { console.error('Failed to create mispronunciations file:', e); process.exit(3); }
+  try {
+    fs.writeFileSync(mdPath, header, 'utf8');
+  } catch (e) {
+    console.error('Failed to create mispronunciations file:', e);
+    process.exit(3);
+  }
 }
 
 const row = `| ${escapeCell(id)} | ${escapeCell(arabic)} | ${escapeCell(translit)} | /audio/${escapeCell(id)}.mp3 | ${escapeCell(issue)} | ${escapeCell(suggested)} | ${escapeCell(reporter)} | ${date} |`;

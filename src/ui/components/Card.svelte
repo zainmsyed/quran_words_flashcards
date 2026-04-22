@@ -2,7 +2,7 @@
   import { onDestroy, onMount } from 'svelte';
   import type { Word } from '../../core/wordlist';
   import { browserStorage } from '../../core/storage-adapter';
-  import { speak, stop, loadBundledAudioManifest, bundledAudioIdsStore, isSpeechSupported } from '../../core/tts-adapter';
+  import { speak, stop, loadBundledAudioManifest, bundledAudioIdsStore, isSpeechSupported, isPronunciationBlockedWordId } from '../../core/tts-adapter';
 
   export let word: Word;
   export let mode: 'ar2en' | 'en2ar' = 'ar2en';
@@ -15,7 +15,7 @@
   let preferredVoice: string | null = null;
 
   // reactive: re-evaluate when the store updates or when word changes
-  $: ttsAvailable = isSpeechSupported() || (word && $bundledAudioIdsStore ? $bundledAudioIdsStore.has(word.id) : false);
+  $: ttsAvailable = Boolean(word && !isPronunciationBlockedWordId(word.id) && (isSpeechSupported() || $bundledAudioIdsStore.has(word.id)));
 
   onMount(async () => {
     try {

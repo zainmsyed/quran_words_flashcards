@@ -22,13 +22,13 @@ const MIME = {
   '.svg': 'image/svg+xml',
   '.mp3': 'audio/mpeg',
   '.wav': 'audio/wav',
-  '.txt': 'text/plain; charset=utf-8'
+  '.txt': 'text/plain; charset=utf-8',
 };
 
 const FLAG_CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type'
+  'Access-Control-Allow-Headers': 'Content-Type',
 };
 
 function escapeCell(s) {
@@ -38,7 +38,7 @@ function escapeCell(s) {
 async function ensureMdHeader() {
   try {
     await fsp.mkdir(MD_DIR, { recursive: true });
-    const exists = await fsp.stat(MD_PATH).then(s => !!s).catch(() => false);
+    const exists = await fsp.stat(MD_PATH).then(() => true).catch(() => false);
     if (!exists) {
       const header = `# Mispronunciations / audio issues (running list)\n\nThis file tracks flagged audio issues added from the local preview server.\n\n| id | arabic | transliteration | audio | issue | suggested fix | reporter | date |\n|---|---:|---|---|---|---|---|---|\n`;
       await fsp.writeFile(MD_PATH, header, 'utf8');
@@ -79,18 +79,18 @@ async function handleFlag(req, res) {
       return res.end('missing id');
     }
 
-    const issue = String(payload?.issue || 'audio needs recreation').trim() || 'audio needs recreation';
-    const suggested = String(payload?.suggested || 'recreate').trim() || 'recreate';
+    const stillWrong = payload?.stillWrong === true || payload?.stillWrong === 'true' || payload?.stillWrong === 1;
+    const issue = String(payload?.issue || (stillWrong ? 'still wrong after listening' : 'audio needs recreation')).trim() || (stillWrong ? 'still wrong after listening' : 'audio needs recreation');
+    const suggested = String(payload?.suggested || (stillWrong ? 'regenerate gTTS and listen again' : 'recreate')).trim() || (stillWrong ? 'regenerate gTTS and listen again' : 'recreate');
     const reporter = String(payload?.reporter || 'you').trim() || 'you';
     const date = String(payload?.date || new Date().toISOString().slice(0, 10)).trim();
 
-    // try to read seed file for arabic/transliteration
     let arabic = '';
     let transliteration = '';
     try {
       const seedRaw = await fsp.readFile(SEED_PATH, 'utf8');
       const seed = JSON.parse(seedRaw);
-      const w = Array.isArray(seed) && seed.find(x => x && x.id === id);
+      const w = Array.isArray(seed) && seed.find((x) => x && x.id === id);
       if (w) {
         arabic = w.arabic || '';
         transliteration = w.transliteration || '';
@@ -138,7 +138,11 @@ async function serveStatic(req, res, pathname) {
     }
 
     let stat;
-    try { stat = await fsp.stat(resolved); } catch (e) { stat = null; }
+    try {
+      stat = await fsp.stat(resolved);
+    } catch (e) {
+      stat = null;
+    }
     if (!stat) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       return res.end('not found');
@@ -146,7 +150,13 @@ async function serveStatic(req, res, pathname) {
 
     if (stat.isDirectory()) {
       const indexPath = path.join(resolved, 'index.html');
-      try { const idxStat = await fsp.stat(indexPath); stat = idxStat; rel = path.join(rel, 'index.html'); } catch (e) { }
+      try {
+        const idxStat = await fsp.stat(indexPath);
+        stat = idxStat;
+        rel = path.join(rel, 'index.html');
+      } catch (e) {
+        // keep original stat if there is no index file
+      }
     }
 
     const total = stat.size;
@@ -166,7 +176,7 @@ async function serveStatic(req, res, pathname) {
           'Content-Range': `bytes ${start}-${end}/${total}`,
           'Accept-Ranges': 'bytes',
           'Content-Length': String(end - start + 1),
-          'Content-Type': contentType
+          'Content-Type': contentType,
         });
         const stream = fs.createReadStream(resolved, { start, end });
         stream.pipe(res);
@@ -179,7 +189,12 @@ async function serveStatic(req, res, pathname) {
     stream.pipe(res);
   } catch (e) {
     console.error('serveStatic error', e);
-    try { res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('server error'); } catch (err) {}
+    try {
+      res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('server error');
+    } catch (err) {
+      // ignore
+    }
   }
 }
 

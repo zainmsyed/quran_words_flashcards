@@ -27,6 +27,21 @@ const DEFAULT_BUNDLED_IDS = [
   'w1','w2','w3','w4','w5','w6','w7','w8','w9','w10'
 ];
 
+const BLOCKED_BUNDLED_AUDIO_IDS = new Set(['w59', 'w82']);
+
+function isBlockedWordId(wordId: string): boolean {
+  return Boolean(wordId && BLOCKED_BUNDLED_AUDIO_IDS.has(wordId));
+}
+
+function extractWordIdFromAudioSource(source: string): string {
+  const match = String(source || '').match(/\/audio\/(?:gcp\/)?(w\d+)\.mp3(?:\?.*)?$/i);
+  return match?.[1]?.trim() || '';
+}
+
+function isBlockedAudioSource(source: string): boolean {
+  return isBlockedWordId(extractWordIdFromAudioSource(source));
+}
+
 let bundledAudioIds: Set<string> = new Set(DEFAULT_BUNDLED_IDS);
 export const bundledAudioIdsStore = writable<Set<string>>(new Set(bundledAudioIds));
 let manifestLoadPromise: Promise<void> | null = null;
@@ -54,12 +69,12 @@ export async function loadBundledAudioManifest(manifestUrl = '/audio/manifest.js
       if (data && Array.isArray(data.entries)) {
         const ids = new Set<string>();
         for (const e of data.entries) {
-          if (e && e.id && e.exists) ids.add(e.id);
+          if (e && e.id && e.exists && !isBlockedWordId(String(e.id))) {
+            ids.add(String(e.id));
+          }
         }
-        if (ids.size > 0) {
-          bundledAudioIds = ids;
-          try { bundledAudioIdsStore.set(new Set(bundledAudioIds)); } catch (e) { /* ignore */ }
-        }
+        bundledAudioIds = ids;
+        try { bundledAudioIdsStore.set(new Set(bundledAudioIds)); } catch (e) { /* ignore */ }
       }
 
       loaded = true;
@@ -145,6 +160,7 @@ async function tryPlayAudioSource(source: string): Promise<boolean> {
 async function tryPlayBundledAudio(sources?: string[]): Promise<boolean> {
   const candidates = (sources || []).filter(Boolean);
   if (candidates.length === 0) return false;
+  if (candidates.some(isBlockedAudioSource)) return false;
 
   for (const source of candidates) {
     const played = await tryPlayAudioSource(source);
@@ -232,12 +248,16 @@ export function isSpeechSupported(): boolean {
   return hasSpeechSupport();
 }
 
+export function isPronunciationBlockedWordId(wordId: string): boolean {
+  return isBlockedWordId(wordId);
+}
+
 export function hasBundledAudioForWordId(wordId: string): boolean {
-  return Boolean(wordId && bundledAudioIds.has(wordId));
+  return Boolean(wordId && !isBlockedWordId(wordId) && bundledAudioIds.has(wordId));
 }
 
 export function canPronounceWord(wordId: string): boolean {
-  return isSpeechSupported() || hasBundledAudioForWordId(wordId);
+  return !isBlockedWordId(wordId) && (isSpeechSupported() || hasBundledAudioForWordId(wordId));
 }
 
 export function isSupported(): boolean {
@@ -333,9 +353,12 @@ export async function speak(text: string, opts?: TtsOptions): Promise<void> {
   if (!isSupported()) return;
 
   try {
+    const audioSources = (opts?.audioSources || []).filter(Boolean);
+    if (audioSources.some(isBlockedAudioSource)) return;
+
     stop();
 
-    const playedBundledAudio = await tryPlayBundledAudio(opts?.audioSources);
+    const playedBundledAudio = await tryPlayBundledAudio(audioSources);
     if (playedBundledAudio) return;
     if (!hasSpeechSupport()) return;
 

@@ -38,6 +38,7 @@ def parse_args():
     p.add_argument("--force", action="store_true", help="Overwrite existing files")
     p.add_argument("--manifest-only", action="store_true", help="Only scan existing files and write manifest.json")
     p.add_argument("--seed", default="src/data/seed-words.json", help="Path to the seed words JSON file")
+    p.add_argument("--add-final-sukun", action="store_true", help="Append Arabic SUKUN (U+0652) to the final letter if it has no diacritic; only used for TTS text (does not modify the seed file)")
     return p.parse_args()
 
 
@@ -92,7 +93,35 @@ def scan_existing(out_dir: Path, words: List[Dict]) -> List[Dict]:
     return entries
 
 
-def generate_with_gcp(out_dir: Path, words: List[Dict], voice_name: str, sample_rate: int, force: bool):
+def _is_combining(cp: int) -> bool:
+    return (0x0610 <= cp <= 0x061A) or (0x064B <= cp <= 0x065F) or (0x06D6 <= cp <= 0x06ED)
+
+
+def _ensure_final_sukun(text: str) -> str:
+    if not text:
+        return text
+    s = text.rstrip()
+    clusters = []
+    cur = ''
+    for ch in s:
+        if cur == '' or not _is_combining(ord(ch)):
+            if cur != '':
+                clusters.append(cur)
+            cur = ch
+        else:
+            cur += ch
+    if cur != '':
+        clusters.append(cur)
+    if not clusters:
+        return s
+    last = clusters[-1]
+    for ch in last:
+        if _is_combining(ord(ch)):
+            return s
+    return s + '\u0652'
+
+
+def generate_with_gcp(out_dir: Path, words: List[Dict], voice_name: str, sample_rate: int, force: bool, add_final_sukun: bool):
     try:
         from google.cloud import texttospeech
     except Exception as e:
@@ -110,6 +139,8 @@ def generate_with_gcp(out_dir: Path, words: List[Dict], voice_name: str, sample_
         text_ar = w.get("arabic")
         if not wid or not text_ar:
             continue
+        # produce the TTS-only text variant when requested
+        tts_text = _ensure_final_sukun(text_ar) if add_final_sukun else text_ar
         fname = f"{wid}.mp3"
         out_path = out_dir / fname
         if out_path.exists() and not force:
@@ -118,8 +149,8 @@ def generate_with_gcp(out_dir: Path, words: List[Dict], voice_name: str, sample_
             print(out_path, "already exists — skipping")
             continue
 
-        print(f"Generating {out_path} for: {text_ar}")
-        synthesis_input = texttospeech.SynthesisInput(text=text_ar)
+        print(f"Generating {out_path} for: {text_ar} (tts_text: {tts_text})")
+        synthesis_input = texttospeech.SynthesisInput(text=tts_text)
         # voice selection: prefer the explicit voice name; fall back to language-only selection
         voice = texttospeech.VoiceSelectionParams(language_code="ar-XA", name=voice_name)
         audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, sample_rate_hertz=sample_rate)
@@ -163,7 +194,7 @@ def main():
         sys.exit(0)
 
     # generate using Google Cloud TTS
-    provider, entries = generate_with_gcp(out_dir, words, args.voice, args.sample_rate, args.force)
+    provider, entries = generate_with_gcp(out_dir, words, args.voice, args.sample_rate, args.force, getattr(args, 'add_final_sukun', False))
     write_manifest(out_dir, entries, provider=provider, voice=args.voice, sample_rate=args.sample_rate)
 
 

@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { execFileSync, spawn } from 'node:child_process';
 import { build, buildSync } from 'esbuild';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import net from 'node:net';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -209,6 +211,113 @@ function writeWorkspaceFile(root, relativePath, content) {
   mkdirSync(path.dirname(filePath), { recursive: true });
   writeFileSync(filePath, content);
   return filePath;
+}
+
+function makeAudioReviewWorkspace(root, reviewIds = ['w100', 'w12']) {
+  const seedWords = [
+    { id: 'w12', arabic: 'لِ', transliteration: 'li', english: 'For/to' },
+    { id: 'w35', arabic: 'جَعَلَ', transliteration: 'jaʿala', english: 'He made' },
+    { id: 'w100', arabic: 'الدُّنْيَا', transliteration: 'al-dunyā', english: 'The world' },
+  ];
+
+  writeWorkspaceFile(root, 'src/data/seed-words.json', JSON.stringify(seedWords, null, 2));
+
+  const reviewRows = reviewIds.map((id) => {
+    const word = seedWords.find((entry) => entry.id === id) || { id, arabic: '', transliteration: '', english: '' };
+    return `| ${word.id} | ${word.arabic} | ${word.transliteration} | /audio/${word.id}.mp3 | still wrong after listening | regenerate gTTS and listen again | you | 2026-04-20 |`;
+  }).join('\n\n');
+
+  writeWorkspaceFile(root, '.context/reviews/mispronunciations.md', `# Mispronunciations / audio issues (running list)\n\nThis file is a running checklist of seed words whose bundled audio sounds incorrect or unnatural.\n\n| id | arabic | transliteration | audio | issue | suggested fix | reporter | date |\n|---|---:|---|---|---|---|---|---|\n${reviewRows}\n`);
+  return seedWords;
+}
+
+async function getFreePort() {
+  return await new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.unref();
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      const port = typeof address === 'object' && address ? address.port : 0;
+      server.close((closeErr) => {
+        if (closeErr) {
+          reject(closeErr);
+          return;
+        }
+        resolve(port);
+      });
+    });
+  });
+}
+
+async function waitForServer(port, timeoutMs = 5000) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/_health`);
+      if (res.ok) return;
+    } catch (err) {
+      // retry until the process is ready
+    }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error(`Timed out waiting for preview server on port ${port}`);
+}
+
+async function startPreviewServer(workspace) {
+  const port = await getFreePort();
+  const proc = spawn(process.execPath, [path.resolve(repoRoot, 'scripts/preview_flag_server.mjs')], {
+    cwd: workspace,
+    env: { ...process.env, PORT: String(port) },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+
+  let stdout = '';
+  let stderr = '';
+  proc.stdout.on('data', (chunk) => {
+    stdout += chunk.toString('utf8');
+  });
+  proc.stderr.on('data', (chunk) => {
+    stderr += chunk.toString('utf8');
+  });
+
+  await waitForServer(port);
+  return { proc, port, stdout: () => stdout, stderr: () => stderr };
+}
+
+async function stopPreviewServer(proc) {
+  if (!proc || proc.exitCode !== null || proc.killed) return;
+  proc.kill();
+  await new Promise((resolve) => proc.once('close', resolve));
+}
+
+async function waitForFileContains(filePath, needle, timeoutMs = 5000) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    try {
+      const content = await readFile(filePath, 'utf8');
+      if (content.includes(needle)) return content;
+    } catch (err) {
+      // keep waiting until the file exists and contains the expected text
+    }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error(`Timed out waiting for ${needle} in ${filePath}`);
+}
+
+async function waitForFileMatchCount(filePath, pattern, expectedCount, timeoutMs = 5000) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    try {
+      const content = await readFile(filePath, 'utf8');
+      const matches = content.match(pattern) || [];
+      if (matches.length === expectedCount) return content;
+    } catch (err) {
+      // keep waiting until the file exists and contains the expected number of rows
+    }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error(`Timed out waiting for ${expectedCount} match(es) of ${pattern} in ${filePath}`);
 }
 
 async function flushSvelte() {
@@ -1023,6 +1132,7 @@ test('tts support helpers distinguish speech and bundled audio availability', as
     assert.equal(isSpeechSupported(), false);
     assert.equal(canPronounceWord('w1'), true);
     assert.equal(canPronounceWord('w42'), false);
+    assert.equal(canPronounceWord('w59'), false);
 
     Object.defineProperty(globalThis, 'window', {
       value: {
@@ -1035,6 +1145,8 @@ test('tts support helpers distinguish speech and bundled audio availability', as
 
     assert.equal(isSpeechSupported(), true);
     assert.equal(canPronounceWord('w42'), true);
+    assert.equal(canPronounceWord('w58'), true);
+    assert.equal(canPronounceWord('w59'), false);
   } finally {
     if (!hadWindow) {
       delete globalThis.window;
@@ -1071,6 +1183,8 @@ test('tts manifest loader populates bundled audio set', async () => {
           voice: 'ar-XA-Neural-B',
           sample_rate: 24000,
           entries: [
+            { id: 'w58', filename: 'w58.mp3', bytes: 1234, exists: true },
+            { id: 'w59', filename: 'w59.mp3', bytes: 1234, exists: true },
             { id: 'w200', filename: 'w200.mp3', bytes: 1234, exists: true },
             { id: 'w201', filename: 'w201.mp3', bytes: 1234, exists: true },
           ],
@@ -1081,16 +1195,22 @@ test('tts manifest loader populates bundled audio set', async () => {
   };
 
   try {
-    const { hasBundledAudioForWordId, loadBundledAudioManifest } = await importTs('src/core/tts-adapter.ts');
+    const { hasBundledAudioForWordId, loadBundledAudioManifest, canPronounceWord } = await importTs('src/core/tts-adapter.ts');
 
     // defaults contain w1..w10
     assert.equal(hasBundledAudioForWordId('w1'), true);
     assert.equal(hasBundledAudioForWordId('w200'), false);
+    assert.equal(hasBundledAudioForWordId('w58'), false);
+    assert.equal(hasBundledAudioForWordId('w59'), false);
 
     await loadBundledAudioManifest();
 
-    // after manifest load the new ids should be present
+    // after manifest load the new ids should be present, but blocked ids stay unavailable
     assert.equal(hasBundledAudioForWordId('w200'), true);
+    assert.equal(hasBundledAudioForWordId('w58'), true);
+    assert.equal(hasBundledAudioForWordId('w59'), false);
+    assert.equal(canPronounceWord('w58'), true);
+    assert.equal(canPronounceWord('w59'), false);
   } finally {
     globalThis.fetch = originalFetch;
     if (!hadWindow) {
@@ -1209,6 +1329,46 @@ test('speak uses bundled audio when playback succeeds and avoids SpeechSynthesis
     await speak('مِنْ', { audioSources: ['/audio/w1.mp3'] });
     // ensure speech synthesis was not invoked
     assert.equal(speechCalled, false);
+  } finally {
+    if (originalAudio === undefined) delete globalThis.Audio; else globalThis.Audio = originalAudio;
+    if (!hadWindow) delete globalThis.window; else Object.defineProperty(globalThis, 'window', { value: originalWindow, configurable: true, writable: true });
+  }
+});
+
+
+test('speak suppresses blocked bundled audio sources', async () => {
+  const originalWindow = globalThis.window;
+  const originalAudio = globalThis.Audio;
+  const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, 'window');
+
+  let speechCalled = false;
+  let audioConstructed = false;
+  Object.defineProperty(globalThis, 'window', {
+    value: {
+      speechSynthesis: { speak: (u) => { speechCalled = true; if (typeof u.onend === 'function') setTimeout(u.onend, 0); } },
+      SpeechSynthesisUtterance: function SpeechSynthesisUtterance() {},
+    },
+    configurable: true,
+    writable: true,
+  });
+
+  globalThis.Audio = function (src) {
+    audioConstructed = true;
+    this._listeners = {};
+    this.src = src;
+    this.preload = '';
+    this.addEventListener = (name, h) => { this._listeners[name] = this._listeners[name] || []; this._listeners[name].push(h); };
+    this.removeEventListener = (name, h) => { if (!this._listeners[name]) return; this._listeners[name] = this._listeners[name].filter(x => x !== h); };
+    this.play = () => Promise.resolve();
+    this.pause = () => {};
+    this.currentTime = 0;
+  };
+
+  try {
+    const { speak } = await importTs('src/core/tts-adapter.ts');
+    await speak('خَلَقَ', { audioSources: ['/audio/w59.mp3', '/audio/gcp/w59.mp3'] });
+    assert.equal(speechCalled, false);
+    assert.equal(audioConstructed, false);
   } finally {
     if (originalAudio === undefined) delete globalThis.Audio; else globalThis.Audio = originalAudio;
     if (!hadWindow) delete globalThis.window; else Object.defineProperty(globalThis, 'window', { value: originalWindow, configurable: true, writable: true });
@@ -1749,6 +1909,150 @@ test('normalizeCardState preserves all card fields and keeps lastRating/lastRevi
   assert.equal(partial.reviewCount, 0);
   assert.equal(partial.lastRating, undefined);
   assert.equal(partial.lastReviewedAt, undefined);
+});
+
+test('gTTS script targets review ids in dry-run mode', async () => {
+  const workspace = mkdtempSync(path.join(tempRoot, 'gtts-review-'));
+  makeAudioReviewWorkspace(workspace, ['w100', 'w12', 'w100']);
+
+  const stdout = execFileSync('python3', [
+    path.resolve(repoRoot, 'scripts/generate_audio_gtts.py'),
+    '--review-file', '.context/reviews/mispronunciations.md',
+    '--dry-run',
+  ], {
+    cwd: workspace,
+    encoding: 'utf8',
+  });
+
+  assert.match(stdout, /Dry run: 2 target id\(s\)/);
+  assert.ok(stdout.includes('w100'));
+  assert.ok(stdout.includes('w12'));
+  assert.ok(stdout.indexOf('w100') < stdout.indexOf('w12'), 'review ids should keep file order');
+  assert.equal((stdout.match(/w100/g) || []).length, 1, 'duplicate ids should be deduped in dry-run output');
+});
+
+
+test('generate_sample_preview.mjs writes a review-only mispronunciations preview', async () => {
+  const workspace = mkdtempSync(path.join(tempRoot, 'preview-review-'));
+  makeAudioReviewWorkspace(workspace, ['w100', 'w12', 'w100']);
+
+  execFileSync('node', [
+    path.resolve(repoRoot, 'scripts/generate_sample_preview.mjs'),
+    '--review-file', '.context/reviews/mispronunciations.md',
+    '--out', 'public/audio/mispronunciations_preview.html',
+  ], {
+    cwd: workspace,
+    encoding: 'utf8',
+  });
+
+  const html = await readFile(path.join(workspace, 'public/audio/mispronunciations_preview.html'), 'utf8');
+  assert.match(html, /Mispronunciations preview \(2 words\)/);
+  assert.match(html, /data-preview-mode="review"/);
+  assert.match(html, /Still wrong/);
+  assert.match(html, /http:\/\/localhost:8001\/audio\/mispronunciations_preview\.html/);
+  assert.ok(html.includes('w100'));
+  assert.ok(html.includes('w12'));
+  assert.ok(!html.includes('w35'));
+  assert.ok(html.indexOf('w100') < html.indexOf('w12'), 'preview order should follow the review table');
+});
+
+
+test('add_mispronunciation.mjs appends a still-wrong row even when the id already exists', async () => {
+  const workspace = mkdtempSync(path.join(tempRoot, 'append-still-wrong-'));
+  makeAudioReviewWorkspace(workspace, ['w12']);
+
+  execFileSync('node', [
+    path.resolve(repoRoot, 'scripts/add_mispronunciation.mjs'),
+    '--id', 'w12',
+    '--still-wrong',
+  ], {
+    cwd: workspace,
+    encoding: 'utf8',
+  });
+
+  const reviewFile = await readFile(path.join(workspace, '.context/reviews/mispronunciations.md'), 'utf8');
+  assert.equal((reviewFile.match(/^\|\s*w12\s*\|/gm) || []).length, 2, 'the script should append duplicate review rows for the same id');
+  assert.match(reviewFile, /still wrong after listening/);
+  assert.match(reviewFile, /regenerate gTTS and listen again/);
+});
+
+
+test('review preview button appends still-wrong rows through the 8001 flag server', async () => {
+  const workspace = mkdtempSync(path.join(tempRoot, 'flag-server-'));
+  makeAudioReviewWorkspace(workspace, ['w12']);
+
+  execFileSync('node', [
+    path.resolve(repoRoot, 'scripts/generate_sample_preview.mjs'),
+    '--review-file', '.context/reviews/mispronunciations.md',
+    '--out', 'public/audio/mispronunciations_preview.html',
+  ], {
+    cwd: workspace,
+    encoding: 'utf8',
+  });
+
+  const { proc, port } = await startPreviewServer(workspace);
+  try {
+    const pageResponse = await fetch(`http://127.0.0.1:${port}/audio/mispronunciations_preview.html`);
+    assert.equal(pageResponse.ok, true, 'preview page should be served from the 8001 flag server');
+    const pageHtml = await pageResponse.text();
+    assert.match(pageHtml, /Mispronunciations preview \(1 word\)/);
+    assert.match(pageHtml, /Still wrong/);
+    assert.match(pageHtml, /data-preview-mode="review"/);
+
+    await withBrowserDom(async ({ document, window }) => {
+      const originalAlert = globalThis.alert;
+      const originalPrompt = globalThis.prompt;
+      globalThis.alert = () => {};
+      globalThis.prompt = () => { throw new Error('prompt should not be used when the flag server is healthy'); };
+
+      try {
+        document.body.innerHTML = `
+          <div class="word" data-word-id="w12">
+            <strong>w12</strong>
+            <span class="arabic">لِ</span>
+            <div class="meta"><em>li</em> — For/to</div>
+            <div class="word-tools">
+              <button type="button" class="flag-btn">Flag</button>
+            </div>
+          </div>
+        `;
+
+        window.__QFC_PREVIEW_MODE__ = 'review';
+        window.__QFC_FLAG_ENDPOINT__ = `http://127.0.0.1:${port}/flag`;
+
+        const script = await readFile(path.join(repoRoot, 'public/audio/sample_preview_flag.js'), 'utf8');
+        eval(script);
+        document.dispatchEvent(new window.Event('DOMContentLoaded'));
+
+        const button = document.querySelector('.flag-btn');
+        assert.ok(button);
+        assert.equal(button.textContent, 'Still wrong');
+
+        button.dispatchEvent(new window.Event('click', { bubbles: true }));
+        await waitForFileMatchCount(path.join(workspace, '.context/reviews/mispronunciations.md'), /^\|\s*w12\s*\|/gm, 2);
+
+        const reviewFile = await readFile(path.join(workspace, '.context/reviews/mispronunciations.md'), 'utf8');
+        assert.equal((reviewFile.match(/^\|\s*w12\s*\|/gm) || []).length, 2, 'server append should add a second still-wrong row');
+        assert.match(reviewFile, /still wrong after listening/);
+        assert.match(reviewFile, /regenerate gTTS and listen again/);
+        assert.equal(button.disabled, true);
+        assert.equal(button.textContent, 'Still wrong ✓');
+      } finally {
+        if (typeof originalAlert === 'undefined') {
+          delete globalThis.alert;
+        } else {
+          globalThis.alert = originalAlert;
+        }
+        if (typeof originalPrompt === 'undefined') {
+          delete globalThis.prompt;
+        } else {
+          globalThis.prompt = originalPrompt;
+        }
+      }
+    });
+  } finally {
+    await stopPreviewServer(proc);
+  }
 });
 
 let failed = 0;
