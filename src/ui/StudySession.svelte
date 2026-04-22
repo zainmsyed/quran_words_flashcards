@@ -429,18 +429,6 @@
               <div class="progress-bar">
                 <div class="progress-fill" style={`width: ${progressPercent}%`}></div>
               </div>
-              <div class="session-quota" aria-live="polite">
-                <div class="quota-badges" role="status" aria-live="polite">
-                  <span class="badge badge-new" aria-label={sessionNewCount + ' new'}>
-                    <span class="badge-count">{sessionNewCount}</span>
-                    <span class="badge-label">new</span>
-                  </span>
-                  <span class="badge badge-review" aria-label={sessionReviewCount + ' to review'}>
-                    <span class="badge-count">{sessionReviewCount}</span>
-                    <span class="badge-label">review</span>
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         {/if}
