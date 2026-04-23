@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const projectName = `qfc-coolify-smoke-${Date.now()}`;
+const webProxyPocketBase = process.env.WEB_PROXY_POCKETBASE?.trim() || '1';
 const smokeEnv = {
   ...process.env,
   PB_ADMIN_EMAIL: process.env.PB_ADMIN_EMAIL?.trim() || 'smoke@example.com',
@@ -13,6 +14,7 @@ const smokeEnv = {
   POCKETBASE_BIND: process.env.POCKETBASE_BIND?.trim() || '0.0.0.0:8090',
   POCKETBASE_DATA_DIR: process.env.POCKETBASE_DATA_DIR?.trim() || '/pb/data',
   VITE_POCKETBASE_URL: process.env.VITE_POCKETBASE_URL?.trim() || '',
+  WEB_PROXY_POCKETBASE: webProxyPocketBase,
 };
 
 function runDocker(args) {
@@ -48,6 +50,10 @@ async function main() {
   console.log(`[smoke] Starting Coolify compose smoke project ${projectName}…`);
   await runDocker(['compose', '-p', projectName, 'up', '-d', '--build', '--wait', '--wait-timeout', '180']);
 
+  const webCheck = webProxyPocketBase === '0'
+    ? 'wget -qO- http://127.0.0.1/healthz >/dev/null && wget -qO- http://pocketbase:8090/api/health >/dev/null && ! wget -qO- http://127.0.0.1/api/health >/dev/null 2>&1 && ! wget -qO- http://127.0.0.1/_/ >/dev/null 2>&1'
+    : 'wget -qO- http://127.0.0.1/healthz >/dev/null && wget -qO- http://pocketbase:8090/api/health >/dev/null && wget -qO- http://127.0.0.1/api/health >/dev/null';
+
   try {
     await runDocker([
       'compose',
@@ -57,7 +63,7 @@ async function main() {
       'web',
       'sh',
       '-ec',
-      'wget -qO- http://127.0.0.1/healthz >/dev/null && wget -qO- http://pocketbase:8090/api/health >/dev/null && wget -qO- http://127.0.0.1/api/health >/dev/null',
+      webCheck,
     ]);
 
     console.log('[smoke] Coolify compose smoke test passed.');

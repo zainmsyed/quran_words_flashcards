@@ -17,9 +17,12 @@ ENV VITE_POCKETBASE_URL=${VITE_POCKETBASE_URL}
 RUN npm run build
 
 FROM nginx:${NGINX_VERSION} AS web
+ARG WEB_PROXY_POCKETBASE=1
 COPY --from=web-build /app/dist /usr/share/nginx/html
-RUN rm -f /etc/nginx/conf.d/default.conf \
-  && cat > /etc/nginx/conf.d/default.conf <<'EOF'
+RUN <<EOF
+set -eu
+rm -f /etc/nginx/conf.d/default.conf
+cat > /etc/nginx/conf.d/default.conf <<'NGINX_HEAD'
 map $http_x_forwarded_proto $forwarded_proto {
   default $http_x_forwarded_proto;
   '' $scheme;
@@ -43,7 +46,20 @@ server {
     access_log off;
     return 200 "ok\n";
   }
+NGINX_HEAD
 
+if [ "$WEB_PROXY_POCKETBASE" = "0" ]; then
+cat >> /etc/nginx/conf.d/default.conf <<'NGINX_BODY'
+  location ^~ /api/ {
+    return 404;
+  }
+
+  location ^~ /_/ {
+    return 404;
+  }
+NGINX_BODY
+else
+cat >> /etc/nginx/conf.d/default.conf <<'NGINX_BODY'
   location /api/ {
     proxy_pass http://pocketbase:8090;
     proxy_http_version 1.1;
@@ -61,6 +77,10 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $forwarded_proto;
   }
+NGINX_BODY
+fi
+
+cat >> /etc/nginx/conf.d/default.conf <<'NGINX_TAIL'
 
   location / {
     try_files $uri $uri/ /index.html;
@@ -70,6 +90,7 @@ server {
     deny all;
   }
 }
+NGINX_TAIL
 EOF
 EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD wget -qO- http://127.0.0.1/healthz >/dev/null 2>&1 || exit 1

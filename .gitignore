@@ -8,3 +8,4 @@ pocketbase_*.zip
 .vscode/
 scripts/.dev/
 scripts/.dev-previews/
+.local/
