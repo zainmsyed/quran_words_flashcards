@@ -2,7 +2,7 @@
 
 **Status:** complete  
 **Created:** 2026-04-14  
-**Last accessed:** 2026-04-16  
+**Last accessed:** 2026-04-23  
 **Completed:** 2026-04-16
 
 ## Goal
@@ -11,7 +11,7 @@ Implement the chosen build-time audio pipeline and produce one bundled pronuncia
 ## Verification
 Run the generation and coverage check for the seed deck and confirm that every current seeded word has a bundled audio file in public/audio with the expected naming convention; verify runtime UI plays bundled audio when present and falls back to browser TTS otherwise.
 
-## Scope
+## Scope — files this story may touch
 - scripts/generate_audio_gtts.py (prototype)
 - scripts/generate_audio_gcp.py (Google Cloud generator)
 - scripts/check_audio_coverage.py (coverage verification)
@@ -19,7 +19,7 @@ Run the generation and coverage check for the seed deck and confirm that every c
 - src/data/seed-words.json
 - public/audio/
 
-## Out of scope
+## Out of scope — do not touch
 - Multiple voice variants
 - Runtime provider calls from the deployed app
 - Manual recording workflow or admin upload tooling

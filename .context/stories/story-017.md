@@ -2,7 +2,7 @@
 
 **Status:** complete  
 **Created:** 2026-04-18  
-**Last accessed:** 2026-04-18  
+**Last accessed:** 2026-04-23  
 **Completed:** 2026-04-18
 
 ## Goal
@@ -11,7 +11,7 @@ Harden a Coolify-managed single-VPS deployment so the Svelte app and PocketBase 
 ## Verification
 Run `docker compose config`, `npm run smoke:compose`, and the `docker build --target web` / `docker build --target pocketbase` checks locally, then confirm the Compose topology keeps PocketBase private and the public web service as the only exposed entrypoint.
 
-## Scope
+## Scope — files this story may touch
 - Dockerfile
 - docker-compose.yml
 - .dockerignore
@@ -23,7 +23,7 @@ Run `docker compose config`, `npm run smoke:compose`, and the `docker build --ta
 - package.json
 - .env.example
 
-## Out of scope
+## Out of scope — do not touch
 - Application code security fixes
 - Automated dependency/secret scanning
 - Backups, restore drills, and incident response runbooks

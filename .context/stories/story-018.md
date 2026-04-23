@@ -2,7 +2,7 @@
 
 **Status:** complete  
 **Created:** 2026-04-18  
-**Last accessed:** 2026-04-19  
+**Last accessed:** 2026-04-23  
 **Completed:** 2026-04-19
 
 ## Goal
@@ -11,7 +11,7 @@ Audit and patch app-side security issues so invite-only users can log in safely,
 ## Verification
 Run the updated security-focused tests and build, then smoke-test the auth/session flow with storage- and backend-failure cases to confirm the app degrades safely instead of exposing data or crashing.
 
-## Scope
+## Scope — files this story may touch
 - src/core/pocketbase-auth.ts
 - src/core/pocketbase-study.ts
 - src/core/storage-adapter.ts
@@ -26,7 +26,7 @@ Run the updated security-focused tests and build, then smoke-test the auth/sessi
 - src/ui/components/Card.svelte
 - scripts/run-tests.mjs
 
-## Out of scope
+## Out of scope — do not touch
 - Server/reverse-proxy hardening
 - Automated CI security gates
 - New study features or visual redesign work

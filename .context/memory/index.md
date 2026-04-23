@@ -56,13 +56,13 @@ public/audio/sample_preview.html — Full 300-word audio QA preview page with pe
 public/audio/manifest.json — Bundled audio coverage manifest with file metadata for the 300-word deck
 scripts/generate_audio_gcp.py — Google Cloud Text-to-Speech generator for bundled Arabic pronunciation files
 scripts/check_audio_coverage.py — Seed-deck audio coverage checker that validates manifest/file presence
-docker-compose.yml — (undescribed)
-scripts/coolify-compose-smoke.mjs — (undescribed)
-scripts/security-check.mjs — (undescribed)
+docker-compose.yml — Coolify-oriented Compose stack for the public web container, PocketBase service, health checks, and persistent PB data volume.
+scripts/coolify-compose-smoke.mjs — Local Compose smoke test that builds the web/PocketBase stack, verifies internal routing, and tears it down.
+scripts/security-check.mjs — Security gate that runs `npm audit` for high/critical issues and scans tracked text files for obvious secret leaks.
 
-scripts/add_mispronunciation.mjs — (undescribed)
-scripts/preview_flag_server.mjs — (undescribed)
-scripts/generate_sample_preview.mjs — (undescribed)
-scripts/fix_preview_script.mjs — (undescribed)
-public/audio/sample_preview_flag.js — (undescribed)
-public/audio/mispronunciations_preview.html — (undescribed)
+scripts/add_mispronunciation.mjs — CLI helper that appends a flagged word row to `.context/reviews/mispronunciations.md` using seed-word metadata.
+scripts/preview_flag_server.mjs — Local port-8001 static/audio preview server that serves `public/` and accepts flag writes at `/flag`.
+scripts/generate_sample_preview.mjs — Generates the full-deck or review-only audio preview HTML pages from seed words and the mispronunciation list.
+scripts/fix_preview_script.mjs — Repair helper that rewrites escaped newline/tab sequences inside the generated `sample_preview.html` inline script block.
+public/audio/sample_preview_flag.js — Browser-side preview helper that posts flag actions to the local server or copies a CLI fallback command.
+public/audio/mispronunciations_preview.html — Generated review-only audio preview page for the currently flagged mispronunciation subset, with still-wrong actions.

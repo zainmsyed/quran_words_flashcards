@@ -2,7 +2,7 @@
 
 **Status:** complete  
 **Created:** 2026-04-18  
-**Last accessed:** 2026-04-19  
+**Last accessed:** 2026-04-23  
 **Completed:** 2026-04-19
 
 ## Goal
@@ -11,13 +11,13 @@ Add lightweight automated security checks so dependency issues and obvious secre
 ## Verification
 Run the new security check locally or in CI and confirm it exits cleanly on the current repo state.
 
-## Scope
+## Scope — files this story may touch
 - .github/workflows/security.yml
 - package.json
 - scripts/security-check.mjs (new or updated helper)
 - docs/security.md (or equivalent short docs note)
 
-## Out of scope
+## Out of scope — do not touch
 - VPS/server hardening
 - Application code security fixes
 - Backup/restore operations

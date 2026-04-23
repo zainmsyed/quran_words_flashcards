@@ -2,7 +2,8 @@
 
 **Status:** complete  
 **Created:** 2026-04-20  
-**Last accessed:** 2026-04-22  
+**Last accessed:** 2026-04-23  
+**Completed:** —
 
 ## Goal
 Use the free gTTS regeneration path for the words listed in `.context/reviews/mispronunciations.md`, then give reviewers a dedicated listening and flagging loop at `http://localhost:8001/audio/mispronunciations_preview.html` so only the updated pronunciations are auditioned and any remaining wrong files can be appended back into the existing review table as still wrong before we reevaluate whether the free route is good enough.
@@ -10,7 +11,7 @@ Use the free gTTS regeneration path for the words listed in `.context/reviews/mi
 ## Verification
 Run the regeneration pass for the flagged IDs, start `node scripts/preview_flag_server.mjs`, open `http://localhost:8001/audio/mispronunciations_preview.html`, listen to the updated subset, and confirm that flagging a word that still sounds wrong appends a new row to `.context/reviews/mispronunciations.md` with wording that marks it as still wrong.
 
-## Scope
+## Scope — files this story may touch
 - `.context/reviews/mispronunciations.md`
 - `scripts/add_mispronunciation.mjs`
 - `scripts/generate_audio_gtts.py`
@@ -22,7 +23,7 @@ Run the regeneration pass for the flagged IDs, start `node scripts/preview_flag_
 - `public/audio/`
 - `scripts/run-tests.mjs`
 
-## Out of scope
+## Out of scope — do not touch
 - Google Cloud or other paid TTS providers
 - Study-flow, SRS, auth, or PocketBase changes
 - New bundled voices or runtime cloud TTS
@@ -44,6 +45,9 @@ Run the regeneration pass for the flagged IDs, start `node scripts/preview_flag_
 - [x] Re-listen to the regenerated files and reevaluate whether the free route is good enough or whether we need a higher-quality provider later.
   - Implemented: regenerated review MP3s with final sukun; audited via preview at http://localhost:8001/audio/mispronunciations_preview.html; blocked w59 and w82 playback in-app and appended review notes; tests ran and passed locally. Date: 2026-04-22
 
+## Issues
+- None yet.
+
 ## Completion Summary
 Story 020 is functionally complete and ready for final closeout. The mispronunciation remediation flow now works end-to-end:
 - Added review-table-driven gTTS regeneration with final-sukun-only TTS input and manifest refresh.
@@ -55,6 +59,3 @@ Story 020 is functionally complete and ready for final closeout. The mispronunci
 Remaining notes:
 - `w59` and `w82` are intentionally left as still broken in the review table for later higher-quality remediation.
 - No implementation blockers remain; the only remaining step is final story closeout, which Vazir will handle.
-
-## Issues
-- None yet.

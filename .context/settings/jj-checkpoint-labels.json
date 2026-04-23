@@ -566,6 +566,23 @@
     "dbe2fced": "fix these errors",
     "00e46f20": "a",
     "6bdd3f2e": "please commit and push",
-    "488e3ac8": "lets remove due today in the settings menu, its just confusing and not really us"
+    "488e3ac8": "lets remove due today in the settings menu, its just confusing and not really us",
+    "8fd0e3fd": "committ push and rebase and merge with master",
+    "5d304144": "why are we still on the bug-fixes branch then?????",
+    "22403be4": "please remove all other branches except master to clean up the repo please",
+    "0733c2d3": "im setting up coolify on hetzner. i have the dns etc. working. how do i configur",
+    "f3c20f99": "im setting up coolify on hetzner. i have the dns etc. working. how do i configur",
+    "37a7321b": "1. arabicflashcard.com\n2. public\n3. admin.arabicflashcard.com\n4. yes. i will add",
+    "7c32a253": "I would like this\n\n- https://arabicflashcard.com → app                          ",
+    "b16e3f5b": "so i would like to make the admin domain just for pocketbase. but is it a good i",
+    "9ca0a6b4": "yes",
+    "005cda01": "by blanket proxy on cloudflare you mean the proxy toggle next to the admin.domai",
+    "77badfed": "ok got yeah that is how i have it set up! \n\nplease show me the coolify setup ple",
+    "c6545e61": "please create a short checklist in .md but add it to the gitignore so its not pu",
+    "3e1b310a": "i think just add the whole docs folder into gitignore",
+    "fba38fa0": "yeah i like the .local folder idea",
+    "b5fb0529": "please commit and push this. and can we change the master bracnh name to main?",
+    "78fbef80": "Run Vazir consolidation using the currently selected Pi model.\n\nTasks:\n1. Read .",
+    "1aa17921": "Run Vazir consolidation using the currently selected Pi model.\n\nTasks:\n1. Read ."
   }
 }

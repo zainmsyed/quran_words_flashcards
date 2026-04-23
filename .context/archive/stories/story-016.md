@@ -2,14 +2,16 @@
 
 **Status:** complete  
 **Created:** 2026-04-16  
-**Last accessed:** 2026-04-18  
+**Last accessed:** 2026-04-23  
 **Completed:** 2026-04-18
+
+## Goal
 Update the study-session planner so each session contains at most 15 cards total, targets 10 new words plus up to 5 due reviews when a full new-card set is available, uses all available new words when fewer than 10 exist, fills the remaining slots with due reviews, and always chooses the oldest due reviews first.
 
 ## Verification
 Run the session-planning tests on a representative mixed deck and confirm the generated queue never exceeds 15 cards, uses all available new words when fewer than 10 are available, and selects the oldest due reviews first.
 
-## Scope
+## Scope — files this story may touch
 - src/core/session.ts
 - src/ui/StudySession.svelte (only if labels or summary copy need to reflect the new quota rules)
 - scripts/run-tests.mjs or targeted test helpers
@@ -31,7 +33,7 @@ Requested explicitly by the user after whole-codebase review follow-ups. These c
 
 Tool-managed sync files such as `.context/memory/index.md`, `.context/reviews/summary.md`, and `.context/settings/jj-checkpoint-labels.json` may also appear in `git status`, but they are not maintained manually in this story.
 
-## Out of scope
+## Out of scope — do not touch
 - Auth, account, or PocketBase behavior
 - SRS interval math changes beyond session composition
 - New decks or content expansion

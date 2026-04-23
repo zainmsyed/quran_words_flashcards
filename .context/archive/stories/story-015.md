@@ -2,7 +2,7 @@
 
 **Status:** complete  
 **Created:** 2026-04-14  
-**Last accessed:** 2026-04-16  
+**Last accessed:** 2026-04-23  
 **Completed:** 2026-04-16
 
 ## Goal
@@ -11,13 +11,13 @@ Update runtime pronunciation behavior so the app treats bundled audio as the pri
 ## Verification
 In the app, confirm that a seeded word with bundled audio plays the static asset path first and that a simulated missing-file or playback-failure case falls back gracefully to browser speech without breaking the card flow.
 
-## Scope
+## Scope — files this story may touch
 - src/core/tts-adapter.ts
 - src/ui/components/Card.svelte
 - src/ui/VoiceSettings.svelte (only if fallback messaging or controls need adjustment)
 - scripts/ (smoke checks or test helpers if needed)
 
-## Out of scope
+## Out of scope — do not touch
 - New study features or SRS changes
 - Multiple bundled voices or per-user bundled voice selection
 - Runtime cloud TTS integration
