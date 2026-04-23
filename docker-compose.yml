@@ -35,8 +35,8 @@ services:
     volumes:
       - pocketbase-data:${POCKETBASE_DATA_DIR:-/pb/data}
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8090/api/health >/dev/null 2>&1 || exit 1"]
-      interval: 30s
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8090/api/health"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
