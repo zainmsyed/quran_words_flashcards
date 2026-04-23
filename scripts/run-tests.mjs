@@ -843,6 +843,28 @@ test('buildSessionPlan fills remaining session capacity with the oldest due revi
   assert.equal(noReviewPlan.queue.length, 10, 'sessions without due reviews should cap at 10 new cards');
 });
 
+test('createReviewAgainSession rebuilds a clean review queue from unique cards', async () => {
+  const { createReviewAgainSession } = await importTs('src/core/session.ts');
+
+  const replay = createReviewAgainSession([
+    { id: 'w1', mode: 'ar2en' },
+    { id: 'w2', mode: 'en2ar' },
+    { id: 'w1', mode: 'ar2en' },
+    { id: 'w3', mode: 'en2ar' },
+  ], new Date('2026-04-09T12:00:00.000Z'));
+
+  assert.deepEqual(replay, {
+    queue: [
+      { id: 'w1', mode: 'ar2en' },
+      { id: 'w2', mode: 'en2ar' },
+      { id: 'w3', mode: 'en2ar' },
+    ],
+    index: 0,
+    createdAt: '2026-04-09T12:00:00.000Z',
+    reviewAgain: true,
+  });
+});
+
 test('pocketbase auth helpers normalize urls and parse sessions safely', async () => {
   const {
     trimTrailingSlash,
@@ -1686,6 +1708,165 @@ test('app shows unavailable when Settings reports a backend outage', async () =>
   }
 });
 
+test('study session review again restarts from unique cards without persisting card due dates', async () => {
+  const stateKey = '__qfcStudySessionReviewAgainState';
+  const workspace = mkdtempSync(path.join(tempRoot, 'study-session-review-again-'));
+  const cardStub = writeWorkspaceFile(workspace, 'Card.stub.svelte', `
+    <script lang="ts">
+      export let word: { id?: string } | null = null;
+      export let mode: 'ar2en' | 'en2ar' = 'ar2en';
+    </script>
+
+    <div data-testid="study-card">{word?.id}:{mode}</div>
+  `);
+  const studyStub = writeWorkspaceFile(workspace, 'pocketbase-study-stub.ts', `
+    const state = globalThis[${JSON.stringify(stateKey)}] ??= {
+      loadCalls: 0,
+      cardSaveCalls: 0,
+      studySaveCalls: 0,
+      lastCardState: null,
+      lastStudySession: null,
+      lastStudyStats: null,
+      lastStudyStateCount: 0,
+    };
+
+    const createdAt = new Date().toISOString();
+
+    const snapshot = {
+      states: {
+        w1: { id: 'w1' },
+        w2: { id: 'w2' },
+      },
+      appStats: {
+        studied: 0,
+        easy: 0,
+        streak: 0,
+      },
+      session: {
+        queue: [
+          { id: 'w1', mode: 'ar2en' },
+          { id: 'w2', mode: 'en2ar' },
+          { id: 'w1', mode: 'ar2en' },
+          { id: 'w2', mode: 'en2ar' },
+        ],
+        index: 4,
+        createdAt,
+      },
+    };
+
+    export async function loadAuthenticatedStudySnapshot(session, words) {
+      state.loadCalls += 1;
+      return snapshot;
+    }
+
+    export async function savePocketBaseCardState(session, nextState) {
+      state.cardSaveCalls += 1;
+      state.lastCardState = nextState;
+    }
+
+    export async function savePocketBaseStudyState(session, stats, savedSession, stateSnapshot) {
+      state.studySaveCalls += 1;
+      state.lastStudySession = savedSession;
+      state.lastStudyStats = stats;
+      state.lastStudyStateCount = Object.keys(stateSnapshot || {}).length;
+    }
+
+    export async function clearLegacyStudyStorage() {}
+  `);
+  globalThis[stateKey] = {
+    loadCalls: 0,
+    cardSaveCalls: 0,
+    studySaveCalls: 0,
+    lastCardState: null,
+    lastStudySession: null,
+    lastStudyStats: null,
+    lastStudyStateCount: 0,
+  };
+
+  try {
+    await withBrowserDom(async ({ document, window }) => {
+      const { default: StudySession } = await importSvelte('src/ui/StudySession.svelte', {
+        [path.resolve(repoRoot, 'src/core/wordlist.ts')]: path.resolve(repoRoot, 'src/core/wordlist.ts'),
+        [path.resolve(repoRoot, 'src/core/srs.ts')]: path.resolve(repoRoot, 'src/core/srs.ts'),
+        [path.resolve(repoRoot, 'src/core/app-stats.ts')]: path.resolve(repoRoot, 'src/core/app-stats.ts'),
+        [path.resolve(repoRoot, 'src/core/session.ts')]: path.resolve(repoRoot, 'src/core/session.ts'),
+        [path.resolve(repoRoot, 'src/core/progress-summary.ts')]: path.resolve(repoRoot, 'src/core/progress-summary.ts'),
+        [path.resolve(repoRoot, 'src/core/pocketbase-auth.ts')]: path.resolve(repoRoot, 'src/core/pocketbase-auth.ts'),
+        [path.resolve(repoRoot, 'src/core/storage-adapter.ts')]: path.resolve(repoRoot, 'src/core/storage-adapter.ts'),
+        [path.resolve(repoRoot, 'src/core/pocketbase-study.ts')]: studyStub,
+        [path.resolve(repoRoot, 'src/ui/components/Card.svelte')]: cardStub,
+      });
+
+      const target = document.getElementById('app');
+      assert.ok(target);
+
+      const component = new StudySession({
+        target,
+        props: {
+          authSession: {
+            token: 'session-token',
+            user: { id: 'user-1', email: 'user@example.com' },
+          },
+        },
+      });
+
+      async function waitForText(selector, expected) {
+        const started = Date.now();
+        while (Date.now() - started < 3000) {
+          const text = document.querySelector(selector)?.textContent?.trim();
+          if (text === expected) return;
+          await flushSvelte();
+        }
+        throw new Error(`Timed out waiting for ${selector} to become ${expected}`);
+      }
+
+      async function waitForState(predicate) {
+        const started = Date.now();
+        while (Date.now() - started < 3000) {
+          if (predicate()) return;
+          await flushSvelte();
+        }
+        throw new Error('Timed out waiting for study session state');
+      }
+
+      await waitForSelector(document, '.session-complete');
+      assert.equal(document.querySelector('.progress-label strong')?.textContent?.trim(), '4 / 4');
+      assert.equal(document.querySelector('[data-testid="study-card"]'), null);
+
+      await waitForSelector(document, 'button.review-again.secondary');
+      document.querySelector('button.review-again.secondary')?.dispatchEvent(new window.Event('click', { bubbles: true }));
+      await waitForState(() => globalThis[stateKey].studySaveCalls === 1);
+      await waitForText('.progress-label strong', '1 / 2');
+      await waitForText('[data-testid="study-card"]', 'w1:ar2en');
+
+      const replaySession = globalThis[stateKey].lastStudySession;
+      assert.ok(replaySession);
+      assert.equal(replaySession.reviewAgain, true);
+      assert.equal(replaySession.index, 0);
+      assert.deepEqual(replaySession.queue.map((item) => item.id), ['w1', 'w2']);
+      assert.deepEqual(replaySession.queue.map((item) => item.mode), ['ar2en', 'en2ar']);
+      assert.equal(globalThis[stateKey].cardSaveCalls, 0);
+
+      document.querySelector('.rating-btn.hard')?.dispatchEvent(new window.Event('click', { bubbles: true }));
+      await waitForState(() => globalThis[stateKey].studySaveCalls === 2);
+      await waitForText('.progress-label strong', '2 / 3');
+      await waitForText('[data-testid="study-card"]', 'w2:en2ar');
+
+      const replayAfterHard = globalThis[stateKey].lastStudySession;
+      assert.ok(replayAfterHard);
+      assert.equal(replayAfterHard.reviewAgain, true);
+      assert.equal(replayAfterHard.index, 1);
+      assert.deepEqual(replayAfterHard.queue.map((item) => item.id), ['w1', 'w2', 'w1']);
+      assert.equal(globalThis[stateKey].cardSaveCalls, 0);
+
+      component.$destroy();
+    });
+  } finally {
+    delete globalThis[stateKey];
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
 test('study persistence helpers derive fingerprints and ignore stale snapshots', async () => {
   const { normalizeSavedSession } = await importTs('src/core/session.ts');
   const {
@@ -1759,6 +1940,18 @@ test('study persistence helpers derive fingerprints and ignore stale snapshots',
     ],
     index: 2,
     createdAt: '2026-04-09T12:00:00.000Z',
+  });
+
+  assert.deepEqual(normalizeSavedSession({
+    queue: [{ id: 'w3', mode: 'en2ar' }],
+    index: 0,
+    createdAt: '2026-04-09T12:00:00.000Z',
+    reviewAgain: true,
+  }), {
+    queue: [{ id: 'w3', mode: 'en2ar' }],
+    index: 0,
+    createdAt: '2026-04-09T12:00:00.000Z',
+    reviewAgain: true,
   });
 
   const storedState = createStoredStudyState(

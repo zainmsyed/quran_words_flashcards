@@ -13,6 +13,7 @@ export type SavedSession = {
   queue: SessionItem[];
   index?: number;
   createdAt?: string;
+  reviewAgain?: boolean;
 };
 
 export type SessionLimits = {
@@ -71,6 +72,46 @@ export function normalizeSavedSession(
     queue,
     index,
     createdAt,
+    ...(input.reviewAgain === true ? { reviewAgain: true } : {}),
+  };
+}
+
+function dedupeSessionQueue(queue: SessionItem[]): SessionItem[] {
+  const seen = new Set<string>();
+  const unique: SessionItem[] = [];
+
+  for (const item of queue) {
+    if (seen.has(item.id)) continue;
+    seen.add(item.id);
+    unique.push({ ...item });
+  }
+
+  return unique;
+}
+
+export function createReviewAgainSession(
+  queue: SessionItem[],
+  createdAt: Date | string = new Date(),
+): SavedSession | null {
+  const createdAtValue = typeof createdAt === 'string'
+    ? createdAt.trim() || new Date().toISOString()
+    : createdAt.toISOString();
+  const normalized = normalizeSavedSession({
+    queue,
+    index: 0,
+    createdAt: createdAtValue,
+  });
+
+  if (!normalized) return null;
+
+  const uniqueQueue = dedupeSessionQueue(normalized.queue);
+  if (uniqueQueue.length === 0) return null;
+
+  return {
+    queue: uniqueQueue,
+    index: 0,
+    createdAt: createdAtValue,
+    reviewAgain: true,
   };
 }
 

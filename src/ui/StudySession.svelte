@@ -7,9 +7,9 @@
   import { initialAppStats, recordStudy, type AppStats } from '../core/app-stats';
   import {
     buildSessionPlan,
+    createReviewAgainSession,
     isSameLocalDay,
     normalizeSavedSession,
-    retrySessionItem,
     type SavedSession,
     type SessionItem,
   } from '../core/session';
@@ -43,6 +43,7 @@
   let deck: Word[] = [];
   let sessionItems: SessionItem[] = [];
   let currentIndex = 0;
+  let reviewAgainMode = false;
   let states: Record<string, CardState> = {};
   let appStats: AppStats = initialAppStats();
   let loading = true;
@@ -81,6 +82,7 @@
   }
 
   async function buildSession(savedSession?: SavedSession) {
+    reviewAgainMode = Boolean(savedSession?.reviewAgain);
     const wordMap = makeWordMap(words);
     const plan = buildSessionPlan(words, states, savedSession, {
       limits: { newPerSession: NEW_PER_SESSION, reviewPerSession: REVIEW_PER_SESSION },
@@ -121,6 +123,7 @@
       queue: sessionItems.map((item) => ({ ...item })),
       index: currentIndex,
       createdAt,
+      ...(reviewAgainMode ? { reviewAgain: true } : {}),
     };
   }
 
@@ -221,7 +224,6 @@
 
     const currentItem = sessionItems[currentIndex];
     const prev = getStateFor(word.id);
-    const updated = applyRatingToCard(prev, rating);
     const nextStats = recordStudy(appStats, rating, new Date(), prev.interval === 0);
     const nextSessionItems = [...sessionItems];
 
@@ -233,27 +235,55 @@
       queue: nextSessionItems,
       index: currentIndex + 1,
       createdAt: new Date().toISOString(),
+      ...(reviewAgainMode ? { reviewAgain: true } : {}),
     } satisfies SavedSession;
-    const nextStates = {
-      ...states,
-      [word.id]: updated,
-    };
 
-    ratingBusy = true;
-    try {
-      await savePocketBaseCardState(authSession!, updated);
-      await persistStudySnapshotWithRetry(nextStats, nextSession, nextStates);
+    const shouldPersistCardState = !reviewAgainMode;
+    let updated: CardState | null = null;
+    let nextStates = states;
 
-      states[word.id] = updated;
-      appStats = nextStats;
-      loadError = '';
+    if (shouldPersistCardState) {
+      updated = applyRatingToCard(prev, rating);
+      nextStates = {
+        ...states,
+        [word.id]: updated,
+      };
+    }
 
+    if (reviewAgainMode) {
       if (rating === 'hard' && currentItem) {
         sessionItems.push({ id: currentItem.id, mode: currentItem.mode });
         deck.push(word);
+        sessionItems = sessionItems;
+        deck = deck;
       }
 
       currentIndex += 1;
+    }
+
+    ratingBusy = true;
+    try {
+      if (updated) {
+        await savePocketBaseCardState(authSession!, updated);
+      }
+      await persistStudySnapshotWithRetry(nextStats, nextSession, nextStates);
+
+      if (updated) {
+        states[word.id] = updated;
+      }
+      appStats = nextStats;
+      loadError = '';
+
+      if (!reviewAgainMode && rating === 'hard' && currentItem) {
+        sessionItems.push({ id: currentItem.id, mode: currentItem.mode });
+        deck.push(word);
+        sessionItems = sessionItems;
+        deck = deck;
+      }
+
+      if (!reviewAgainMode) {
+        currentIndex += 1;
+      }
     } catch (error) {
       if (dispatchSessionIssue(error)) {
         return;
@@ -275,15 +305,12 @@
       return;
     }
 
-    const nextSession = {
-      queue: sessionItems,
-      index: 0,
-      createdAt: new Date().toISOString(),
-    } satisfies SavedSession;
+    const replaySession = createReviewAgainSession(sessionItems);
+    if (!replaySession) return;
 
     try {
-      await persistStudySnapshotWithRetry(appStats, nextSession);
-      currentIndex = 0;
+      await buildSession(replaySession);
+      await persistStudySnapshotWithRetry(appStats, currentSessionSnapshot());
       loadError = '';
     } catch (error) {
       if (dispatchSessionIssue(error)) {
