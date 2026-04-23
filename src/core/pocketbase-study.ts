@@ -75,22 +75,45 @@ function hashString(input: string): string {
   return (hash >>> 0).toString(36);
 }
 
+function normalizeDateValue(value: unknown, fallback = ''): string {
+  const trimmed = trimValue(value);
+  if (!trimmed) return fallback;
+
+  const normalized = trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T');
+  const parsed = new Date(normalized);
+  if (Number.isNaN(parsed.getTime())) {
+    return fallback || trimmed;
+  }
+
+  return parsed.toISOString();
+}
+
 export function createCardProgressFingerprint(states: Record<string, CardState>): string {
   const canonical = Object.values(states)
     .map((state) => normalizeCardState({ id: state.id, ...state }))
     .sort((left, right) => left.id.localeCompare(right.id))
-    .map((state) => ({
-      id: state.id,
-      interval: state.interval,
-      ease: state.ease,
-      dueDate: state.dueDate,
-      reviewCount: state.reviewCount,
-      hardCount: state.hardCount,
-      gotCount: state.gotCount,
-      easyCount: state.easyCount,
-      lastRating: state.lastRating ?? '',
-      lastReviewedAt: state.lastReviewedAt ?? '',
-    }));
+    .map((state) => {
+      const isUntouched = state.interval <= 0
+        && state.reviewCount <= 0
+        && state.hardCount <= 0
+        && state.gotCount <= 0
+        && state.easyCount <= 0
+        && !state.lastRating
+        && !state.lastReviewedAt;
+
+      return {
+        id: state.id,
+        interval: state.interval,
+        ease: state.ease,
+        dueDate: isUntouched ? '' : normalizeDateValue(state.dueDate),
+        reviewCount: state.reviewCount,
+        hardCount: state.hardCount,
+        gotCount: state.gotCount,
+        easyCount: state.easyCount,
+        lastRating: state.lastRating ?? '',
+        lastReviewedAt: isUntouched ? '' : normalizeDateValue(state.lastReviewedAt),
+      };
+    });
 
   return hashString(JSON.stringify(canonical));
 }
@@ -149,13 +172,13 @@ function fromCardProgressRecord(record: PocketBaseCardProgressRecord): CardState
     id: wordId,
     interval: toNumber(record.interval, 0),
     ease: toNumber(record.ease, 2.5),
-    dueDate: trimValue(record.due_date) || new Date().toISOString(),
+    dueDate: normalizeDateValue(record.due_date, new Date().toISOString()),
     reviewCount: toNumber(record.review_count, 0),
     hardCount: toNumber(record.hard_count, 0),
     gotCount: toNumber(record.got_count, 0),
     easyCount: toNumber(record.easy_count, 0),
     lastRating: isValidRating(record.last_rating) ? record.last_rating : undefined,
-    lastReviewedAt: trimValue(record.last_reviewed_at) || undefined,
+    lastReviewedAt: normalizeDateValue(record.last_reviewed_at) || undefined,
   });
 }
 
@@ -357,8 +380,12 @@ export async function loadAuthenticatedStudySnapshot(session: AuthSession, words
     studied: summary.seenWords,
     easy: summary.easyCount,
   });
-  const sessionState = storedState?.progressFingerprint === progressFingerprint
-    ? normalizeSavedSession(storedState.session)
+  const hasStoredState = storedState != null;
+  const canUseLegacySession = hasStoredState && !storedState.progressFingerprint;
+  const canUseNoProgressSession = hasStoredState && progressRecords.length === 0;
+  const sessionFingerprintMatches = hasStoredState && storedState.progressFingerprint === progressFingerprint;
+  const sessionState = (sessionFingerprintMatches || canUseLegacySession || canUseNoProgressSession)
+    ? normalizeSavedSession(storedState?.session)
     : null;
 
   return {

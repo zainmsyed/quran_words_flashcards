@@ -1711,6 +1711,38 @@ test('study persistence helpers derive fingerprints and ignore stale snapshots',
   const fingerprint = createCardProgressFingerprint(states);
 
   assert.notEqual(fingerprint, createCardProgressFingerprint({ ...states, w2: { ...states.w2, easyCount: 2 } }));
+  assert.equal(
+    createCardProgressFingerprint({
+      w9: makeCardState('w9', {
+        interval: 1,
+        dueDate: '2026-04-10T09:00:00.000Z',
+        reviewCount: 1,
+        lastReviewedAt: '2026-04-09T09:00:00.000Z',
+      }),
+    }),
+    createCardProgressFingerprint({
+      w9: makeCardState('w9', {
+        interval: 1,
+        dueDate: '2026-04-10 09:00:00.000Z',
+        reviewCount: 1,
+        lastReviewedAt: '2026-04-09 09:00:00.000Z',
+      }),
+    }),
+    'fingerprints should match even when PocketBase returns equivalent date strings with spaces',
+  );
+  assert.equal(
+    createCardProgressFingerprint({
+      w10: makeCardState('w10', {
+        dueDate: '2026-04-10T09:00:00.000Z',
+      }),
+    }),
+    createCardProgressFingerprint({
+      w10: makeCardState('w10', {
+        dueDate: '2026-04-11T14:45:00.000Z',
+      }),
+    }),
+    'untouched cards should not change the fingerprint just because their default dueDate timestamp differs',
+  );
 
   assert.deepEqual(normalizeSavedSession({
     queue: [
@@ -1862,6 +1894,265 @@ test('study persistence helpers derive fingerprints and ignore stale snapshots',
         writable: true,
       });
     }
+  }
+});
+
+test('study persistence helpers restore legacy saved sessions without a progressFingerprint', async () => {
+  const { loadAuthenticatedStudySnapshot } = await importTs('src/core/pocketbase-study.ts');
+
+  const originalFetch = globalThis.fetch;
+  const expectedSession = {
+    queue: [{ id: 'w1', mode: 'ar2en' }],
+    index: 1,
+    createdAt: '2026-04-09T12:00:00.000Z',
+  };
+
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.endsWith('/api/collections/card_progress/records?page=1&perPage=200&filter=user%3D%22user-1%22')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          items: [
+            {
+              id: 'record-1',
+              user: 'user-1',
+              word_id: 'w1',
+              interval: 1,
+              ease: 2.5,
+              due_date: '2026-04-10 09:00:00.000Z',
+              review_count: 1,
+              hard_count: 0,
+              got_count: 1,
+              easy_count: 0,
+              last_rating: 'got',
+              last_reviewed_at: '2026-04-09 09:00:00.000Z',
+            },
+          ],
+          totalPages: 1,
+        }),
+      };
+    }
+
+    if (url.endsWith('/api/collections/study_state/records?page=1&perPage=1&filter=user%3D%22user-1%22')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          items: [{
+            id: 'state-1',
+            user: 'user-1',
+            state_json: JSON.stringify({
+              stats: { studied: 1, easy: 0, streak: 1, lastStudyDate: '2026-04-09' },
+              session: expectedSession,
+            }),
+          }],
+          totalPages: 1,
+        }),
+      };
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  };
+
+  try {
+    const words = [
+      { id: 'w1', arabic: 'word1', english: 'word1' },
+      { id: 'w2', arabic: 'word2', english: 'word2' },
+    ];
+    const snapshot = await loadAuthenticatedStudySnapshot({ token: 'token-1', user: { id: 'user-1', email: 'user@example.com' } }, words);
+
+    assert.deepEqual(snapshot.session, expectedSession);
+    assert.equal(snapshot.states.w1.reviewCount, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('study persistence helpers restore saved sessions when no card_progress records exist yet', async () => {
+  const {
+    createCardProgressFingerprint,
+    loadAuthenticatedStudySnapshot,
+  } = await importTs('src/core/pocketbase-study.ts');
+
+  const originalFetch = globalThis.fetch;
+  const expectedSession = {
+    queue: [{ id: 'w1', mode: 'ar2en' }, { id: 'w2', mode: 'en2ar' }],
+    index: 0,
+    createdAt: '2026-04-09T12:00:00.000Z',
+  };
+  const fingerprint = createCardProgressFingerprint({
+    w1: makeCardState('w1', { dueDate: '2026-04-09T12:00:00.000Z' }),
+    w2: makeCardState('w2', { dueDate: '2026-04-09T12:00:00.500Z' }),
+  });
+
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.endsWith('/api/collections/card_progress/records?page=1&perPage=200&filter=user%3D%22user-1%22')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          items: [],
+          totalPages: 1,
+        }),
+      };
+    }
+
+    if (url.endsWith('/api/collections/study_state/records?page=1&perPage=1&filter=user%3D%22user-1%22')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          items: [{
+            id: 'state-1',
+            user: 'user-1',
+            state_json: JSON.stringify({
+              stats: { studied: 0, easy: 0, streak: 0 },
+              session: expectedSession,
+              progressFingerprint: fingerprint,
+            }),
+          }],
+          totalPages: 1,
+        }),
+      };
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  };
+
+  try {
+    const words = [
+      { id: 'w1', arabic: 'word1', english: 'word1' },
+      { id: 'w2', arabic: 'word2', english: 'word2' },
+    ];
+    const snapshot = await loadAuthenticatedStudySnapshot({ token: 'token-1', user: { id: 'user-1', email: 'user@example.com' } }, words);
+
+    assert.deepEqual(snapshot.session, expectedSession);
+    assert.equal(snapshot.states.w1.reviewCount, 0);
+    assert.equal(snapshot.states.w2.reviewCount, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('study persistence helpers restore saved sessions when PocketBase returns equivalent date strings', async () => {
+  const {
+    createCardProgressFingerprint,
+    loadAuthenticatedStudySnapshot,
+  } = await importTs('src/core/pocketbase-study.ts');
+
+  const originalFetch = globalThis.fetch;
+  const expectedSession = {
+    queue: [{ id: 'w1', mode: 'ar2en' }],
+    index: 1,
+    createdAt: '2026-04-09T12:00:00.000Z',
+  };
+
+  const canonicalStates = {
+    w1: makeCardState('w1', {
+      interval: 1,
+      dueDate: '2026-04-10T09:00:00.000Z',
+      reviewCount: 1,
+      gotCount: 1,
+      lastRating: 'got',
+      lastReviewedAt: '2026-04-09T09:00:00.000Z',
+    }),
+    w2: makeCardState('w2', {
+      interval: 2,
+      ease: 2.6,
+      dueDate: '2026-04-11T09:00:00.000Z',
+      reviewCount: 2,
+      gotCount: 1,
+      easyCount: 1,
+      lastRating: 'easy',
+      lastReviewedAt: '2026-04-09T10:00:00.000Z',
+    }),
+    w3: makeCardState('w3', {
+      dueDate: '2026-04-12T07:30:00.000Z',
+    }),
+  };
+  const fingerprint = createCardProgressFingerprint(canonicalStates);
+
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.endsWith('/api/collections/card_progress/records?page=1&perPage=200&filter=user%3D%22user-1%22')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          items: [
+            {
+              id: 'record-1',
+              user: 'user-1',
+              word_id: 'w1',
+              interval: 1,
+              ease: 2.5,
+              due_date: '2026-04-10 09:00:00.000Z',
+              review_count: 1,
+              hard_count: 0,
+              got_count: 1,
+              easy_count: 0,
+              last_rating: 'got',
+              last_reviewed_at: '2026-04-09 09:00:00.000Z',
+            },
+            {
+              id: 'record-2',
+              user: 'user-1',
+              word_id: 'w2',
+              interval: 2,
+              ease: 2.6,
+              due_date: '2026-04-11 09:00:00.000Z',
+              review_count: 2,
+              hard_count: 0,
+              got_count: 1,
+              easy_count: 1,
+              last_rating: 'easy',
+              last_reviewed_at: '2026-04-09 10:00:00.000Z',
+            },
+          ],
+          totalPages: 1,
+        }),
+      };
+    }
+
+    if (url.endsWith('/api/collections/study_state/records?page=1&perPage=1&filter=user%3D%22user-1%22')) {
+      return {
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({
+          items: [{
+            id: 'state-1',
+            user: 'user-1',
+            state_json: JSON.stringify({
+              stats: { studied: 2, easy: 1, streak: 1, lastStudyDate: '2026-04-09' },
+              session: expectedSession,
+              progressFingerprint: fingerprint,
+            }),
+          }],
+          totalPages: 1,
+        }),
+      };
+    }
+
+    throw new Error(`Unexpected fetch: ${url}`);
+  };
+
+  try {
+    const words = [
+      { id: 'w1', arabic: 'word1', english: 'word1' },
+      { id: 'w2', arabic: 'word2', english: 'word2' },
+      { id: 'w3', arabic: 'word3', english: 'word3' },
+    ];
+    const snapshot = await loadAuthenticatedStudySnapshot({ token: 'token-1', user: { id: 'user-1', email: 'user@example.com' } }, words);
+
+    assert.deepEqual(snapshot.session, expectedSession);
+    assert.equal(snapshot.states.w1.dueDate, '2026-04-10T09:00:00.000Z');
+    assert.equal(snapshot.states.w1.lastReviewedAt, '2026-04-09T09:00:00.000Z');
+    assert.equal(snapshot.states.w3.reviewCount, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });
 
