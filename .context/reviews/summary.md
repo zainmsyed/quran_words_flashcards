@@ -1,6 +1,6 @@
 # Review Summary
 
-**Last updated:** 2026-04-23T13:11:11Z
+**Last updated:** 2026-04-24T15:38:46Z
 
 ## Findings
 - When a mobile top bar looks clipped, restore the header’s own padding/safe-area inset instead of changing viewport-level spacing so the rest of the screen stays put. | count: 2 | status: promoted | sources: review-20260414-200827.md, remembered.md | stories: story-009
@@ -15,6 +15,7 @@
 - When a quota says to fill the remaining slots, compute the secondary quota from remaining capacity instead of applying a fixed sub-cap unconditionally. | count: 1 | status: tracked | sources: review-20260418-123224.md
 - When a security-sensitive UI flow depends on custom component events, add component/e2e coverage for the dispatch chain instead of only testing helper modules. | count: 1 | status: tracked | sources: review-20260418-220708.md | stories: story-018
 - When adding a secondary panel to a card screen, reuse the card’s wrapper and spacing tokens so both edges stay aligned. | count: 1 | status: promoted | sources: remembered.md
+- When computing per-user progress fingerprints, also canonicalize date/time fields and ignore volatile default values (e.g., auto-generated dueDate for untouched cards) so logically identical state yields a stable fingerprint. | count: 1 | status: promoted | sources: remembered.md
 - When deployment correctness depends on container networking, test the network path itself instead of relying only on static config or image builds. | count: 1 | status: tracked | sources: review-20260418-145506.md | stories: story-017
 - When localStorage is part of auth/session persistence, catch storage writes/removals the same way reads are caught so storage-restricted browsers degrade gracefully. | count: 1 | status: tracked | sources: review-20260414-200827.md
 - When multiple records represent one logical snapshot, recover from the durable source of truth instead of trusting a stale auxiliary snapshot. | count: 1 | status: tracked | sources: review-20260418-220708.md | stories: story-018

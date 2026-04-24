@@ -21,3 +21,4 @@
 - Add tests for new logic and scripts before merging feature branches. <!-- source: story-014 -->
 - Prefer Svelte stores or explicit subscription APIs for cross-component runtime state changes so UI reactivity is reliable. <!-- source: story-014 -->
 - When localStorage is part of auth/session persistence, catch storage write/remove failures so sign-in and sign-out degrade gracefully. <!-- source: story-004 -->
+- When computing per-user progress fingerprints, also canonicalize date/time fields and ignore volatile default values (e.g., auto-generated dueDate for untouched cards) so logically identical state yields a stable fingerprint.
