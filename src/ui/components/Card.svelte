@@ -167,7 +167,8 @@
   .flashcard {
     position: relative;
     width: 100%;
-    min-height: 60vh;
+    min-height: var(--card-height);
+    min-height: clamp(15rem, 60vh, var(--card-height));
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
     transform-origin: center center;
@@ -385,7 +386,9 @@
   @media (max-width: 520px) {
     .flashcard {
       width: 100%;
-      min-height: 60vh;
+      min-height: var(--card-height);
+      min-height: clamp(15rem, 44vh, var(--card-height));
+      min-height: clamp(15rem, 44svh, var(--card-height));
     }
 
     .card-face {

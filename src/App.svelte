@@ -28,6 +28,14 @@
   };
 
   onMount(() => {
+    if (typeof window !== 'undefined') {
+      if (window.history && 'scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      if (typeof window.scrollTo === 'function') {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      }
+    }
     void bootstrapAuth();
   });
 

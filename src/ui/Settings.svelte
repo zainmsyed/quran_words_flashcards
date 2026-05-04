@@ -187,6 +187,7 @@
 
   /* The body contains the carded content (tabs + content) */
   .settings-body {
+    margin-top: 1.2rem;
     background: var(--card);
     border-radius: 6px;
     border: 0.5px solid var(--border);

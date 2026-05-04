@@ -202,7 +202,19 @@
     }
   }
 
+  function resetPageScroll() {
+    if (typeof window === 'undefined') return;
+
+    const browserWindow = window;
+    if (typeof browserWindow.scrollTo !== 'function') return;
+
+    requestAnimationFrame(() => {
+      browserWindow.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
+  }
+
   onMount(() => {
+    resetPageScroll();
     void retryLoad();
   });
 
@@ -504,7 +516,9 @@
             </div>
           {/if}
         {:else}
-          <Card word={deck[currentIndex]} mode={sessionItems[currentIndex]?.mode || 'ar2en'} />
+          <div class="flashcard-slot">
+            <Card word={deck[currentIndex]} mode={sessionItems[currentIndex]?.mode || 'ar2en'} />
+          </div>
         {/if}
       </div>
 
@@ -629,7 +643,8 @@
     min-height: 0;
     display: grid;
     grid-template-columns: var(--session-gutter) minmax(0, 1fr) var(--session-gutter);
-    align-content: start;
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-content: stretch;
   }
 
   .progress-scene {
@@ -685,26 +700,39 @@
 
   .card-stage {
     grid-column: 2;
+    grid-row: 1;
     width: 100%;
     min-width: 0;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
     align-items: stretch;
-    justify-content: flex-start;
     gap: 1rem;
     margin-top: 1.2rem;
   }
 
+  .flashcard-slot {
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .flashcard-slot :global(.flashcard-scene) {
+    width: 100%;
+  }
+
   .rating-row {
     grid-column: 2;
+    grid-row: 2;
+    align-self: end;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.75rem;
     width: 100%;
     min-width: 0;
     margin: 1.2rem auto 0;
-    padding: 0 0.1rem;
+    padding: 0 0.1rem 1rem;
   }
 
   .rating-btn {
@@ -883,6 +911,7 @@
     .rating-row {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.5rem;
+      padding-bottom: max(0.9rem, env(safe-area-inset-bottom));
     }
   }
 
