@@ -1,9 +1,20 @@
 # Intake Brief
 
-**Last updated:** 2026-04-18
+**Last updated:** 2026-05-04
 
 ## Planning brief
-Secure the Quranic Flashcards app for an invite-only deployment that is primarily managed through Coolify on a generic VPS (for example Hetzner or a similar provider) where the app and PocketBase database run on the same host. Prioritize server hardening and application/code hardening so logins, user data, and authenticated sessions stay protected, and include basic automated security checks after the baseline hardening work. Keep operational recovery work such as backup/restore drills for a later phase.
+Add a session-start choice for the existing study flow. When a normal daily session queue is created or resumed at the beginning, the user should choose between reviewing the upcoming session words first or going straight into the current flashcard test flow. The review path should show only the words in the current session queue, openly displaying Arabic, transliteration, and English so learners can familiarize themselves before testing. The direct test path should preserve the current app behavior.
+
+## Final distilled answers
+- The preview/review list is limited to the current session queue only, not the full deck or broader due/new lists.
+- The list should show answers openly: Arabic, transliteration, and English.
+- v1 review list is text-only; no pronunciation/audio controls in the preview.
+- Start-of-session entry should offer two choices: Review first or Test me.
+- If the user chooses Review first, the review screen should have a single next action to start the test/flashcards.
+- The choice/review step applies only to the first normal daily session, not the Review again flow after completing a session.
+- Previewing words must not affect SRS progress, card state, app stats, or streaks; only rating flashcards should update progress.
+- Refresh/resume should preserve the user's exact place: choice screen, review screen, or the same flashcard index, matching the existing saved-session behavior.
+- v1 does not need New/Review labels or color coding in the preview list.
 
 ## Source files
 - .context/intake/dictionaries/quran_300_words.csv (11519 bytes)

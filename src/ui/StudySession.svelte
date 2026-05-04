@@ -2,6 +2,7 @@
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import Card from './components/Card.svelte';
   import AppTopbar from './components/AppTopbar.svelte';
+  import SessionPreview from './components/SessionPreview.svelte';
   import { loadSeedWords, type Word } from '../core/wordlist';
   import { applyRatingToCard, initialCardState, normalizeCardState, type CardState } from '../core/srs';
   import { initialAppStats, recordStudy, type AppStats } from '../core/app-stats';
@@ -12,6 +13,7 @@
     normalizeSavedSession,
     type SavedSession,
     type SessionItem,
+    type SessionPhase,
   } from '../core/session';
   import { summarizeStudyProgress, MASTERED_EASY_COUNT } from '../core/progress-summary';
   import {
@@ -44,6 +46,7 @@
   let sessionItems: SessionItem[] = [];
   let currentIndex = 0;
   let reviewAgainMode = false;
+  let sessionPhase: SessionPhase = 'test';
   let states: Record<string, CardState> = {};
   let appStats: AppStats = initialAppStats();
   let loading = true;
@@ -53,6 +56,7 @@
   let currentCardNumber = 0;
   let progressPercent = 0;
   let ratingBusy = false;
+  let phaseBusy = false;
 
   $: currentCardNumber = deck.length > 0 ? Math.min(currentIndex + 1, deck.length) : 0;
   $: progressPercent = deck.length > 0 ? Math.round((currentCardNumber / deck.length) * 100) : 0;
@@ -81,6 +85,12 @@
     });
   }
 
+  function resolveSessionPhase(savedSession?: SavedSession): SessionPhase {
+    if (savedSession?.reviewAgain) return 'test';
+    if (!savedSession) return 'choice';
+    return savedSession.phase ?? 'test';
+  }
+
   async function buildSession(savedSession?: SavedSession) {
     reviewAgainMode = Boolean(savedSession?.reviewAgain);
     const wordMap = makeWordMap(words);
@@ -93,6 +103,7 @@
     sessionNewCount = plan.newCount;
     sessionReviewCount = plan.reviewCount;
     deck = sessionItems.map((si) => wordMap.get(si.id)).filter(Boolean) as Word[];
+    sessionPhase = deck.length === 0 || currentIndex >= deck.length ? 'test' : resolveSessionPhase(savedSession);
   }
 
   function dispatchSessionIssue(error: unknown): boolean {
@@ -123,6 +134,7 @@
       queue: sessionItems.map((item) => ({ ...item })),
       index: currentIndex,
       createdAt,
+      phase: reviewAgainMode ? 'test' : sessionPhase,
       ...(reviewAgainMode ? { reviewAgain: true } : {}),
     };
   }
@@ -178,7 +190,7 @@
     await buildSession(effectiveSession || undefined);
 
     if (!effectiveSession || statsChanged) {
-      const sessionToPersist = effectiveSession ?? currentSessionSnapshot();
+      const sessionToPersist = currentSessionSnapshot(effectiveSession?.createdAt);
       await persistStudySnapshotWithRetry(syncedStats, sessionToPersist);
     }
 
@@ -223,8 +235,44 @@
     return states[id];
   }
 
+  async function moveToSessionPhase(nextPhase: SessionPhase) {
+    if (phaseBusy || reviewAgainMode || sessionPhase === nextPhase) return;
+
+    if (!authSession) {
+      dispatchSessionIssue(new PocketBaseAuthError('unauthorized', 'Your session expired. Please sign in again.'));
+      return;
+    }
+
+    const previousPhase = sessionPhase;
+    sessionPhase = nextPhase;
+    phaseBusy = true;
+
+    try {
+      await persistStudySnapshotWithRetry(appStats, currentSessionSnapshot());
+      loadError = '';
+    } catch (error) {
+      sessionPhase = previousPhase;
+      if (dispatchSessionIssue(error)) {
+        return;
+      }
+
+      console.warn(error);
+      loadError = 'Could not save your session choice.';
+    } finally {
+      phaseBusy = false;
+    }
+  }
+
+  function reviewBeforeTest() {
+    void moveToSessionPhase('preview');
+  }
+
+  function startTest() {
+    void moveToSessionPhase('test');
+  }
+
   async function handleRate(rating: 'hard' | 'got' | 'easy') {
-    if (ratingBusy) return;
+    if (ratingBusy || sessionPhase !== 'test') return;
 
     if (!authSession) {
       dispatchSessionIssue(new PocketBaseAuthError('unauthorized', 'Your session expired. Please sign in again.'));
@@ -247,6 +295,7 @@
       queue: nextSessionItems,
       index: currentIndex + 1,
       createdAt: new Date().toISOString(),
+      phase: 'test',
       ...(reviewAgainMode ? { reviewAgain: true } : {}),
     } satisfies SavedSession;
 
@@ -361,7 +410,7 @@
   }
 
   function handleWindowKeydown(event: KeyboardEvent) {
-    if (loading || ratingBusy || currentIndex >= deck.length || event.repeat) return;
+    if (loading || ratingBusy || sessionPhase !== 'test' || currentIndex >= deck.length || event.repeat) return;
     if (event.metaKey || event.ctrlKey || event.altKey) return;
 
     const target = event.target as HTMLElement | null;
@@ -458,7 +507,7 @@
         {#if loadError && deck.length > 0}
           <div class="session-alert" role="alert">{loadError}</div>
         {/if}
-        {#if deck.length > 0}
+        {#if deck.length > 0 && sessionPhase === 'test'}
           <div class="progress-scene">
             <div class="progress-card" aria-label={`Session progress ${currentCardNumber} of ${deck.length}`}>
               <div class="progress-label">
@@ -515,6 +564,20 @@
               </div>
             </div>
           {/if}
+        {:else if !reviewAgainMode && sessionPhase === 'choice'}
+          <div class="session-choice" aria-label="Choose how to start this session">
+            <div class="choice-copy">
+              <p class="choice-eyebrow">Session ready</p>
+              <h2>Review first or start testing?</h2>
+              <p>This session has {deck.length} words. You can read through them first or jump straight into flashcards.</p>
+            </div>
+            <div class="choice-actions">
+              <button type="button" class="choice-btn primary" on:click={reviewBeforeTest} disabled={phaseBusy}>Review first</button>
+              <button type="button" class="choice-btn secondary" on:click={startTest} disabled={phaseBusy}>Test me</button>
+            </div>
+          </div>
+        {:else if !reviewAgainMode && sessionPhase === 'preview'}
+          <SessionPreview words={deck} busy={phaseBusy} onStart={startTest} />
         {:else}
           <div class="flashcard-slot">
             <Card word={deck[currentIndex]} mode={sessionItems[currentIndex]?.mode || 'ar2en'} />
@@ -522,7 +585,7 @@
         {/if}
       </div>
 
-      {#if currentIndex < deck.length}
+      {#if sessionPhase === 'test' && currentIndex < deck.length}
         <div class="rating-row" aria-label="Rate this card">
           <button type="button" class="rating-btn hard" on:click={() => handleRate('hard')} aria-label="Hard" disabled={ratingBusy}>
             <span class="rating-icon">
@@ -720,6 +783,89 @@
 
   .flashcard-slot :global(.flashcard-scene) {
     width: 100%;
+  }
+
+  .session-choice {
+    grid-row: 1 / -1;
+    width: 100%;
+    align-self: center;
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1.15rem, 4vw, 1.6rem);
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .choice-copy {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .choice-eyebrow {
+    margin: 0;
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .choice-copy h2 {
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 7vw, 3.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+    color: var(--text);
+  }
+
+  .choice-copy p:last-child {
+    margin: 0;
+    max-width: 42rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .choice-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .choice-btn {
+    min-height: 58px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-primary);
+  }
+
+  .choice-btn.primary {
+    border: 0;
+    background: var(--primary);
+    color: var(--on-primary);
+  }
+
+  .choice-btn.secondary {
+    background: var(--card);
+    color: var(--primary);
+    border: 0.5px solid var(--border);
+  }
+
+  .choice-btn.primary:hover {
+    background: var(--primary-dim);
+    opacity: 1;
+  }
+
+  .choice-btn.secondary:hover {
+    background: var(--primary-container);
+    border-color: rgba(214, 40, 40, 0.18);
+    opacity: 1;
   }
 
   .rating-row {
@@ -930,6 +1076,10 @@
 
     .progress-bar {
       height: 8px;
+    }
+
+    .choice-actions {
+      grid-template-columns: 1fr;
     }
 
     .rating-btn {

@@ -3,6 +3,7 @@ import type { CardState } from './srs';
 import { isDueCardState } from './progress-summary';
 
 export type SessionMode = 'ar2en' | 'en2ar';
+export type SessionPhase = 'choice' | 'preview' | 'test';
 
 export type SessionItem = {
   id: string;
@@ -14,6 +15,7 @@ export type SavedSession = {
   index?: number;
   createdAt?: string;
   reviewAgain?: boolean;
+  phase?: SessionPhase;
 };
 
 export type SessionLimits = {
@@ -67,12 +69,16 @@ export function normalizeSavedSession(
     : 0;
 
   const createdAt = typeof input.createdAt === 'string' && input.createdAt.trim() ? input.createdAt.trim() : undefined;
+  const phase = input.phase === 'choice' || input.phase === 'preview' || input.phase === 'test'
+    ? input.phase
+    : undefined;
 
   return {
     queue,
     index,
     createdAt,
     ...(input.reviewAgain === true ? { reviewAgain: true } : {}),
+    ...(phase ? { phase } : {}),
   };
 }
 
@@ -112,6 +118,7 @@ export function createReviewAgainSession(
     index: 0,
     createdAt: createdAtValue,
     reviewAgain: true,
+    phase: 'test',
   };
 }
 

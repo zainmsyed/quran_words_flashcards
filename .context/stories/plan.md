@@ -1,7 +1,7 @@
 # Project — Plan
 
 **Created:** 2026-03-29  
-**Last updated:** 2026-04-20
+**Last updated:** 2026-05-04
 
 ---
 
@@ -51,6 +51,7 @@ The app will use a custom Svelte login gate and account screens. PocketBase rema
 | story-018.md | App security hardening — auth/session safety and sensitive UI paths | not-started | story-019.md |
 | story-019.md | Security automation — dependency scanning, secret scanning, and audit gates | not-started | — |
 | story-020.md | Mispronunciation remediation — free gTTS pass, port 8001 preview, and still-wrong flags | in-progress | — |
+| story-021.md | Session start preview choice — review queue before testing | in-progress | — |
 
 ## Scope addendum — 2026-04-14 static Arabic audio expansion
 - Preserve existing UI refresh story history; add new stories only for the Arabic audio expansion.
@@ -81,6 +82,15 @@ The app will use a custom Svelte login gate and account screens. PocketBase rema
 - Use the free gTTS regeneration path for the words listed in `.context/reviews/mispronunciations.md`, keep the listening and flagging loop on port 8001, and append any still-wrong items back into the same running review table before reevaluating whether the free route is good enough.
 - Reevaluate the free route after the first pass before deciding whether to keep iterating with it or revisit the provider choice later.
 
+## Scope addendum — 2026-05-04 session preview choice
+- Add a lightweight start-of-session choice before the first normal daily flashcard test: Review first or Test me.
+- Review first shows only the current session queue and openly displays Arabic, transliteration, and English for each word so learners can familiarize themselves before testing.
+- The preview list is text-only in v1: no audio controls, New/Review labels, or color coding.
+- Test me preserves the existing flashcard flow and study mechanics.
+- Previewing words must not update SRS state, app stats, streaks, or card progress; progress changes only after flashcard ratings.
+- Saved-session resume should preserve the exact phase: choice screen, review screen, or current flashcard index.
+- The choice/review step applies only to the first normal daily session, not the Review again replay flow.
+
 ## Replanning log
 - 2026-04-09: Replanned v1 to layer PocketBase auth onto the original study app. Confirmed invite-only manual onboarding for a small friends-and-family group, custom Svelte auth UI, change-password plus forgot/reset-password flows, PocketBase-backed persistence, repo-contained deployment files/instructions, and a fresh start with no localStorage migration.
 - 2026-04-12: Replanned visual update to a Bauhaus-inspired theme across all screens. Decisions: replace palette with a red/yellow/near‑black Bauhaus palette and add a success green (#1E7A4A); load Space Grotesk (headings), Work Sans (UI/body), and Noto Naskh Arabic (Arabic script); convert pill-shaped surfaces to rectangular 6px-radius geometry; brand-mark set to a rectangular red box with the Arabic letter "ا" and app name "alif" in Space Grotesk. Added story-005 through story-011 to implement fonts, tokens, topbar/brand, card restyle, session chrome, WordList/Stats, Settings/VoiceSettings, and QA/responsive polish. Preserved existing study/auth behavior and story history.
@@ -88,3 +98,4 @@ The app will use a custom Svelte login gate and account screens. PocketBase rema
 - 2026-04-16: Replanned the study flow so sessions cap at 15 cards and prefer 10 new words plus up to 5 due reviews when possible. Sessions should use all available new words when fewer than 10 are available, never exceed 15 total, prefer the oldest due reviews first, and randomize the final order only after the quota rules are satisfied. Added story-016 to implement the quota engine and its verification.
 - 2026-04-18: Replanned the project around security hardening for an invite-only deployment primarily managed through Coolify on a generic VPS with the app and PocketBase sharing the same host. Decisions: prioritize server hardening first, then application/code hardening, then lightweight automated security checks; keep the deployment generic enough to work on any VPS provider that can run Coolify; defer backups/restore drills, WAF/CDN/DDoS services, public signup, and broader platform changes to a later phase. Added story-017 through story-019 to implement the Coolify deployment baseline, patch app-layer security issues, and add security automation without overwriting preserved story history.
 - 2026-04-20: Added story-020 for a free gTTS-based mispronunciation remediation pass with a port-8001 preview/flagging loop that records still-wrong items back into `.context/reviews/mispronunciations.md`.
+- 2026-05-04: Replanned the study start flow to add an optional session-queue preview before testing. Decisions: show a Review first / Test me choice for normal daily sessions; keep Review again unchanged; show only the current session queue with Arabic, transliteration, and English; keep preview text-only for v1; preserve exact refresh/resume phase; and ensure previewing does not affect stats or SRS progress. Added story-021 for the implementation.
